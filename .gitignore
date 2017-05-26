@@ -99,3 +99,13 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+########################################
+
+# venv on windows
+Scripts/**
+pyvenv.cfg
+
+# pip on windows
+pip-selfcheck.json

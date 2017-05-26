@@ -1,6 +1,6 @@
 # music-chart-analytics
 
-**THIS PROJECT IS STILL UNDER DEVELOPMENT**
+**THIS PROJECT IS STILL UNDER DEVELOPMENT**  
 Analyzes online chord charts for common traits and patterns.
 
 ## Project Goals
@@ -29,7 +29,12 @@ The parser will read through all those charts and identify key features of the s
 
 ## Development
 
-...
+This project uses Python 3.
+
+### Dependencies
+
+- beautifulsoup4
+- requests
 
 ## Contact
 
