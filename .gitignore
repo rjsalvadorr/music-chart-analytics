@@ -107,5 +107,10 @@ ENV/
 Scripts/**
 pyvenv.cfg
 
+# venv on linux
+bin/**
+lib64
+share/**
+
 # pip on windows
 pip-selfcheck.json
