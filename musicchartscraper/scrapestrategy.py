@@ -2,7 +2,8 @@ from abc import ABCMeta
 
 class ScrapeStrategy:
     """
-    Base class, representing a strategy for navigating a particular website.
+    Abstract base class, representing a strategy for navigating a particular website.
+    One concrete subclass should be implemented for each website we're interested in.
     """
     __metaclass__ = ABCMeta
 

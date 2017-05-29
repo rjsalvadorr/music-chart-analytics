@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import requests
 from bs4 import BeautifulSoup
 
@@ -9,7 +10,7 @@ Steps:
 Potential filename format: artist-name_song-name_session-id.md
 """
 
-class LilypondFileBuilder:
+class MusicChartScraper:
     def __init__(self):
         self.chordSheetLinks = []
 
@@ -30,3 +31,6 @@ class LilypondFileBuilder:
             tabContent = tabContentHtml.get_text()
 
             print(tabContent)
+
+if __name__ == '__main__':
+    print "
