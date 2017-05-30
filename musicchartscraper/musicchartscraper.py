@@ -14,13 +14,13 @@ class MusicChartScraper:
     def __init__(self):
         self.chordSheetLinks = []
 
-    def scrape(artistName):
-    """
-    Scrapes websites for songs by a given artist.
-    """
-        chordSheetLinks.append("https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver3_crd.htm");
+    def scrape(self, artistName):
+        """
+        Scrapes websites for songs by a given artist.
+        """
+        self.chordSheetLinks.append("https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver3_crd.htm");
 
-        for sheetLink in chordSheetLinks:
+        for sheetLink in self.chordSheetLinks:
             resp = requests.get(sheetLink)
             print("Status: " + str(resp.status_code))
 
@@ -33,4 +33,6 @@ class MusicChartScraper:
             print(tabContent)
 
 if __name__ == '__main__':
-    print "
+    # main method. This is where you're going to call the scraper.
+    mcScraper = MusicChartScraper()
+    mcScraper.scrape("placeholderValue")
