@@ -7,6 +7,13 @@ class ScrapeStrategy:
     """
     __metaclass__ = ABCMeta
 
+    # TODO - figure out what each Strategy obj will need
+    """
+    - main URL root
+    - format for main artist URL
+    - format for song URLs
+    """
+
     @abstractmethod
     def getArtistUrl(self):
         pass
