@@ -114,3 +114,6 @@ share/**
 
 # pip on windows
 pip-selfcheck.json
+
+# log files
+log*.txt
