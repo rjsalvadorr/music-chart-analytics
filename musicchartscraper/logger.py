@@ -28,7 +28,7 @@ class Logger:
         self.logPath = os.path.join(self.outputDir, self.filename)
 
         self.log("LOG STARTED AT " + self.startTime.strftime("%Y-%m-%d %H:%M:%S"))
-        self.log("==================================\n")
+        self.log("==================================")
 
 
     def log(self, text):

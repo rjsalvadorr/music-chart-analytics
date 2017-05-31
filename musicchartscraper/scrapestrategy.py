@@ -1,23 +1,19 @@
-from abc import ABCMeta
+from abc import ABC, abstractmethod
 
-class ScrapeStrategy:
+class ScrapeStrategy(ABC):
     """
     Abstract base class, representing a strategy for navigating a particular website.
     One concrete subclass should be implemented for each website we're interested in.
     """
-    __metaclass__ = ABCMeta
-
-    # TODO - figure out what each Strategy obj will need
-    """
-    - main URL root
-    - format for main artist URL
-    - format for song URLs
-    """
 
     @abstractmethod
-    def getArtistUrl(self):
+    def _formatArtistName(self, artistName):
         pass
 
     @abstractmethod
-    def getSongUrl(self):
+    def _getArtistUrl(self, artistName):
+        pass
+
+    @abstractmethod
+    def getSongUrls(self):
         pass
