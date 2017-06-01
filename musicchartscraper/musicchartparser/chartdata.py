@@ -13,13 +13,16 @@ class ChartData:
         self.chords = None
         self.sections = None
 
+        self.keyAnalysisCertainty = None
+
     def __str__(self):
         stringRep = "SONG: " + self.title.upper() + "\n"
         stringRep += "ARTIST: " + self.artist + "\n"
         stringRep += "SOURCE: " + self.source + "\n\n"
 
         if self.key and not self.key.isspace():
-            stringRep += "KEY: " + self.key + "\n\n"
+            stringRep += "KEY: " + self.key + "\n"
+            stringRep += "KEY ANALYSIS CERTAINTY: " + self.keyAnalysisCertainty + "\n\n"
 
         if self.chords:
             stringRep += "CHORDS\n"

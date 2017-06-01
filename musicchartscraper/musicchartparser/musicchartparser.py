@@ -1,5 +1,6 @@
 import re
-from music21 import *
+from music21 import harmony
+from music21 import converter
 from .chartdata import ChartData
 
 class MusicChartParser:
@@ -29,6 +30,9 @@ class MusicChartParser:
         self.songSource = None
         self.chordList = []
         self.sectionList = []
+
+        self.analyzedKey = None
+        self.analyzedKeyCertainty = None
 
 
     def _isChordSymbol(self, chordText):
@@ -78,9 +82,46 @@ class MusicChartParser:
         return "Dummy Data For The Win"
 
 
-    def _parseKey(self, chartText):
-        # Dummy data for now
-        return "Cm"
+    def _convertToMusic21String(self, text):
+        return text.replace("b", "-")
+
+
+    def _convertMusic21Key(self, text):
+        fText = text.title()
+        return fText.replace("-", "b")
+
+
+    def _analyzeKey(self):
+        # Get the pitches used in the current song's chords
+        # And assemble those pitches into a large tinynotation string
+        tinyNotationString = "tinyNotation: 4/4 "
+        for chordSymbol in self.chordList:
+            formattedChordSymbol = self._convertToMusic21String(chordSymbol)
+
+            formattedChordSymbol = formattedChordSymbol.replace("-5", "b5") # HAX!!!
+            formattedChordSymbol = formattedChordSymbol.replace("-9", "b9") # HAX!!!
+            formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj") # HAX!!!
+            formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7") # HAX!!!
+            formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4") # HAX!!!
+
+            try:
+                h = harmony.ChordSymbol(formattedChordSymbol)
+                for rawPitch in h.pitches:
+                    tnPitch = str(rawPitch)
+                    tnPitch = tnPitch[:-1] # Removes the octave number from the pitch string
+                    tinyNotationString += tnPitch + " "
+            except ValueError as exc:
+                print("Chord parsing failed due to " + repr(exc))
+            except Exception as exc:
+                print("UNEXPECTED ERROR: " + repr(exc))
+                print(traceback.format_exc())
+
+        littlePiece = converter.parse(tinyNotationString)
+        k = littlePiece.analyze('key')
+
+        self.analyzedKeyCertainty = str(k.tonalCertainty())
+
+        return self._convertMusic21Key(str(k))
 
 
     def _parseChords(self, chartText):
@@ -120,8 +161,8 @@ class MusicChartParser:
         chartData = ChartData()
         lines = chartText.splitlines()
 
-        chartData.artist = self.artist
-        chartData.title = self.songTitle
+        chartData.artist = self.artist.upper()
+        chartData.title = self.songTitle.upper()
         chartData.source = self.songSource
 
         for line in lines:
@@ -129,6 +170,8 @@ class MusicChartParser:
             self.sectionList.extend(self._parseSections(line))
 
         chartData.chords = self.chordList
+        chartData.key = self._analyzeKey()
+        chartData.keyAnalysisCertainty = self.analyzedKeyCertainty
         chartData.sections = self.sectionList
 
         self._resetSongData()

@@ -45,5 +45,5 @@ class Logger:
         except IOError as exc:
             print("ERROR! Unable to copy file. " + repr(exc))
         except Exception as exc:
-            print("Unexpected error: " + repr(exc))
+            print("UNEXPECTED ERROR: " + repr(exc))
             print(traceback.format_exc())
