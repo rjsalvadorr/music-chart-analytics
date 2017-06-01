@@ -6,8 +6,6 @@ class ScrapeStrategy(ABC):
     One concrete subclass should be implemented for each website we're interested in.
     """
 
-    # TODO - add a "getSongTitle()" method here
-
     @abstractmethod
     def _formatArtistName(self, artistName):
         pass
@@ -17,5 +15,9 @@ class ScrapeStrategy(ABC):
         pass
 
     @abstractmethod
-    def getSongUrls(self):
+    def getSongUrls(self, artistName):
+        pass
+
+    @abstractmethod
+    def getSongTitle(self, bSoup):
         pass

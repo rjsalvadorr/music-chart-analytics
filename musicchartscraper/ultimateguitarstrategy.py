@@ -1,4 +1,6 @@
 import requests
+import re
+
 from bs4 import BeautifulSoup
 
 from .scrapestrategy import ScrapeStrategy
@@ -30,3 +32,10 @@ class UltimateGuitarStrategy(ScrapeStrategy):
                 songUrls.append(hrefContent)
 
         return songUrls
+
+    def getSongTitle(self, bSoup):
+        titleTag = bSoup.select(".t_header .t_title h1")[0]
+        rawTitle = titleTag.get_text()
+        rePattern = re.compile(r"[ ]*chords", re.IGNORECASE)
+
+        return rePattern.sub("", rawTitle)

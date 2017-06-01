@@ -44,7 +44,7 @@ class MusicChartScraper:
 
                 self.parser.artist = artistName
                 self.parser.songSource = songUrl
-                self.parser.songTitle = "Placeholder Title"
+                self.parser.songTitle = scrapeStrategy.getSongTitle(soup)
                 chartData = self.parser.parseChart(tabContent)
 
                 self.log(str(chartData))
