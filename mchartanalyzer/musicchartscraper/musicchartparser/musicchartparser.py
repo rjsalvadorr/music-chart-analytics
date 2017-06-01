@@ -1,7 +1,3 @@
-# from musicchartparser.chartdata import ChartData
-# WHY DOES THIS HAVE TO BE AN ABSOLUTE PATH?
-# I don't see why a module just can't import fellow modules in the same package
-
 from .chartdata import ChartData
 
 class MusicChartParser:
@@ -11,24 +7,10 @@ class MusicChartParser:
     def __init__(self):
         self._resetSongData()
 
-
-    def setArtistName(self, artistName):
-        """
-        Sets the artist name for a chart.
-        """
-        self.artistName = artistName
-
-
-    def setSongName(self, songName):
-        """
-        Sets the song name for a chart.
-        """
-        self.songName = songName
-
-
     def _resetSongData(self):
-        self.artistName = None
-        self.songName = None
+        self.artist = None
+        self.songTitle = None
+        self.songSource = None
         self.chordList = []
         self.sectionList = []
 
@@ -70,8 +52,9 @@ class MusicChartParser:
         chartData = ChartData()
         lines = chartText.splitlines()
 
-        chartData.artist = self.artistName
-        chartData.title = self.songName
+        chartData.artist = self.artist
+        chartData.title = self.songTitle
+        chartData.source = self.songSource
 
         for line in lines:
             self.chordList.extend(self._parseChords(line))

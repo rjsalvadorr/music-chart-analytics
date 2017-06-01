@@ -17,6 +17,7 @@ Potential filename format: artist-name_song-name_session-id.md
 class MusicChartScraper:
     def __init__(self):
         self.logger = Logger()
+        self.parser = MusicChartParser()
         self.chordSheetLinks = []
 
         self.scrapeStrategies = []
@@ -35,13 +36,18 @@ class MusicChartScraper:
             self.log("\nURLs for " + artistName + " on " + scrapeStrategy.siteDomain + ":")
 
             for songUrl in songUrls:
-                self.log(songUrl)
-                """
                 resp = requests.get(songUrl)
-                self.log("(" + str(resp.status_code) + ") ")
                 pageContent = resp.content
                 soup = BeautifulSoup(pageContent, "html.parser")
                 tabContentHtml = soup.select(".js-tab-content")[0]
                 tabContent = tabContentHtml.get_text()
-                """
-                # TODO - run parser on each sheet, and extract features.
+
+                self.parser.artist = artistName
+                self.parser.songSource = songUrl
+                self.parser.songTitle = "Placeholder Title"
+                chartData = self.parser.parseChart(tabContent)
+
+                self.log(str(chartData))
+                self.log("----------\n")
+
+                print("Parsed data for " + chartData.title)
