@@ -1,4 +1,5 @@
 import re
+from music21 import *
 from .chartdata import ChartData
 
 class MusicChartParser:
@@ -6,7 +7,7 @@ class MusicChartParser:
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """
 
-    sectionKeywords = ["intro", "verse", "prechorus", "pre-chorus", "pre chorus", "chorus", "bridge", "outro", "solo", "hook", "pre-hook", ]
+    sectionKeywords = ["intro", "verse", "prechorus", "pre-chorus", "pre chorus", "chorus", "bridge", "outro", "solo", "hook", "pre-hook", "coda", "middle 8"]
 
     chordSymbols = ["m", "M", "min", "maj", "dim"] # TRIADS
     chordSymbols.extend(["m7", "M7", "min7", "maj7", "dim7", "m7b5"]) # SEVENTHS
@@ -43,9 +44,17 @@ class MusicChartParser:
             regexChords += re.escape(chordSymbol)
         regexChords += r")"
 
-        finalPattern = re.compile(regexRoot + regexChords + r"?")
+        finalPattern = re.compile(regexRoot + regexChords + r"?(\/" + regexRoot + r")?")
 
         return finalPattern.fullmatch(chordText)
+
+
+    def _removeSlashChordBass(self, chordSymbol):
+        """
+        Uses regex patterns to remove the bass note from slash chords
+        """
+        rePattern = re.compile(r"\/[CDEFGAB](#{1,2}|b{1,2})?$")
+        return rePattern.sub("", chordSymbol)
 
 
     def _isSectionSymbol(self, text):
@@ -63,6 +72,7 @@ class MusicChartParser:
 
         return finalPattern.fullmatch(text)
 
+
     def _parseTitle(self, chartText):
         # Dummy data for now
         return "Dummy Data For The Win"
@@ -79,7 +89,7 @@ class MusicChartParser:
         tokens = chartText.split()
         for token in tokens:
             if self._isChordSymbol(token):
-                chords.append(token)
+                chords.append(self._removeSlashChordBass(token))
 
         return chords
 

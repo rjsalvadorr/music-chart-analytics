@@ -9,16 +9,20 @@ class UltimateGuitarStrategy(ScrapeStrategy):
     def __init__(self):
         self.siteDomain = "ultimate-guitar.com"
 
+
     def _formatArtistName(self, artistName):
         formattedName = artistName.lower()
         formattedName = formattedName.replace(" ", "_")
         return formattedName
 
+
     def _getArtistUrl(self, artistName):
         formattedName = self._formatArtistName(artistName)
         return "https://www.ultimate-guitar.com/tabs/" + formattedName + "_chords_tabs.htm"
 
+
     def getSongUrls(self, artistName):
+        # TODO - account for multiple pages!!
         artistUrl = self._getArtistUrl(artistName)
         resp = requests.get(artistUrl)
         print("(" + str(resp.status_code) + ") " + artistUrl)
@@ -32,6 +36,7 @@ class UltimateGuitarStrategy(ScrapeStrategy):
                 songUrls.append(hrefContent)
 
         return songUrls
+
 
     def getSongTitle(self, bSoup):
         titleTag = bSoup.select(".t_header .t_title h1")[0]

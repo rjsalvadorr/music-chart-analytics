@@ -23,8 +23,10 @@ class MusicChartScraper:
         self.scrapeStrategies = []
         self.scrapeStrategies.append(UltimateGuitarStrategy())
 
+
     def log(self, text):
         self.logger.log(text)
+
 
     def scrape(self, artistName):
         """
