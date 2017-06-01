@@ -1,18 +1,20 @@
-from chartdata import ChartData
+# from musicchartparser.chartdata import ChartData
+# WHY DOES THIS HAVE TO BE AN ABSOLUTE PATH?
+# I don't see why a module just can't import fellow modules in the same package
+
+from .chartdata import ChartData
 
 class MusicChartParser:
     """
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """
     def __init__(self):
-        self.artistName = None
-        self.songName = None
+        self._resetSongData()
 
 
     def setArtistName(self, artistName):
         """
         Sets the artist name for a chart.
-        Meant to be used in cases where the song name isn't in the chart itself.
         """
         self.artistName = artistName
 
@@ -20,7 +22,6 @@ class MusicChartParser:
     def setSongName(self, songName):
         """
         Sets the song name for a chart.
-        Meant to be used in cases where the song name isn't in the chart itself.
         """
         self.songName = songName
 
@@ -28,6 +29,8 @@ class MusicChartParser:
     def _resetSongData(self):
         self.artistName = None
         self.songName = None
+        self.chordList = []
+        self.sectionList = []
 
 
     def _parseTitle(self, chartText):
@@ -65,16 +68,18 @@ class MusicChartParser:
 
     def parseChart(self, chartText):
         chartData = ChartData()
+        lines = chartText.splitlines()
 
-        if self.artistName and not self.artistName.isspace():
-            chartData.artist = self.artistName
+        chartData.artist = self.artistName
+        chartData.title = self.songName
 
-        if self.songName and not self.songName.isspace():
-            chartData.title = self.songName
+        for line in lines:
+            self.chordList.extend(self._parseChords(line))
+            self.sectionList.extend(self._parseSections(line))
+
+        chartData.chords = self.chordList
+        chartData.sections = self.sectionList
 
         self._resetSongData()
-
-        chartData.chords = self._parseChords(chartText)
-        chartData.sections = self._parseSections(chartText)
 
         return chartData

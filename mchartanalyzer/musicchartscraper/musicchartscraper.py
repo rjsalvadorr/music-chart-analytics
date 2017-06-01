@@ -1,8 +1,10 @@
-#!/usr/bin/env python
 import requests
 from bs4 import BeautifulSoup
-from logger import Logger
-from ultimateguitarstrategy import UltimateGuitarStrategy
+
+from .logger import Logger
+from .ultimateguitarstrategy import UltimateGuitarStrategy
+from .musicchartparser.musicchartparser import MusicChartParser
+from .musicchartparser.chartdata import ChartData
 
 """
 Steps:
@@ -43,12 +45,3 @@ class MusicChartScraper:
                 tabContent = tabContentHtml.get_text()
                 """
                 # TODO - run parser on each sheet, and extract features.
-
-
-if __name__ == '__main__':
-    # main method. This is where you're going to call the scraper.
-    mcScraper = MusicChartScraper()
-    mcScraper.scrape("Phish")
-    mcScraper.scrape("Michael Jackson")
-
-    print("Scraping complete!")

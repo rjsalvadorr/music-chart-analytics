@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from scrapestrategy import ScrapeStrategy
+
+from .scrapestrategy import ScrapeStrategy
 
 class UltimateGuitarStrategy(ScrapeStrategy):
     def __init__(self):

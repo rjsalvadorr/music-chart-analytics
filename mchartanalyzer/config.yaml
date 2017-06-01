@@ -1,0 +1,10 @@
+# Configuration for mChartAnalyzer
+
+# Artists whose songs will be analyzed
+artists:
+  - Phish
+  - Michael Jackson
+
+# If true, log files will be written for each run of the program
+# The logs will be located in the "mchartanalyzer-output" directory
+logEnabled: true

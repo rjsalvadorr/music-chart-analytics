@@ -6,7 +6,7 @@ from datetime import datetime
 class Logger:
     def __init__(self):
         self.moduleDir = os.path.dirname(os.path.realpath(__file__))
-        self.projectDir = os.path.dirname(self.moduleDir)
+        self.projectDir = os.path.dirname(os.path.dirname(self.moduleDir))
         self.outputDir = os.path.join(self.projectDir, "mchartanalyzer-output")
 
         # Create output directory if it doesn't exist
