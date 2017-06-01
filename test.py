@@ -20,10 +20,17 @@ filenames.append("chart7.txt")
 filenames.append("chart8.txt")
 filenames.append("chart9.txt")
 
+chordSymbols = ["Bb", "Cm7", "Ebm7b5", "F#dim", "Blugh", "Lorem", "C5345345"]
+
 moduleDir = os.path.dirname(os.path.realpath(__file__))
 inputDir = os.path.join(moduleDir, "test")
 
 print("Testing!")
+
+for chordSym in chordSymbols:
+    result = parser._isChordSymbol(chordSym)
+    resString = "YEP" if result else "NOPE"
+    print("Is " + chordSym + " a chord symbol? " + resString)
 
 for filename in filenames:
     filePath = os.path.join(inputDir, filename)

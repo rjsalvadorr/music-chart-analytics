@@ -1,11 +1,27 @@
+import re
 from .chartdata import ChartData
 
 class MusicChartParser:
     """
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """
+
+    sectionKeywords = ["intro", "verse", "chorus", "bridge", "outro"]
+
+
+    chordSymbols = ["m", "M", "min", "maj", "dim"] # TRIADS
+    chordSymbols.extend(["m7", "M7", "min7", "maj7", "dim7", "m7b5"]) # SEVENTHS
+    chordSymbols.extend(["aug", "+", "7#5", "M7+5", "M7+", "m7+", "7+"]) # AUGMENTED
+    chordSymbols.extend(["sus2", "sus4", "7sus4", "11", "sus4b9", "susb9"]) # SUSPENDED
+    chordSymbols.extend(["6", "m6", "M6", "maj6", "6/7", "67", "6/9",  "69"]) # SIXTHS
+    chordSymbols.extend(["9", "add9", "m9", "maj9", "M9", "7b9", "7#9"]) # NINTHS
+    chordSymbols.extend(["11", "add11", "7#11", "m11"]) # ELEVENTHS
+    chordSymbols.extend(["13", "add13", "M13", "m13", "maj13"]) # THIRTEENTHS
+    chordSymbols.extend(["7b9", "7#9", "67", "6/7", "add2", "5"]) # ALTERATIONS
+
     def __init__(self):
         self._resetSongData()
+
 
     def _resetSongData(self):
         self.artist = None
@@ -13,6 +29,24 @@ class MusicChartParser:
         self.songSource = None
         self.chordList = []
         self.sectionList = []
+
+
+    def _isChordSymbol(self, chordText):
+        """
+        Uses regex patterns to parse out chord symbols.
+        """
+        # We can't use word boundaries (/b) since # is not a word character!
+        regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
+        regexChords = r"("
+        for idx, chordSymbol in enumerate(MusicChartParser.chordSymbols):
+            if idx != 0:
+                regexChords += r"|"
+            regexChords += re.escape(chordSymbol)
+        regexChords += r")"
+
+        finalPattern = re.compile(regexRoot + regexChords + r"?")
+
+        return finalPattern.fullmatch(chordText)
 
 
     def _parseTitle(self, chartText):
@@ -28,10 +62,10 @@ class MusicChartParser:
     def _parseChords(self, chartText):
         chords = []
 
-        # Dummy data for now
-        chords.append("Cm")
-        chords.append("Fm")
-        chords.append("G")
+        tokens = chartText.split()
+        for token in tokens:
+            if self._isChordSymbol(token):
+                chords.append(token)
 
         return chords
 
