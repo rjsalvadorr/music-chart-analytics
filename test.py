@@ -32,7 +32,7 @@ for chordSym in chordSymbols:
     resString = "YEP" if result else "NOPE"
     print("Is " + chordSym + " a chord symbol? " + resString)
 
-for filename in filenames:
+for idx, filename in enumerate(filenames):
     filePath = os.path.join(inputDir, filename)
     try:
         with open(filePath, 'r') as inFile:
@@ -40,7 +40,7 @@ for filename in filenames:
 
         parser.artist = "Placeholder Artist"
         parser.songSource = "http://www.whatever.io/shoop.html"
-        parser.songTitle = "Placeholder Title"
+        parser.songTitle = "Placeholder Title (" + str(idx + 1) + ")"
         chartData = parser.parseChart(chartLines)
 
         logger.log(str(chartData))

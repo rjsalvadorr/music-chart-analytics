@@ -6,8 +6,7 @@ class MusicChartParser:
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """
 
-    sectionKeywords = ["intro", "verse", "chorus", "bridge", "outro"]
-
+    sectionKeywords = ["intro", "verse", "prechorus", "pre-chorus", "pre chorus", "chorus", "bridge", "outro", "solo", "hook", "pre-hook", ]
 
     chordSymbols = ["m", "M", "min", "maj", "dim"] # TRIADS
     chordSymbols.extend(["m7", "M7", "min7", "maj7", "dim7", "m7b5"]) # SEVENTHS
@@ -49,6 +48,21 @@ class MusicChartParser:
         return finalPattern.fullmatch(chordText)
 
 
+    def _isSectionSymbol(self, text):
+        """
+        Uses regex patterns to parse out section markers
+        """
+        regexSections = r"[ \[]*("
+        for idx, sectionKeyword in enumerate(MusicChartParser.sectionKeywords):
+            if idx != 0:
+                regexSections += r"|"
+            regexSections += re.escape(sectionKeyword)
+        regexSections += r")[ 1-9]*[ \]]*"
+
+        finalPattern = re.compile(regexSections, re.IGNORECASE)
+
+        return finalPattern.fullmatch(text)
+
     def _parseTitle(self, chartText):
         # Dummy data for now
         return "Dummy Data For The Win"
@@ -70,14 +84,24 @@ class MusicChartParser:
         return chords
 
 
-    def _parseSections(self, chartText):
+    def _parseSections(self, textLine):
         sections = []
+        keywordExists = False
+        keywordToken = None
 
-        # Dummy data for now
-        sections.append("Verse")
-        sections.append("Chorus")
-        sections.append("Verse")
-        sections.append("Chorus")
+        tokens = textLine.split()
+        for token in tokens:
+            if self._isSectionSymbol(token):
+                keywordExists = True
+                keywordToken = token
+
+        if keywordExists:
+            formmatedKeyword = keywordToken.upper()
+            formmatedKeyword = formmatedKeyword.replace("[", "")
+            formmatedKeyword = formmatedKeyword.replace("]", "")
+            formmatedKeyword = formmatedKeyword.replace(" ", "")
+
+            sections.append(formmatedKeyword)
 
         return sections
 
