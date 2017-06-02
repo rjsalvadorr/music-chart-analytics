@@ -36,6 +36,7 @@ This project uses Python 3.
 - beautifulsoup4
 - requests
 - music21
+- PyYAML
 
 ## Contact
 
