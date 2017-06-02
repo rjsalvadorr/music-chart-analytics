@@ -4,6 +4,7 @@ import traceback
 from datetime import datetime
 
 class Logger:
+
     def __init__(self, testMode=None):
         self.moduleDir = os.path.dirname(os.path.realpath(__file__))
         self.projectDir = os.path.dirname(self.moduleDir)

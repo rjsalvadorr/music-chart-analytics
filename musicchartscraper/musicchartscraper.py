@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-from .logger import Logger
 from .ultimateguitarstrategy import UltimateGuitarStrategy
 from .musicchartparser.musicchartparser import MusicChartParser
 from .musicchartparser.chartdata import ChartData
@@ -16,7 +15,6 @@ Potential filename format: artist-name_song-name_session-id.md
 
 class MusicChartScraper:
     def __init__(self):
-        self.logger = Logger()
         self.parser = MusicChartParser()
         self.chordSheetLinks = []
 
@@ -24,32 +22,34 @@ class MusicChartScraper:
         self.scrapeStrategies.append(UltimateGuitarStrategy())
 
 
-    def log(self, text):
-        self.logger.log(text)
-
-
     def scrape(self, artistName):
         """
-        Scrapes websites for songs by a given artist.
+        Scrapes websites for song charts by a given artist, then feeds that information to the parser.
+        After scraping is complete, the parser analysis is triggered.
         """
+        scrapeSourceNames = []
+        artistSourceUrls = []
         print("Scraping for " + artistName + " songs...")
+
+        # Set up artist information, then send it to the parser.
+        for scrapeStrategy in self.scrapeStrategies:
+            scrapeSourceNames.append(scrapeStrategy.getSourceName())
+            artistSourceUrls.append(scrapeStrategy.getArtistUrl(artistName))
+
+        self.parser.setArtistData(artistName, scrapeSourceNames, artistSourceUrls)
+
+        # Scrape the chart sources for song charts, then call the parser for each one.
         for scrapeStrategy in self.scrapeStrategies:
             songUrls = scrapeStrategy.getSongUrls(artistName)
-            self.log("\nURLs for " + artistName + " on " + scrapeStrategy.siteDomain + ":")
 
             for songUrl in songUrls:
                 resp = requests.get(songUrl)
                 pageContent = resp.content
                 soup = BeautifulSoup(pageContent, "html.parser")
-                tabContentHtml = soup.select(".js-tab-content")[0]
-                tabContent = tabContentHtml.get_text()
+                chartContentHtml = soup.select(".js-tab-content")[0]
+                chartContent = chartContentHtml.get_text()
 
-                self.parser.artist = artistName
-                self.parser.songSource = songUrl
-                self.parser.songTitle = scrapeStrategy.getSongTitle(soup)
-                chartData = self.parser.parseChart(tabContent)
+                self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
 
-                self.log(str(chartData))
-                self.log("----------\n")
-
-                print("Parsed data for " + chartData.title)
+        # Begin analysis!
+        self.parser.analyzeData()

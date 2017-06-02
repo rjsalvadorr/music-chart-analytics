@@ -1,7 +1,10 @@
 import re
 from music21 import harmony
 from music21 import converter
+
+from .logger import Logger
 from .chartdata import ChartData
+from .artistdata import ChartData
 
 class MusicChartParser:
     """
@@ -20,14 +23,16 @@ class MusicChartParser:
     chordSymbols.extend(["13", "add13", "M13", "m13", "maj13"]) # THIRTEENTHS
     chordSymbols.extend(["7b9", "7#9", "67", "6/7", "add2", "5"]) # ALTERATIONS
 
+    logger = Logger()
+
+
     def __init__(self):
         self._resetSongData()
 
 
     def _resetSongData(self):
-        self.artist = None
-        self.songTitle = None
-        self.songSource = None
+        self.artistData = None
+
         self.chordList = []
         self.sectionList = []
 
@@ -35,9 +40,13 @@ class MusicChartParser:
         self.analyzedKeyCertainty = None
 
 
-    def _isChordSymbol(self, chordText):
+    def log(self, text):
+        MusicChartParser.logger.log(text)
+
+
+    def _isChordSymbol(self, text):
         """
-        Uses regex patterns to parse out chord symbols.
+        Returns true if the given text is a chord symbol.
         """
         # We can't use word boundaries (/b) since # is not a word character!
         regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
@@ -50,12 +59,12 @@ class MusicChartParser:
 
         finalPattern = re.compile(regexRoot + regexChords + r"?(\/" + regexRoot + r")?")
 
-        return finalPattern.fullmatch(chordText)
+        return finalPattern.fullmatch(text)
 
 
     def _removeSlashChordBass(self, chordSymbol):
         """
-        Uses regex patterns to remove the bass note from slash chords
+        Remove the bass note from slash chord symbols. For example, this function would take "Gm7/Bb" and return "Gm7".
         """
         rePattern = re.compile(r"\/[CDEFGAB](#{1,2}|b{1,2})?$")
         return rePattern.sub("", chordSymbol)
@@ -63,7 +72,7 @@ class MusicChartParser:
 
     def _isSectionSymbol(self, text):
         """
-        Uses regex patterns to parse out section markers
+        Returns true if the given text is probably a section marking, such as "Chorus" or "Verse".
         """
         regexSections = r"[ \[]*("
         for idx, sectionKeyword in enumerate(MusicChartParser.sectionKeywords):
@@ -77,33 +86,43 @@ class MusicChartParser:
         return finalPattern.fullmatch(text)
 
 
-    def _parseTitle(self, chartText):
-        # Dummy data for now
-        return "Dummy Data For The Win"
+    def _convertToMusic21ChordSymbol(self, text):
+        """
+        Converts regular chord symbols into ones that music21 understands.
+        The main difference: the flat accidental is "-" on music21, not "b".
+        For example, this method would convert "Bbm7" to "B-m7"
+        """
+        formattedChordSymbol = text.replace("b", "-")
+        # Specific replacements below were added after certain music21 errors.
+        # TODO - find a better way to avoid these issues!
+        formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
+        formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
+        formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj")
+        formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
+        formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
 
-
-    def _convertToMusic21String(self, text):
-        return text.replace("b", "-")
+        return formattedChordSymbol
 
 
     def _convertMusic21Key(self, text):
+        """
+        Converts a music21 key string to a regular one.
+        Music21 key strings use a lowercase tonic for minor keys, and use "-" as a flat accidental instead of "b".
+        For example, this method would convert "b- minor" to "Bb Minor"
+        """
         fText = text.title()
         return fText.replace("-", "b")
 
 
     def _analyzeKey(self):
+        """
+        Determines the song's key by analyzing the chords in the current song.
+        """
         # Get the pitches used in the current song's chords
         # And assemble those pitches into a large tinynotation string
         tinyNotationString = "tinyNotation: 4/4 "
         for chordSymbol in self.chordList:
-            formattedChordSymbol = self._convertToMusic21String(chordSymbol)
-
-            formattedChordSymbol = formattedChordSymbol.replace("-5", "b5") # HAX!!!
-            formattedChordSymbol = formattedChordSymbol.replace("-9", "b9") # HAX!!!
-            formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj") # HAX!!!
-            formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7") # HAX!!!
-            formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4") # HAX!!!
-
+            formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
             try:
                 h = harmony.ChordSymbol(formattedChordSymbol)
                 for rawPitch in h.pitches:
@@ -125,6 +144,9 @@ class MusicChartParser:
 
 
     def _parseChords(self, chartText):
+        """
+        Parses the chord chart for chord symbols, such as "Gmaj7" or "F#m7b5"
+        """
         chords = []
 
         tokens = chartText.split()
@@ -136,6 +158,9 @@ class MusicChartParser:
 
 
     def _parseSections(self, textLine):
+        """
+        Parses the chord chart for section markings, such as "Chorus" or "Verse".
+        """
         sections = []
         keywordExists = False
         keywordToken = None
@@ -157,13 +182,16 @@ class MusicChartParser:
         return sections
 
 
-    def parseChart(self, chartText):
+    def parseChart(self, songTitle, chartSourceUrl, chartContent):
+        """
+        Core function of the Parser.
+        Calls a series of internal parsing methods to extract data from a chord chart.
+        """
         chartData = ChartData()
-        lines = chartText.splitlines()
+        lines = chartContent.splitlines()
 
-        chartData.artist = self.artist.upper()
-        chartData.title = self.songTitle.upper()
-        chartData.source = self.songSource
+        chartData.title = songTitle.upper()
+        chartData.source = chartSourceUrl
 
         for line in lines:
             self.chordList.extend(self._parseChords(line))
@@ -175,5 +203,26 @@ class MusicChartParser:
         chartData.sections = self.sectionList
 
         self._resetSongData()
+        self.log(str(chartData))
+        self.log("----------\n")
 
-        return chartData
+        print("Parsed data for " + chartData.title)
+
+
+    def setArtistData(self, name, sources, artistSourceUrls):
+        """
+        Sets the current artist info for the parser.
+        """
+        freshArtistData = ArtistData()
+        freshArtistData.artistName = name
+        freshArtistData.sourceNames = sources
+        freshArtistData.soureUrls = artistSourceUrls
+
+        self.artistData = freshArtistData
+
+
+    def analyzeData(self):
+        """
+        Calls a series of internal analysis methods to analyze data and get it ready for persistence.
+        """
+        return 0
