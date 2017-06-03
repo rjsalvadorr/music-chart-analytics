@@ -68,6 +68,11 @@ print("")
 print("##### DATABASE HANDLER TESTING #####\n")
 dbHandler = DatabaseHandler()
 
-dbHandler.saveArtistData(newArtistData)
+# dbHandler.saveArtistData(newArtistData)
 # dbHandler.saveSongData(newArtistData, newSongData)
 # dbHandler.saveChartData(newSongData, newChartData)
+
+artistResult1 = dbHandler.getArtistByName("HJGQQYQH")
+artistResult2 = dbHandler.getArtistByName("SOMETHING_UNFINDABLE")
+print(artistResult1)
+print(artistResult2)

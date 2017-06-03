@@ -4,6 +4,9 @@ import traceback
 from datetime import datetime
 
 from . import constants
+from .objects.artistdata import ArtistData
+from .objects.songdata import SongData
+from .objects.chartdata import ChartData
 
 class DatabaseHandler:
     """
@@ -171,15 +174,28 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def getArtistByName(self, title, keepConnectionOpen):
+    def getArtistByName(self, artistName, keepConnectionOpen=None):
         """
         Retrieves an artist with the given name.
         Returns "None" if a record isn't found.
         """
         try:
             c = self._connect()
+            c.execute("SELECT * FROM ARTISTS WHERE name = ?", (artistName,))
+            row = c.fetchone()
 
-            # SELECT * FROM CHARTS WHERE 'source_url' = 'http://whatevs.ca'
+            if row:
+                newArtistData = ArtistData()
+
+                newArtistData.id = row[0]
+                newArtistData.name = row[1]
+                newArtistData.setSourceNamesFromString(row[2])
+                newArtistData.setSourceUrlsFromString(row[3])
+                newArtistData.updateTime = row[4]
+
+                return newArtistData
+            else:
+                return None
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -189,10 +205,11 @@ class DatabaseHandler:
             if not keepConnectionOpen:
                 self._close()
 
-        return 0
+        # If it gets to this point, I don't even know what to do.
+        return None
 
 
-    def getSongByTitle(self, title, keepConnectionOpen):
+    def getSongByTitle(self, title, keepConnectionOpen=None):
         """
         Retrieves a song with the given title.
         Returns "None" if a record isn't found.
@@ -213,7 +230,7 @@ class DatabaseHandler:
         return 0
 
 
-    def getChartByUrl(self, title, keepConnectionOpen):
+    def getChartByUrl(self, title, keepConnectionOpen=None):
         """
         Retrieves a chart with the given source URL.
         Returns "None" if a record isn't found.
