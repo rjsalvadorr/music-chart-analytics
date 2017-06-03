@@ -23,8 +23,11 @@ finally:
 
 mcScraper = ChartScraper()
 
-if yamlData["testModeEnabled"]:
-    mcScraper.testModeEnabled = True
+testModeEnabled = yamlData["testModeEnabled"]
+mcScraper.testModeEnabled = testModeEnabled
+
+scrapeCooldownEnabled = yamlData["scrapeCooldownEnabled"]
+mcScraper.scrapeCooldownEnabled = scrapeCooldownEnabled
 
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)

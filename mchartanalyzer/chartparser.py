@@ -28,9 +28,7 @@ class ChartParser:
 
     def __init__(self):
         self.artistData = None
-
         self._resetSongData()
-
 
 
     def _resetSongData(self):

@@ -50,7 +50,7 @@ class DatabaseHandler:
         try:
             c = self._connect()
             existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
-            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+            timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if existingArtist:
                 # Artist with this name already exists. Update it.
@@ -87,7 +87,7 @@ class DatabaseHandler:
             c = self._connect()
             existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
             existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
-            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+            timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if not existingSong:
                 # Song does not exist yet. Insert new record.
@@ -120,7 +120,7 @@ class DatabaseHandler:
             c = self._connect()
             existingChart = self.getChartByUrl(chartData.source, keepConnectionOpen=True)
             existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
-            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+            timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if existingChart:
                 # Chart from this source already exists. Update it.

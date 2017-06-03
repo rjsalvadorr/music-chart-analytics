@@ -7,6 +7,7 @@ import random
 import string
 
 from mchartanalyzer.databasehandler import DatabaseHandler
+from mchartanalyzer.chartscraper import ChartScraper
 from mchartanalyzer.objects.artistdata import ArtistData
 from mchartanalyzer.objects.songdata import SongData
 from mchartanalyzer.objects.chartdata import ChartData
@@ -82,3 +83,13 @@ print(songRes)
 
 chartRes = dbHandler.getChartByUrl("http://lwwgfqxt.org/thing.html")
 print(chartRes)
+
+cScraper = ChartScraper()
+testUrls = []
+testUrls.append("http://lwwgfqxt.org/thing.html")
+testUrls.append("http://vkojcxqa.org/thing.html")
+testUrls.append("silly_value")
+
+for earl in testUrls:
+    validUrl = cScraper._isUrlValidTarget(earl)
+    print("Is " + earl + " a valid URL? " + str(validUrl))

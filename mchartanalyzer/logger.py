@@ -33,7 +33,7 @@ class Logger:
             self.filename = "log-" + self.startTime.strftime("%Y%m%d-%H%M%S") + ".txt"
 
         self.logPath = os.path.join(constants.DATA_OUTPUT_DIR, self.filename)
-        self.log("LOG STARTED AT " + self.startTime.strftime("%Y-%m-%d %H:%M:%S"))
+        self.log("LOG STARTED AT " + self.startTime.strftime(constants.DATETIME_FORMAT))
         self.log("==================================\n")
 
 

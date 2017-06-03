@@ -2,6 +2,7 @@
 
 # Artists whose songs will be analyzed
 artists:
+  - Marvin Gaye
   - Phish
   - Michael Jackson
 
@@ -10,5 +11,10 @@ artists:
 logEnabled: true
 
 # If true, the system will stop parsing after a few charts. (3 per artist, to be exact)
-# TODO - use this value!
+# This should be set to "false" for normal operation.
 testModeEnabled: true
+
+# If false, the system will ignore the cooldown period after a URL is scraped.
+# Default value is "true"
+# Normally, the system waits one month before scraping a URL again.
+scrapeCooldownEnabled: true
