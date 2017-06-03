@@ -38,7 +38,7 @@ def getRandomUrl():
 
 ###############################################################################
 # DATA OBJECT TESTING
-print("##### DATA OBJECT TESTING #####\n")
+print("\n##### DATA OBJECT TESTING #####\n")
 
 newArtistData = ArtistData()
 newArtistData.name = getRandomString().upper()
@@ -65,7 +65,7 @@ print("")
 
 ###############################################################################
 # DATABASE HANDLER TESTING
-print("##### DATABASE HANDLER TESTING #####\n")
+print("\n##### DATABASE HANDLER TESTING #####\n")
 dbHandler = DatabaseHandler()
 '''
 dbHandler.saveArtistData(newArtistData)
