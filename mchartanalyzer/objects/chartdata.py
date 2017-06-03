@@ -19,6 +19,16 @@ class ChartData(BaseDataObject):
         self.title = None
 
 
+    def setChordListFromString(self, chordListStr):
+        convertedList = self._convertStringToList(chordListStr)
+        self.chordsSpecific = convertedList
+
+
+    def setSectionsFromString(self, sectionsStr):
+        convertedList = self._convertStringToList(sectionsStr)
+        self.sections = convertedList
+
+
     def getChordListString(self):
         return self._convertListToString(self.chordsSpecific)
 

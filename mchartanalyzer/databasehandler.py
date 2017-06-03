@@ -91,7 +91,7 @@ class DatabaseHandler:
 
             if not existingSong:
                 # Song does not exist yet. Insert new record.
-                finalQuery = insertStmt.format(artistId=artistData.id, songTitle=songData.title, updateTime=timestampStr)
+                finalQuery = insertStmt.format(artistId=existingArtist.id, songTitle=songData.title, updateTime=timestampStr)
                 print("Running query: " + finalQuery)
                 c.execute(finalQuery)
 
@@ -113,13 +113,13 @@ class DatabaseHandler:
         """
 
         # Sample SQLite snippet: INSERT INTO CHARTS('id','song_id','source_url','chords_specific','sections','is_new','update_time') VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','update_time') VALUES ({songId}, {url}, {chordList}, {sectionList}, 1, {updateTime})"
-        updateStmt = "UPDATE CHARTS SET 'chords_specific' = {chordList}, 'sections' = {sectionList}, 'is_new' = 1, 'update_time' = {updateTime} WHERE song_id={songId} AND source_url={url}"
+        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{updateTime}\')"
+        updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE song_id={songId} AND source_url=\'{url}\'"
 
         try:
             c = self._connect()
             existingChart = self.getChartByUrl(chartData.source, keepConnectionOpen=True)
-            existingSong = self.getSongByTitle(chartData.title, keepConnectionOpen=True)
+            existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
             if existingChart:
@@ -216,8 +216,20 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
+            c.execute("SELECT * FROM SONGS WHERE title = ?", (title,))
+            row = c.fetchone()
 
-            # SELECT * FROM SONGS WHERE title = 'WHATEVER'
+            if row:
+                newSongData = SongData()
+
+                newSongData.id = row[0]
+                newSongData.artistId = row[1]
+                newSongData.title = row[2]
+                newSongData.updateTime = row[3]
+
+                return newSongData
+            else:
+                return None
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -230,15 +242,30 @@ class DatabaseHandler:
         return 0
 
 
-    def getChartByUrl(self, title, keepConnectionOpen=None):
+    def getChartByUrl(self, sourceUrl, keepConnectionOpen=None):
         """
         Retrieves a chart with the given source URL.
         Returns "None" if a record isn't found.
         """
         try:
             c = self._connect()
+            c.execute("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,))
+            row = c.fetchone()
 
-            # SELECT * FROM CHARTS WHERE 'source_url' = 'http://whatevs.ca'
+            if row:
+                newChartData = ChartData()
+
+                newChartData.id = row[0]
+                newChartData.songId = row[1]
+                newChartData.source = row[2]
+                newChartData.setChordListFromString(row[3])
+                newChartData.setSectionsFromString(row[4])
+                newChartData.isNew = row[5]
+                newChartData.updateTime = row[6]
+
+                return newChartData
+            else:
+                return None
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))

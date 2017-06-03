@@ -67,12 +67,18 @@ print("")
 # DATABASE HANDLER TESTING
 print("##### DATABASE HANDLER TESTING #####\n")
 dbHandler = DatabaseHandler()
-
-# dbHandler.saveArtistData(newArtistData)
-# dbHandler.saveSongData(newArtistData, newSongData)
-# dbHandler.saveChartData(newSongData, newChartData)
-
+'''
+dbHandler.saveArtistData(newArtistData)
+dbHandler.saveSongData(newArtistData, newSongData)
+dbHandler.saveChartData(newSongData, newChartData)
+'''
 artistResult1 = dbHandler.getArtistByName("HJGQQYQH")
 artistResult2 = dbHandler.getArtistByName("SOMETHING_UNFINDABLE")
 print(artistResult1)
 print(artistResult2)
+
+songRes = dbHandler.getSongByTitle("NEHFJPSJ")
+print(songRes)
+
+chartRes = dbHandler.getChartByUrl("http://lwwgfqxt.org/thing.html")
+print(chartRes)
