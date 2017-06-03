@@ -3,6 +3,7 @@ class ArtistData:
     """
     Class encapsulating all the desired data from the chord charts, after thorough analysis.
     """
+    
     def __init__(self):
         # The properties listed below are good candidates for persistence and presentation
         self.artistName = ""
@@ -14,11 +15,4 @@ class ArtistData:
         self.numMajorKeys = 0
         self.numMinorKeys = 0
 
-        self.numChordsSpecific = 0
-        self.numChordsGeneral = 0
-
-    def calculate(self):
-        return 0
-
-    def addChartData(self, chartData):
-        self.chartDataList.append(chartData)
+        self.numChords = 0

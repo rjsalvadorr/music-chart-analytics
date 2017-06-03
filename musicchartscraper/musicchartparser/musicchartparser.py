@@ -138,7 +138,7 @@ class MusicChartParser:
         littlePiece = converter.parse(tinyNotationString)
         k = littlePiece.analyze('key')
 
-        self.analyzedKeyCertainty = str(k.tonalCertainty())
+        self.analyzedKeyCertainty = str(round(k.tonalCertainty(), 5))
 
         return self._convertMusic21Key(str(k))
 

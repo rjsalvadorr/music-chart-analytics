@@ -10,10 +10,12 @@ class ChartData:
         self.source = None
 
         self.key = None
-        self.chords = None
+        self.chordsSpecific = None
+        self.chordsGeneral = None
         self.sections = None
 
         self.keyAnalysisCertainty = None
+
 
     def __str__(self):
         stringRep = "SONG: " + self.title.upper() + "\n"
@@ -24,9 +26,9 @@ class ChartData:
             stringRep += "KEY: " + self.key + "\n"
             stringRep += "KEY ANALYSIS CERTAINTY: " + self.keyAnalysisCertainty + "\n\n"
 
-        if self.chords:
+        if self.chordsSpecific:
             stringRep += "CHORDS\n"
-            for chord in self.chords:
+            for chord in self.chordsSpecific:
                 stringRep += chord + " "
             stringRep += "\n\n"
 
