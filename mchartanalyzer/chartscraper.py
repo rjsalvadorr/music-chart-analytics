@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 from .ultimateguitarstrategy import UltimateGuitarStrategy
 from .chartparser import ChartParser
-from .chartdata import ChartData
+from .objects.chartdata import ChartData
 
 """
 Steps:

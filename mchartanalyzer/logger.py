@@ -3,20 +3,19 @@ import shutil
 import traceback
 from datetime import datetime
 
+from . import constants
+
 class Logger:
 
     def __init__(self, testMode=None):
-        self.moduleDir = os.path.dirname(os.path.realpath(__file__))
-        self.projectDir = os.path.dirname(self.moduleDir)
-        self.outputDir = os.path.join(self.projectDir, "mchartanalyzer-data")
 
         self.testMode = True if testMode else False
 
         # Create output directory if it doesn't exist
         try:
-            os.makedirs(self.outputDir)
+            os.makedirs(constants.DATA_OUTPUT_DIR)
         except OSError:
-            if not os.path.isdir(self.outputDir):
+            if not os.path.isdir(constants.DATA_OUTPUT_DIR):
                 raise
 
         self.newFile()
@@ -33,7 +32,7 @@ class Logger:
         else:
             self.filename = "log-" + self.startTime.strftime("%Y%m%d-%H%M%S") + ".txt"
 
-        self.logPath = os.path.join(self.outputDir, self.filename)
+        self.logPath = os.path.join(constants.DATA_OUTPUT_DIR, self.filename)
         self.log("LOG STARTED AT " + self.startTime.strftime("%Y-%m-%d %H:%M:%S"))
         self.log("==================================\n")
 

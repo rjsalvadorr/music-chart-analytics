@@ -3,8 +3,8 @@ from music21 import harmony
 from music21 import converter
 
 from .logger import Logger
-from .chartdata import ChartData
-from .artistdata import ArtistData
+from .objects.chartdata import ChartData
+from .objects.artistdata import ArtistData
 
 class ChartParser:
     """
