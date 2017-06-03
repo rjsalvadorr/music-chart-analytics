@@ -4,10 +4,10 @@ import os
 import traceback
 
 from musicchartscraper.logger import Logger
-from musicchartscraper.musicchartparser.musicchartparser import MusicChartParser
+from musicchartscraper.musicchartparser.musicchartparser import ChartParser
 
 logger = Logger(testMode=True)
-parser = MusicChartParser()
+parser = ChartParser()
 
 filenames = []
 filenames.append("chart1.txt")

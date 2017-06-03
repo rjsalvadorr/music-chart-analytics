@@ -8,3 +8,7 @@ artists:
 # If true, log files will be written for each run of the program
 # The logs will be located in the "mchartanalyzer-output" directory
 logEnabled: true
+
+# If true, the system will stop parsing after a few charts. (3 per artist, to be exact)
+# TODO - use this value!
+testModeEnabled: true

@@ -16,14 +16,18 @@ class UltimateGuitarStrategy(ScrapeStrategy):
         return formattedName
 
 
-    def _getArtistUrl(self, artistName):
+    def getSourceName(self):
+        return "Ultimate Guitar"
+
+
+    def getArtistUrl(self, artistName):
         formattedName = self._formatArtistName(artistName)
         return "https://www.ultimate-guitar.com/tabs/" + formattedName + "_chords_tabs.htm"
 
 
     def getSongUrls(self, artistName):
         # TODO - account for multiple pages!!
-        artistUrl = self._getArtistUrl(artistName)
+        artistUrl = self.getArtistUrl(artistName)
         resp = requests.get(artistUrl)
         print("(" + str(resp.status_code) + ") " + artistUrl)
         pageContent = resp.content

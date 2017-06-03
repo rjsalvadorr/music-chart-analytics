@@ -11,7 +11,11 @@ class ScrapeStrategy(ABC):
         pass
 
     @abstractmethod
-    def _getArtistUrl(self, artistName):
+    def getSourceName(self):
+        pass
+
+    @abstractmethod
+    def getArtistUrl(self, artistName):
         pass
 
     @abstractmethod
