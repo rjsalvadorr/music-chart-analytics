@@ -8,7 +8,7 @@ class ArtistData(BaseDataObject):
     def __init__(self):
         BaseDataObject.__init__(self)
 
-        self.artistName = ""
+        self.name = ""
         self.sourceNames = []
         self.sourceUrls = []
 
@@ -34,10 +34,10 @@ class ArtistData(BaseDataObject):
     def __str__(self):
         stringRep = "ArtistData { id=" + str(self.id) + ", "
 
-        stringRep += "artistName=" + self.artistName + ", "
-        stringRep += "sourceNames=" + self.getSourceNamesAsString() + ", "
-        stringRep += "sourceUrls=" + self.getSourceUrlsAsString() + ", "
-        
+        stringRep += "artistName=" + self.name + ", "
+        stringRep += "sourceNames=[" + self.getSourceNamesAsString() + "], "
+        stringRep += "sourceUrls=[" + self.getSourceUrlsAsString() + "], "
+
         stringRep += "updateTime=" + self.updateTime + " }"
 
         return stringRep

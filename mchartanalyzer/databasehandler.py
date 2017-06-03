@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import traceback
+from datetime import datetime
 
 from . import constants
 
@@ -10,20 +12,27 @@ class DatabaseHandler:
 
     def __init__(self, testMode=None):
         self.dbConnection = None
+        self.dbOpened = False
 
     def _connect(self):
-        self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
+        if not self.dbOpened:
+            self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
+            self.dbOpened = True
         return self.dbConnection.cursor()
 
     def _commit(self):
         self.dbConnection.commit()
 
     def _close(self):
-        self.dbConnection.close()
+        if self.dbOpened:
+            self.dbConnection.close()
+            self.dbOpened = False
 
     def _commitAndClose(self):
-        self.dbConnection.commit()
-        self.dbConnection.close()
+        if self.dbOpened:
+            self.dbConnection.commit()
+            self.dbConnection.close()
+            self.dbOpened = False
 
 
     def saveArtistData(self, artistData):
@@ -32,20 +41,24 @@ class DatabaseHandler:
         """
 
         # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
-        insertStmt = "INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ({artistName}, {sourceNames}, {sourceUrls}, {updateTime})"
-        updateStmt = "UPDATE ARTISTS SET 'source_names' = {sourceNames}, 'source_urls' = {sourceUrls}, 'update_time' = {updateTime} WHERE name=({artistName})"
+        insertStmt = "INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES (\'{artistName}\', \'{sourceNames}\', \'{sourceUrls}\', \'{updateTime}\')"
+        updateStmt = "UPDATE ARTISTS SET 'source_names' = \'{sourceNames}\', 'source_urls' = \'{sourceUrls}\', 'update_time' = \'{updateTime}\' WHERE name=(\'{artistName}\')"
 
         try:
             c = self._connect()
-            existingArtist = self.getArtistByName(artistData.name)
+            existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
             if existingArtist:
                 # Artist with this name already exists. Update it.
-                c.execute(updateStmt.format(artistName=artistData.name, sourceNames=artistData.sourceNames, sourceUrls=artistData.sourceUrls, updateTime=timestampStr))
+                finalQuery = updateStmt.format(artistName=artistData.name, sourceNames=artistData.getSourceNamesAsString(), sourceUrls=artistData.getSourceUrlsAsString(), updateTime=timestampStr)
+                print("Running query: " + finalQuery)
+                c.execute(finalQuery)
             else:
                 # Artist does not exist yet. Insert new record.
-                c.execute(insertStmt.format(artistName=artistData.name, sourceNames=artistData.sourceNames, sourceUrls=artistData.sourceUrls, updateTime=timestampStr))
+                finalQuery = insertStmt.format(artistName=artistData.name, sourceNames=artistData.getSourceNamesAsString(), sourceUrls=artistData.getSourceUrlsAsString(), updateTime=timestampStr)
+                print("Running query: " + finalQuery)
+                c.execute(finalQuery)
 
         except sqlite3.IntegrityError:
             print('ERROR: ID already exists in PRIMARY KEY column!')
@@ -58,24 +71,26 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def saveSongData(self, chartData):
+    def saveSongData(self, artistData, songData):
         """
         Saves song data to the database.
         If a song with the same name exists in the database, nothing happens.
         """
 
         # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
-        insertStmt = "INSERT INTO SONGS('artist_id','title','update_time') VALUES ({artistId}, {songTitle}, {updateTime})"
+        insertStmt = "INSERT INTO SONGS('artist_id','title','update_time') VALUES ({artistId}, \'{songTitle}\', \'{updateTime}\')"
 
         try:
             c = self._connect()
-            existingArtist = self.getArtistByName(artistData.name)
-            existingSong = self.getSongByTitle(chartData.title)
+            existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
+            existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
             if not existingSong:
                 # Song does not exist yet. Insert new record.
-                c.execute(insertStmt.format(artistId=artistData.id, songTitle=chartData.title, updateTime=timestampStr))
+                finalQuery = insertStmt.format(artistId=artistData.id, songTitle=songData.title, updateTime=timestampStr)
+                print("Running query: " + finalQuery)
+                c.execute(finalQuery)
 
         except sqlite3.IntegrityError:
             print('ERROR: ID already exists in PRIMARY KEY column!')
@@ -88,7 +103,7 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def saveChartData(self, chartData):
+    def saveChartData(self, songData, chartData):
         """
         Saves chart data to the database.
         If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
@@ -100,8 +115,8 @@ class DatabaseHandler:
 
         try:
             c = self._connect()
-            existingChart = self.getChartByUrl(chartData.source)
-            existingSong = self.getSongByTitle(chartData.title)
+            existingChart = self.getChartByUrl(chartData.source, keepConnectionOpen=True)
+            existingSong = self.getSongByTitle(chartData.title, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
             if existingChart:
@@ -156,7 +171,7 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def getArtistByName(self, title):
+    def getArtistByName(self, title, keepConnectionOpen):
         """
         Retrieves an artist with the given name.
         Returns "None" if a record isn't found.
@@ -171,12 +186,13 @@ class DatabaseHandler:
             print(traceback.format_exc())
 
         finally:
-            self._close()
+            if not keepConnectionOpen:
+                self._close()
 
         return 0
 
 
-    def getSongByTitle(self, title):
+    def getSongByTitle(self, title, keepConnectionOpen):
         """
         Retrieves a song with the given title.
         Returns "None" if a record isn't found.
@@ -191,12 +207,13 @@ class DatabaseHandler:
             print(traceback.format_exc())
 
         finally:
-            self._close()
+            if not keepConnectionOpen:
+                self._close()
 
         return 0
 
 
-    def getChartByUrl(self, title):
+    def getChartByUrl(self, title, keepConnectionOpen):
         """
         Retrieves a chart with the given source URL.
         Returns "None" if a record isn't found.
@@ -211,7 +228,8 @@ class DatabaseHandler:
             print(traceback.format_exc())
 
         finally:
-            self._close()
+            if not keepConnectionOpen:
+                self._close()
 
         return 0
 

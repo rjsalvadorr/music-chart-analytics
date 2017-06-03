@@ -8,7 +8,7 @@ class ChartData(BaseDataObject):
     def __init__(self):
         BaseDataObject.__init__(self)
 
-        self.songId= 0
+        self.songId = 0
         self.source = ""
         self.chordsSpecific = []
         self.sections = []
@@ -45,11 +45,11 @@ class ChartData(BaseDataObject):
 
     def __str__(self):
         stringRep = "ChartData { id=" + str(self.id) + ", "
-        
-        stringRep += "songId=" + str(self.artistId) + ", "
+
+        stringRep += "songId=" + str(self.songId) + ", "
         stringRep += "source=" + self.source + ", "
-        stringRep += "chordsSpecific=" + self.getChordListString + ", "
-        stringRep += "sections=" + self.getSectionListString() + ", "
+        stringRep += "chordsSpecific=[" + self.getChordListString() + "], "
+        stringRep += "sections=[" + self.getSectionListString() + "], "
         stringRep += "isNew=" + str(self.isNew) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"

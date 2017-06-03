@@ -191,7 +191,7 @@ class ChartParser:
         chartData = ChartData()
         lines = chartContent.splitlines()
 
-        chartData.artist = self.artistData.artistName
+        chartData.artist = self.artistData.name
         chartData.title = songTitle.upper()
         chartData.source = chartSourceUrl
 
@@ -216,7 +216,7 @@ class ChartParser:
         Sets the current artist info for the parser.
         """
         freshArtistData = ArtistData()
-        freshArtistData.artistName = name
+        freshArtistData.name = name
         freshArtistData.sourceNames = sources
         freshArtistData.soureUrls = artistSourceUrls
 
