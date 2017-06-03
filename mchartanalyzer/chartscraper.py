@@ -13,13 +13,15 @@ Steps:
 Potential filename format: artist-name_song-name_session-id.md
 """
 
-class Scraper:
+class ChartScraper:
     def __init__(self):
-        self.parser = MusicChartParser()
+        self.parser = ChartParser()
         self.chordSheetLinks = []
 
         self.scrapeStrategies = []
         self.scrapeStrategies.append(UltimateGuitarStrategy())
+
+        self.testModeEnabled = False
 
 
     def scrape(self, artistName):
@@ -42,7 +44,10 @@ class Scraper:
         for scrapeStrategy in self.scrapeStrategies:
             songUrls = scrapeStrategy.getSongUrls(artistName)
 
-            for songUrl in songUrls:
+            for index, songUrl in enumerate(songUrls):
+                if self.testModeEnabled and index >= 3:
+                    break
+
                 resp = requests.get(songUrl)
                 pageContent = resp.content
                 soup = BeautifulSoup(pageContent, "html.parser")

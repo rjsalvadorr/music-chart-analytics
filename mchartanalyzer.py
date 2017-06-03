@@ -21,6 +21,10 @@ except:
 finally:
     stream.close()
 
-mcScraper = MusicChartScraper()
+mcScraper = ChartScraper()
+
+if yamlData["testModeEnabled"]:
+    mcScraper.testModeEnabled = True
+
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)

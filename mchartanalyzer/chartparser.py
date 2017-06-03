@@ -4,7 +4,7 @@ from music21 import converter
 
 from .logger import Logger
 from .chartdata import ChartData
-from .artistdata import ChartData
+from .artistdata import ArtistData
 
 class ChartParser:
     """
@@ -27,12 +27,13 @@ class ChartParser:
 
 
     def __init__(self):
+        self.artistData = None
+
         self._resetSongData()
 
 
-    def _resetSongData(self):
-        self.artistData = None
 
+    def _resetSongData(self):
         self.chordList = []
         self.sectionList = []
 
@@ -41,7 +42,7 @@ class ChartParser:
 
 
     def log(self, text):
-        MusicChartParser.logger.log(text)
+        ChartParser.logger.log(text)
 
 
     def _isChordSymbol(self, text):
@@ -51,7 +52,7 @@ class ChartParser:
         # We can't use word boundaries (/b) since # is not a word character!
         regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
         regexChords = r"("
-        for idx, chordSymbol in enumerate(MusicChartParser.chordSymbols):
+        for idx, chordSymbol in enumerate(ChartParser.chordSymbols):
             if idx != 0:
                 regexChords += r"|"
             regexChords += re.escape(chordSymbol)
@@ -75,7 +76,7 @@ class ChartParser:
         Returns true if the given text is probably a section marking, such as "Chorus" or "Verse".
         """
         regexSections = r"[ \[]*("
-        for idx, sectionKeyword in enumerate(MusicChartParser.sectionKeywords):
+        for idx, sectionKeyword in enumerate(ChartParser.sectionKeywords):
             if idx != 0:
                 regexSections += r"|"
             regexSections += re.escape(sectionKeyword)
@@ -190,6 +191,7 @@ class ChartParser:
         chartData = ChartData()
         lines = chartContent.splitlines()
 
+        chartData.artist = self.artistData.artistName
         chartData.title = songTitle.upper()
         chartData.source = chartSourceUrl
 
