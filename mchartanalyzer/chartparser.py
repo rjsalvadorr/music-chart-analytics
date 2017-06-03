@@ -2,8 +2,10 @@ import re
 from music21 import harmony
 from music21 import converter
 
+from .databasehandler import DatabaseHandler
 from .logger import Logger
 from .objects.chartdata import ChartData
+from .objects.songdata import SongData
 from .objects.artistdata import ArtistData
 
 class ChartParser:
@@ -27,6 +29,7 @@ class ChartParser:
 
 
     def __init__(self):
+        self.dbHandler = DatabaseHandler()
         self.artistData = None
         self._resetSongData()
 
@@ -208,17 +211,27 @@ class ChartParser:
 
         print("Parsed data for " + chartData.title)
 
+        newSongData = SongData()
+        newSongData.title = chartData.title
+
+        print("Saving song and chart data to database...")
+        self.dbHandler.saveSongData(self.artistData, newSongData)
+        self.dbHandler.saveChartData(newSongData, chartData)
+
 
     def setArtistData(self, name, sources, artistSourceUrls):
         """
         Sets the current artist info for the parser.
         """
         freshArtistData = ArtistData()
-        freshArtistData.name = name
+        freshArtistData.name = name.upper()
         freshArtistData.sourceNames = sources
         freshArtistData.soureUrls = artistSourceUrls
 
         self.artistData = freshArtistData
+
+        print("Saving artist data to database...")
+        self.dbHandler.saveArtistData(self.artistData)
 
 
     def analyzeData(self):
