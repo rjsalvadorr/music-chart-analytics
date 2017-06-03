@@ -6,7 +6,7 @@ from .logger import Logger
 from .chartdata import ChartData
 from .artistdata import ChartData
 
-class MusicChartParser:
+class ChartParser:
     """
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """

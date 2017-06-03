@@ -3,7 +3,7 @@ class ArtistData:
     """
     Class encapsulating all the desired data from the chord charts, after thorough analysis.
     """
-    
+
     def __init__(self):
         # The properties listed below are good candidates for persistence and presentation
         self.artistName = ""

@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from .ultimateguitarstrategy import UltimateGuitarStrategy
-from .musicchartparser.musicchartparser import MusicChartParser
-from .musicchartparser.chartdata import ChartData
+from .chartparser import ChartParser
+from .chartdata import ChartData
 
 """
 Steps:
@@ -13,7 +13,7 @@ Steps:
 Potential filename format: artist-name_song-name_session-id.md
 """
 
-class MusicChartScraper:
+class Scraper:
     def __init__(self):
         self.parser = MusicChartParser()
         self.chordSheetLinks = []
@@ -51,5 +51,4 @@ class MusicChartScraper:
 
                 self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
 
-        # Begin analysis!
-        self.parser.analyzeData()
+        print("Scraping complete!")

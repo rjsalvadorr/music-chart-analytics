@@ -2,7 +2,7 @@
 import os
 import pprint # for console printing
 import yaml
-from musicchartscraper.musicchartscraper import MusicChartScraper
+from mchartanalyzer.chartscraper import ChartScraper
 
 # Loading configuration file
 fileDir = os.path.dirname(os.path.realpath(__file__))
@@ -24,5 +24,3 @@ finally:
 mcScraper = MusicChartScraper()
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)
-
-print("Scraping complete!")
