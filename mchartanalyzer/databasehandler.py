@@ -26,66 +26,211 @@ class DatabaseHandler:
         self.dbConnection.close()
 
 
-    def saveChartData(self, chartData):
-        c = self._connect()
+    def saveArtistData(self, artistData):
+        """
+        Saves artist data to the database.
+        """
 
-        # Sample SQLite snippet:
-        # INSERT INTO CHARTS('id','song_id','source_url','chords_specific','sections','is_new','update_time') VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+        # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
+        insertStmt = "INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ({artistName}, {sourceNames}, {sourceUrls}, {updateTime})"
+        updateStmt = "UPDATE ARTISTS SET 'source_names' = {sourceNames}, 'source_urls' = {sourceUrls}, 'update_time' = {updateTime} WHERE name=({artistName})"
 
-        # A) Inserts an ID with a specific value in a second column
         try:
-            c.execute("INSERT INTO {tn} ({idf}, {cn}) VALUES (123456, 'test')".\
-                format(tn=table_name, idf=id_column, cn=column_name))
+            c = self._connect()
+            existingArtist = self.getArtistByName(artistData.name)
+            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
+            if existingArtist:
+                # Artist with this name already exists. Update it.
+                c.execute(updateStmt.format(artistName=artistData.name, sourceNames=artistData.sourceNames, sourceUrls=artistData.sourceUrls, updateTime=timestampStr))
+            else:
+                # Artist does not exist yet. Insert new record.
+                c.execute(insertStmt.format(artistName=artistData.name, sourceNames=artistData.sourceNames, sourceUrls=artistData.sourceUrls, updateTime=timestampStr))
+
         except sqlite3.IntegrityError:
-            print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+            print('ERROR: ID already exists in PRIMARY KEY column!')
 
-        # B) Tries to insert an ID (if it does not exist yet)
-        # with a specific value in a second column
-        c.execute("INSERT OR IGNORE INTO {tn} ({idf}, {cn}) VALUES (123456, 'test')".\
-                format(tn=table_name, idf=id_column, cn=column_name))
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
 
-        # C) Updates the newly inserted or pre-existing entry
-        c.execute("UPDATE {tn} SET {cn}=('Hi World') WHERE {idf}=(123456)".\
-                format(tn=table_name, cn=column_name, idf=id_column))
-
-        self._commitAndClose()
+        finally:
+            self._commitAndClose()
 
 
-    def saveArtistData(self, chartData):
-        c = self._connect()
+    def saveSongData(self, chartData):
+        """
+        Saves song data to the database.
+        If a song with the same name exists in the database, nothing happens.
+        """
 
-        # Sample SQLite snippet:
-        # INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
+        # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
+        insertStmt = "INSERT INTO SONGS('artist_id','title','update_time') VALUES ({artistId}, {songTitle}, {updateTime})"
 
-        self._commitAndClose()
+        try:
+            c = self._connect()
+            existingArtist = self.getArtistByName(artistData.name)
+            existingSong = self.getSongByTitle(chartData.title)
+            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
+            if not existingSong:
+                # Song does not exist yet. Insert new record.
+                c.execute(insertStmt.format(artistId=artistData.id, songTitle=chartData.title, updateTime=timestampStr))
+
+        except sqlite3.IntegrityError:
+            print('ERROR: ID already exists in PRIMARY KEY column!')
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()
+
+
+    def saveChartData(self, chartData):
+        """
+        Saves chart data to the database.
+        If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
+        """
+
+        # Sample SQLite snippet: INSERT INTO CHARTS('id','song_id','source_url','chords_specific','sections','is_new','update_time') VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','update_time') VALUES ({songId}, {url}, {chordList}, {sectionList}, 1, {updateTime})"
+        updateStmt = "UPDATE CHARTS SET 'chords_specific' = {chordList}, 'sections' = {sectionList}, 'is_new' = 1, 'update_time' = {updateTime} WHERE song_id={songId} AND source_url={url}"
+
+        try:
+            c = self._connect()
+            existingChart = self.getChartByUrl(chartData.source)
+            existingSong = self.getSongByTitle(chartData.title)
+            timestampStr = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
+            if existingChart:
+                # Chart from this source already exists. Update it.
+                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+            else:
+                # Chart does not exist yet. Insert new record.
+                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+
+        except sqlite3.IntegrityError:
+            print('ERROR: ID already exists in PRIMARY KEY column!')
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()
 
 
     def saveChartCalculationData(self, chartData):
-        c = self._connect()
+        """
+        Saves chart calculations to the database.
+        """
+        try:
+            c = self._connect()
 
-        self._close()
+            # ...
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()
 
 
     def saveArtistCalculationData(self, chartData):
-        c = self._connect()
+        """
+        Saves artist calculations to the database.
+        """
+        try:
+            c = self._connect()
 
-        self._close()
+            # ...
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()
 
 
-    def _getSongByTitle(self, title):
-        c = self._connect()
+    def getArtistByName(self, title):
+        """
+        Retrieves an artist with the given name.
+        Returns "None" if a record isn't found.
+        """
+        try:
+            c = self._connect()
 
-        # SELECT * FROM SONGS WHERE TITLE = 'WHATEVER'
+            # SELECT * FROM CHARTS WHERE 'source_url' = 'http://whatevs.ca'
 
-        self._close()
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return 0
+
+
+    def getSongByTitle(self, title):
+        """
+        Retrieves a song with the given title.
+        Returns "None" if a record isn't found.
+        """
+        try:
+            c = self._connect()
+
+            # SELECT * FROM SONGS WHERE title = 'WHATEVER'
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return 0
+
+
+    def getChartByUrl(self, title):
+        """
+        Retrieves a chart with the given source URL.
+        Returns "None" if a record isn't found.
+        """
+        try:
+            c = self._connect()
+
+            # SELECT * FROM CHARTS WHERE 'source_url' = 'http://whatevs.ca'
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return 0
 
 
     def getNewChartRecords(self):
-        c = self._connect()
+        """
+        Retrieves charts which haven't been analyzed yet.
+        Returns "None" if there are no new charts.
+        """
+        try:
+            c = self._connect()
 
-        # 1) Contents of all columns for row that match a certain value in 1 column
-        c.execute('SELECT * FROM {tn} WHERE {cn}="Hi World"'.\
-                format(tn=table_name, cn=column_2))
-        all_rows = c.fetchall()
+            # 1) Contents of all columns for row that match a certain value in 1 column
+            c.execute('SELECT * FROM {tn} WHERE {cn}="Hi World"'.format(tn=table_name, cn=column_2))
+            all_rows = c.fetchall()
 
-        self._close()
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()

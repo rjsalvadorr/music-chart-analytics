@@ -199,13 +199,13 @@ class ChartParser:
             self.chordList.extend(self._parseChords(line))
             self.sectionList.extend(self._parseSections(line))
 
-        chartData.chords = self.chordList
+        chartData.chordsSpecific = self.chordList
         chartData.key = self._analyzeKey()
         chartData.keyAnalysisCertainty = self.analyzedKeyCertainty
         chartData.sections = self.sectionList
 
         self._resetSongData()
-        self.log(str(chartData))
+        self.log(chartData.toLogString())
         self.log("----------\n")
 
         print("Parsed data for " + chartData.title)

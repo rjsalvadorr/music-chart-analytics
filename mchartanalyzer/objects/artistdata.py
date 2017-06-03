@@ -1,31 +1,43 @@
+from .basedata import BaseDataObject
 
-class ArtistData:
+class ArtistData(BaseDataObject):
     """
-    Class encapsulating all the desired data from the chord charts, after thorough analysis.
+    Class encapsulating basic information about an artist/musician.
     """
 
     def __init__(self):
-        # The properties listed below are good candidates for persistence and presentation
+        BaseDataObject.__init__(self)
+
         self.artistName = ""
-        self.sourceNames = ""
-        self.sourceUrls = ""
-        self.analysisTimestamp = ""
+        self.sourceNames = []
+        self.sourceUrls = []
 
-        self.numSongs = 0
-        self.numMajorKeys = 0
-        self.numMinorKeys = 0
 
-        self.numChords = 0
+    def setSourceNamesFromString(self, sourceNamesStr):
+        convertedList = self._convertStringToList(sourceNamesStr)
+        self.sourceNames = convertedList
+
+
+    def setSourceUrlsFromString(self, sourceUrlsStr):
+        convertedList = self._convertStringToList(sourceUrlsStr)
+        self.sourceUrls = convertedList
+
+
+    def getSourceNamesAsString(self):
+        return self._convertListToString(self.sourceNames)
+
+
+    def getSourceUrlsAsString(self):
+        return self._convertListToString(self.sourceUrls)
 
 
     def __str__(self):
-        stringRep = "artistName=" + self.artistName + "\n"
-        stringRep += "sourceNames=" + ", ".join(self.sourceNames) + "\n"
-        stringRep += "sourceUrls=" + "\n".join(self.sourceUrls) + "\n"
-        stringRep += "analysisTimestamp=" + self.analysisTimestamp + "\n"
-        stringRep += "numSongs=" + str(self.numSongs) + "\n"
-        stringRep += "numMajorKeys=" + str(self.numMajorKeys) + "\n"
-        stringRep += "numMinorKeys=" + str(self.numMinorKeys) + "\n"
-        stringRep += "numChords=" + str(self.numChords) + "\n"
+        stringRep = "ArtistData { id=" + str(self.id) + ", "
+
+        stringRep += "artistName=" + self.artistName + ", "
+        stringRep += "sourceNames=" + self.getSourceNamesAsString() + ", "
+        stringRep += "sourceUrls=" + self.getSourceUrlsAsString() + ", "
+        
+        stringRep += "updateTime=" + self.updateTime + " }"
 
         return stringRep

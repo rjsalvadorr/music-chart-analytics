@@ -120,3 +120,4 @@ log*.txt
 
 # etc
 **.sqbpro
+**.db-journal
