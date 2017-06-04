@@ -47,7 +47,7 @@ class ChartScraper:
 
         print("Days between the dates: " + str(dtDifference.days))
 
-        if(dtDifference.days > 30):
+        if(dtDifference.days > constants.URL_SCRAPE_COOLDOWN_DAYS):
             return True
         else:
             return False
@@ -71,14 +71,14 @@ class ChartScraper:
 
         # Scrape the chart sources for song charts, then call the parser for each one.
         for scrapeStrategy in self.scrapeStrategies:
-            songUrls = scrapeStrategy.getSongUrls(artistName)
+            songUrls = scrapeStrategy.getSongUrlsForArtist(artistName)
 
             for index, songUrl in enumerate(songUrls):
                 if self.scrapeCooldownEnabled and not self._isUrlValidTarget(songUrl):
                     print("Invalid URL target: " + songUrl)
                     break
 
-                if self.testModeEnabled and index >= 3:
+                if self.testModeEnabled and index >= constants.TEST_MODE_SONG_LIMIT:
                     break
 
                 resp = requests.get(songUrl)

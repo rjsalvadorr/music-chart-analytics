@@ -226,7 +226,7 @@ class ChartParser:
         freshArtistData = ArtistData()
         freshArtistData.name = name.upper()
         freshArtistData.sourceNames = sources
-        freshArtistData.soureUrls = artistSourceUrls
+        freshArtistData.sourceUrls = artistSourceUrls
 
         self.artistData = freshArtistData
 

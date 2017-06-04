@@ -296,3 +296,24 @@ class DatabaseHandler:
 
         finally:
             self._close()
+
+    def purgeDatabase(self):
+        """
+        Removes all data from the database.
+        """
+        try:
+            c = self._connect()
+
+            print("PURGING ALL DATA FROM THE DATABASE!")
+            c.execute("DELETE FROM ARTISTS")
+            c.execute("DELETE FROM ARTIST_CALCS")
+            c.execute("DELETE FROM CHARTS")
+            c.execute("DELETE FROM CHART_CALCS")
+            c.execute("DELETE FROM SONGS")
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()

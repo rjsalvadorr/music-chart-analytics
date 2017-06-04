@@ -19,7 +19,7 @@ class ScrapeStrategy(ABC):
         pass
 
     @abstractmethod
-    def getSongUrls(self, artistName):
+    def getSongUrlsForArtist(self, artistName):
         pass
 
     @abstractmethod

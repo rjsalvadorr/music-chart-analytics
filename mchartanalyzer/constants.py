@@ -1,5 +1,8 @@
 import os
 
+TEST_MODE_SONG_LIMIT = 3
+URL_SCRAPE_COOLDOWN_DAYS = 30
+
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__))
 PROJECT_DIR = os.path.dirname(MODULE_DIR)
 DATETIME_FORMAT = "%Y-%m-%d-%H:%M:%S"
