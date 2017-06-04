@@ -16,7 +16,7 @@ class ChartCalculations(BaseDataObject):
 
     def __str__(self):
         stringRep = "ChartCalculations { id=" + str(self.id) + ", "
-        
+
         stringRep += "chartId=" + str(self.chartId) + ", "
         stringRep += "key=" + self.key + ", "
         stringRep += "keyAnalysisCertainty=" + self.keyAnalysisCertainty + ", "

@@ -60,7 +60,7 @@ class ChartScraper:
         """
         scrapeSourceNames = []
         artistSourceUrls = []
-        print("Scraping for " + artistName + " songs...")
+        print("\nScraping for " + artistName + " songs...")
 
         # Set up artist information, then send it to the parser.
         for scrapeStrategy in self.scrapeStrategies:

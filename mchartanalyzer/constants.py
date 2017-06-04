@@ -1,6 +1,6 @@
 import os
 
-TEST_MODE_SONG_LIMIT = 3
+TEST_MODE_SONG_LIMIT = 2
 URL_SCRAPE_COOLDOWN_DAYS = 30
 
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__))

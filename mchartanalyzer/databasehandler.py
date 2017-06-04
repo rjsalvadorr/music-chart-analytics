@@ -275,7 +275,7 @@ class DatabaseHandler:
             if not keepConnectionOpen:
                 self._close()
 
-        return 0
+        return None
 
 
     def getNewChartRecords(self):
@@ -283,12 +283,27 @@ class DatabaseHandler:
         Retrieves charts which haven't been analyzed yet.
         Returns "None" if there are no new charts.
         """
+
+        chartRecords = []
+
         try:
             c = self._connect()
+            c.execute("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,))
+            for row in c:
+                newChartData = ChartData()
+                
+                newChartData.id = row[0]
+                newChartData.songId = row[1]
+                newChartData.source = row[2]
+                newChartData.setChordListFromString(row[3])
+                newChartData.setSectionsFromString(row[4])
+                newChartData.isNew = row[5]
+                newChartData.updateTime = row[6]
 
-            # 1) Contents of all columns for row that match a certain value in 1 column
-            c.execute('SELECT * FROM {tn} WHERE {cn}="Hi World"'.format(tn=table_name, cn=column_2))
-            all_rows = c.fetchall()
+                chartRecords.append(newChartData)
+
+            else:
+                return None
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -296,6 +311,9 @@ class DatabaseHandler:
 
         finally:
             self._close()
+
+        return chartRecords
+
 
     def purgeDatabase(self):
         """
