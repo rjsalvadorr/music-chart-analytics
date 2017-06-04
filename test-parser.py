@@ -3,8 +3,8 @@ import sys
 import os
 import traceback
 
-from musicchartscraper.logger import Logger
-from musicchartscraper.musicchartparser.musicchartparser import ChartParser
+from mchartanalyzer.logger import Logger
+from mchartanalyzer.chartparser import ChartParser
 
 logger = Logger(testMode=True)
 parser = ChartParser()
@@ -27,22 +27,22 @@ moduleDir = os.path.dirname(os.path.realpath(__file__))
 inputDir = os.path.join(moduleDir, "test")
 
 print("Testing!")
-
 print("")
 
+# CHORD SYMBOL PARSING
 for chordSym in chordSymbols:
     result = parser._isChordSymbol(chordSym)
     resString = "YEP" if result else "NOPE"
     print("Is " + chordSym + " a chord symbol? " + resString)
-
 print("")
 
+# SLASH CHORD SYMBOL PARSING
 for chordSym in slashChordSymbols:
     result = parser._removeSlashChordBass(chordSym)
     print(chordSym + " -> " + result)
-
 print("")
 
+# FILE PARSING
 for idx, filename in enumerate(filenames):
     filePath = os.path.join(inputDir, filename)
     try:

@@ -117,3 +117,7 @@ pip-selfcheck.json
 
 # log files
 log*.txt
+
+# etc
+**.sqbpro
+**.db-journal

@@ -2,9 +2,11 @@ import re
 from music21 import harmony
 from music21 import converter
 
+from .databasehandler import DatabaseHandler
 from .logger import Logger
-from .chartdata import ChartData
-from .artistdata import ArtistData
+from .objects.chartdata import ChartData
+from .objects.songdata import SongData
+from .objects.artistdata import ArtistData
 
 class ChartParser:
     """
@@ -27,10 +29,9 @@ class ChartParser:
 
 
     def __init__(self):
+        self.dbHandler = DatabaseHandler()
         self.artistData = None
-
         self._resetSongData()
-
 
 
     def _resetSongData(self):
@@ -191,7 +192,7 @@ class ChartParser:
         chartData = ChartData()
         lines = chartContent.splitlines()
 
-        chartData.artist = self.artistData.artistName
+        chartData.artist = self.artistData.name
         chartData.title = songTitle.upper()
         chartData.source = chartSourceUrl
 
@@ -199,16 +200,23 @@ class ChartParser:
             self.chordList.extend(self._parseChords(line))
             self.sectionList.extend(self._parseSections(line))
 
-        chartData.chords = self.chordList
+        chartData.chordsSpecific = self.chordList
         chartData.key = self._analyzeKey()
         chartData.keyAnalysisCertainty = self.analyzedKeyCertainty
         chartData.sections = self.sectionList
 
         self._resetSongData()
-        self.log(str(chartData))
+        self.log(chartData.toLogString())
         self.log("----------\n")
 
         print("Parsed data for " + chartData.title)
+
+        newSongData = SongData()
+        newSongData.title = chartData.title
+
+        print("Saving song and chart data to database...")
+        self.dbHandler.saveSongData(self.artistData, newSongData)
+        self.dbHandler.saveChartData(newSongData, chartData)
 
 
     def setArtistData(self, name, sources, artistSourceUrls):
@@ -216,11 +224,14 @@ class ChartParser:
         Sets the current artist info for the parser.
         """
         freshArtistData = ArtistData()
-        freshArtistData.artistName = name
+        freshArtistData.name = name.upper()
         freshArtistData.sourceNames = sources
         freshArtistData.soureUrls = artistSourceUrls
 
         self.artistData = freshArtistData
+
+        print("Saving artist data to database...")
+        self.dbHandler.saveArtistData(self.artistData)
 
 
     def analyzeData(self):
