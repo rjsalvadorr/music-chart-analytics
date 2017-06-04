@@ -45,8 +45,6 @@ class ChartScraper:
         dtNow = datetime.now()
         dtDifference = dtNow - dtScrape
 
-        print("Days between the dates: " + str(dtDifference.days))
-
         if(dtDifference.days > constants.URL_SCRAPE_COOLDOWN_DAYS):
             return True
         else:
@@ -74,19 +72,20 @@ class ChartScraper:
             songUrls = scrapeStrategy.getSongUrlsForArtist(artistName)
 
             for index, songUrl in enumerate(songUrls):
-                if self.scrapeCooldownEnabled and not self._isUrlValidTarget(songUrl):
-                    print("Invalid URL target: " + songUrl)
-                    break
-
                 if self.testModeEnabled and index >= constants.TEST_MODE_SONG_LIMIT:
                     break
 
-                resp = requests.get(songUrl)
-                pageContent = resp.content
-                soup = BeautifulSoup(pageContent, "html.parser")
-                chartContentHtml = soup.select(".js-tab-content")[0]
-                chartContent = chartContentHtml.get_text()
+                if self.scrapeCooldownEnabled and not self._isUrlValidTarget(songUrl):
+                    print("Invalid URL target: " + songUrl)
+                else:
+                    print("Valid URL target: " + songUrl)
 
-                self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
+                    resp = requests.get(songUrl)
+                    pageContent = resp.content
+                    soup = BeautifulSoup(pageContent, "html.parser")
+                    chartContentHtml = soup.select(".js-tab-content")[0]
+                    chartContent = chartContentHtml.get_text()
+
+                    self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
 
         print("Scraping complete!")

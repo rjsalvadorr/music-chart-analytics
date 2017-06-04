@@ -33,7 +33,7 @@ class UltimateGuitarStrategy(ScrapeStrategy):
         If there are multiple pages available, this method will call itself for the next available page.
         """
         resp = requests.get(artistUrl)
-        print("(" + str(resp.status_code) + ") " + artistUrl)
+        # print("(" + str(resp.status_code) + ") " + artistUrl)
         pageContent = resp.content
         soup = BeautifulSoup(pageContent, "html.parser")
         songUrls = []

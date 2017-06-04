@@ -45,7 +45,7 @@ class DatabaseHandler:
 
         # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
         insertStmt = "INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES (\'{artistName}\', \'{sourceNames}\', \'{sourceUrls}\', \'{updateTime}\')"
-        updateStmt = "UPDATE ARTISTS SET 'source_names' = \'{sourceNames}\', 'source_urls' = \'{sourceUrls}\', 'update_time' = \'{updateTime}\' WHERE name=(\'{artistName}\')"
+        updateStmt = "UPDATE ARTISTS SET 'source_names' = \'{sourceNames}\', 'source_urls' = \'{sourceUrls}\', 'update_time' = \'{updateTime}\' WHERE name=\'{artistName}\'"
 
         try:
             c = self._connect()
@@ -55,12 +55,12 @@ class DatabaseHandler:
             if existingArtist:
                 # Artist with this name already exists. Update it.
                 finalQuery = updateStmt.format(artistName=artistData.name, sourceNames=artistData.getSourceNamesAsString(), sourceUrls=artistData.getSourceUrlsAsString(), updateTime=timestampStr)
-                print("Running query: " + finalQuery)
+                # print("Running query: " + finalQuery)
                 c.execute(finalQuery)
             else:
                 # Artist does not exist yet. Insert new record.
                 finalQuery = insertStmt.format(artistName=artistData.name, sourceNames=artistData.getSourceNamesAsString(), sourceUrls=artistData.getSourceUrlsAsString(), updateTime=timestampStr)
-                print("Running query: " + finalQuery)
+                # print("Running query: " + finalQuery)
                 c.execute(finalQuery)
 
         except sqlite3.IntegrityError:
@@ -92,7 +92,7 @@ class DatabaseHandler:
             if not existingSong:
                 # Song does not exist yet. Insert new record.
                 finalQuery = insertStmt.format(artistId=existingArtist.id, songTitle=songData.title, updateTime=timestampStr)
-                print("Running query: " + finalQuery)
+                # print("Running query: " + finalQuery)
                 c.execute(finalQuery)
 
         except sqlite3.IntegrityError:
@@ -278,20 +278,58 @@ class DatabaseHandler:
         return None
 
 
-    def getNewChartRecords(self):
+    def getArtistsWithFreshCharts(self):
         """
-        Retrieves charts which haven't been analyzed yet.
-        Returns "None" if there are no new charts.
+        Retrieves artists with charts that haven't been analyzed yet.
+        Returns an empty list if there are no such artists
         """
-
-        chartRecords = []
-
+        artistRecords = []
         try:
             c = self._connect()
-            c.execute("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,))
+
+            # Sample Query:
+            # SELECT ARTISTS.* FROM ARTISTS
+            # INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id
+            # INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id
+            # WHERE CHARTS.is_new != 0
+            # GROUP BY ARTISTS.name
+
+            c.execute("SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name")
+            for row in c:
+                newArtistData = ArtistData()
+
+                newArtistData.id = row[0]
+                newArtistData.name = row[1]
+                newArtistData.setSourceNamesFromString(row[2])
+                newArtistData.setSourceUrlsFromString(row[3])
+                newArtistData.updateTime = row[4]
+
+                artistRecords.append(newArtistData)
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return artistRecords
+
+
+    def getFreshChartsForArtist(self, artistName):
+        """
+        For a given artist, retrieves charts that haven't been analyzed yet.
+        Returns an empty list if there are no new charts.
+        """
+        chartRecords = []
+        try:
+            c = self._connect()
+
+            c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?", (artistName.upper(),))
+
             for row in c:
                 newChartData = ChartData()
-                
+
                 newChartData.id = row[0]
                 newChartData.songId = row[1]
                 newChartData.source = row[2]
@@ -302,9 +340,6 @@ class DatabaseHandler:
 
                 chartRecords.append(newChartData)
 
-            else:
-                return None
-
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
             print(traceback.format_exc())
@@ -313,6 +348,29 @@ class DatabaseHandler:
             self._close()
 
         return chartRecords
+
+
+    def initializeDatabase(self):
+        """
+        Initializes database.
+        Creates database file if it doesn't exist.
+        """
+        try:
+            c = self._connect()
+
+            print("INITIALIZING DATABASE!")
+            c.execute("DELETE FROM ARTISTS")
+            c.execute("DELETE FROM ARTIST_CALCS")
+            c.execute("DELETE FROM CHARTS")
+            c.execute("DELETE FROM CHART_CALCS")
+            c.execute("DELETE FROM SONGS")
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._commitAndClose()
 
 
     def purgeDatabase(self):

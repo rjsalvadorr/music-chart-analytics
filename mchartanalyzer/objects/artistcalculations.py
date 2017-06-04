@@ -9,14 +9,17 @@ class ArtistCalculations(BaseDataObject):
         BaseDataObject.__init__(self)
 
         self.artistId = 0
+        self.numChords = 0
+        self.mostCommonChordsSpecific = []
+        self.mostCommonChordsGeneral = []
+        self.numChords = 0
+
+        # The following properties are derived through database queries,
+        # so they don't have corresponding columns in the DB.
         self.numSongs = 0
         self.numCharts = 0
         self.numMajorKeys = 0
         self.numMinorKeys = 0
-        self.numChords = 0
-        self.mostCommonChordsSpecific = 0
-        self.mostCommonChordsGeneral = 0
-        self.numChords = 0
 
 
     def __str__(self):
