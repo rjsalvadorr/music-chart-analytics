@@ -12,6 +12,7 @@ class ChartCalculations(BaseDataObject):
         self.key = ""
         self.keyAnalysisCertainty = ""
         self.chordsGeneral = []
+        self.numChords = 0
 
 
     def setChordListFromString(self, chordListStr):
@@ -30,6 +31,7 @@ class ChartCalculations(BaseDataObject):
         stringRep += "key=" + self.key + ", "
         stringRep += "keyAnalysisCertainty=" + self.keyAnalysisCertainty + ", "
         stringRep += "chordsGeneral=[" + self.getChordListString() + "], "
+        stringRep += "numChords=" + str(self.numChords) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 

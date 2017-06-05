@@ -76,13 +76,17 @@ mcScraper.scrapeCooldownEnabled = scrapeCooldownEnabled
 
 if initializeDatabaseEnabled:
     dbHandler.initializeDatabase()
+    print ("Database initialized!")
 
 if databasePurgeEnabled:
     dbHandler.purgeDatabase()
+    print ("Database purged!")
 
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)
 
+print ("\nAnalyzing charts...")
 mcAnalyzer.analyzeFreshCharts()
 
+print("Finished!")
 sys.exit(0)

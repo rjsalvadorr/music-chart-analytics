@@ -1,7 +1,6 @@
 import re
 
 from .databasehandler import DatabaseHandler
-from .logger import Logger
 from .objects.chartdata import ChartData
 from .objects.songdata import SongData
 from .objects.artistdata import ArtistData
@@ -23,8 +22,6 @@ class ChartParser:
     chordSymbols.extend(["13", "add13", "M13", "m13", "maj13"]) # THIRTEENTHS
     chordSymbols.extend(["7b9", "7#9", "67", "6/7", "add2", "5"]) # ALTERATIONS
 
-    logger = Logger()
-
 
     def __init__(self):
         self.dbHandler = DatabaseHandler()
@@ -35,10 +32,6 @@ class ChartParser:
     def _resetSongData(self):
         self.chordList = []
         self.sectionList = []
-
-
-    def log(self, text):
-        ChartParser.logger.log(text)
 
 
     def _isChordSymbol(self, text):
@@ -92,7 +85,15 @@ class ChartParser:
         tokens = chartText.split()
         for token in tokens:
             if self._isChordSymbol(token):
-                chords.append(self._removeSlashChordBass(token))
+                formattedToken = self._removeSlashChordBass(token)
+
+                if len(chords) == 0:
+                    # if the chords list is empty, add the chordSymbol
+                    chords.append(formattedToken)
+                else:
+                    if formattedToken != chords[-1]:
+                        # add the chord symbol only if it's different from the previous one.
+                        chords.append(formattedToken)
 
         return chords
 
@@ -142,8 +143,6 @@ class ChartParser:
         chartData.sections = self.sectionList
 
         self._resetSongData()
-        self.log(chartData.toLogString())
-        self.log("----------\n")
 
         print("Parsed data for " + chartData.title)
 

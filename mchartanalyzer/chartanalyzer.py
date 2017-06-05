@@ -5,11 +5,15 @@ from music21 import key
 from .objects.artistcalculations import ArtistCalculations
 from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
+from .logger import Logger
 
 class ChartAnalyzer:
     """
     Analyzes the charts, and calculates the desired data for display.
     """
+
+    logger = Logger()
+
     def __init__(self):
         self.dbHandler = DatabaseHandler()
 
@@ -36,6 +40,10 @@ class ChartAnalyzer:
 
     def _analyzeArtist(self, artistData, chartDataList):
         return None
+
+
+    def _log(self, text):
+        ChartAnalyzer.logger.log(text)
 
 
     def _convertChordSymbolToGeneral(self, chordSymbol, m21Key):
@@ -153,22 +161,44 @@ class ChartAnalyzer:
         chartCalcs.key = analyzedKey
         chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
         chartCalcs.chordsGeneral = self._convertChordListToGeneral(chartData.chordsSpecific, analyzedKey)
+        chartCalcs.numChords = len(chartData.chordsSpecific)
 
         return chartCalcs
+
+
+    def _dumpCalculationsToLog(self, artistData, songData, chartData, chartCalcs):
+        logString = "ARTIST: " + artistData.name + "\n"
+        logString += "TITLE: " + songData.title + "\n"
+        logString += "SECTIONS: " + chartData.getSectionListString().replace(",", " ") + "\n"
+        logString += "ORIGINAL CHORDS: " + chartData.getChordListString().replace(",", " ") + "\n"
+        logString += "\n"
+        logString += "COMPUTED KEY: " + chartCalcs.key + "\n"
+        logString += "COMPUTED KEY CERTAINTY: " + chartCalcs.keyAnalysisCertainty + "\n"
+        logString += "COMPUTED CHORDS: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
+        logString += "# OF CHORDS: " + str(chartCalcs.numChords) + "\n"
+        logString += "\n========================================\n"
+
+        self._log(logString)
 
 
     def analyzeFreshCharts(self):
         freshArtists = self.dbHandler.getArtistsWithFreshCharts()
 
-        for artistData in freshArtists:
-            print("")
-            print(artistData)
+        if(len(freshArtists) == 0):
+            print("No fresh data! No analysis will be done.")
+            return
 
+        for artistData in freshArtists:
+            print("Analyzing data for " + artistData.name + "...")
             freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
 
             for freshChartData in freshCharts:
-                print("")
-                print(freshChartData)
-
+                songData = self.dbHandler.getSongById(freshChartData.songId)
+                print("Analyzing data for " + songData.title + "...")
                 chartCalcs = self._analyzeChart(freshChartData)
-                print(chartCalcs)
+
+                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
+                self._dumpCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
+
+
+        print("Data analyzed and persisted!")

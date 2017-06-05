@@ -145,21 +145,28 @@ class DatabaseHandler:
         """
         Saves chart calculations to the database.
         """
-        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\', 1, \'{updateTime}\')"
-        updateCalcsStmt = "UPDATE CHART_CALCS SET 'key' = \'{chordList}\', 'key_certainty' = \'{sectionList}\', 'chords_general' = \'{chordsGeneral}\', 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
+        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'num_chords', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\',  \'{numChords}\', \'{updateTime}\')"
+        updateCalcsStmt = "UPDATE CHART_CALCS SET 'key' = \'{key}\', 'key_certainty' = \'{keyCertainty}\', 'chords_general' = \'{chordsGeneral}\', 'num_chords' = \'{numChords}\', 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
 
-        updateChartStmt = "UPDATE CHARTS SET 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE id={chartId}"
+        updateChartStmt = "UPDATE CHARTS SET 'is_new' = 0, 'update_time' = \'{updateTime}\' WHERE id={chartId}"
+
+        selectCalcsStmt = "SELECT * from CHART_CALCS WHERE 'chart_id' = {chartId}"
 
         try:
             c = self._connect()
+            c.execute(selectCalcsStmt.format(chartId=chartData.id))
             timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
-            if existingChart:
+            if c.rowcount > 0:
                 # Chart from this source already exists. Update it.
-                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+                c.execute(updateCalcsStmt.format(chartId=chartData.id, key=chartCalcs.key, keyCertainty=chartCalcs.keyAnalysisCertainty, chordsGeneral=chartCalcs.getChordListString(), numChords=chartCalcs.numChords, updateTime=timestampStr))
             else:
                 # Chart does not exist yet. Insert new record.
-                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+                c.execute(insertCalcsStmt.format(chartId=chartData.id, key=chartCalcs.key, keyCertainty=chartCalcs.keyAnalysisCertainty, chordsGeneral=chartCalcs.getChordListString(), numChords=chartCalcs.numChords, updateTime=timestampStr))
+
+            # Update the chart, toggle "is_new" to 0
+            c.execute(updateChartStmt.format(chartId=chartData.id,  updateTime=timestampStr))
+
 
         except sqlite3.IntegrityError:
             print('ERROR: ID already exists in PRIMARY KEY column!')
@@ -232,6 +239,39 @@ class DatabaseHandler:
         try:
             c = self._connect()
             c.execute("SELECT * FROM SONGS WHERE title = ?", (title,))
+            row = c.fetchone()
+
+            if row:
+                newSongData = SongData()
+
+                newSongData.id = row[0]
+                newSongData.artistId = row[1]
+                newSongData.title = row[2]
+                newSongData.updateTime = row[3]
+
+                return newSongData
+            else:
+                return None
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            if not keepConnectionOpen:
+                self._close()
+
+        return 0
+
+
+    def getSongById(self, songId, keepConnectionOpen=None):
+        """
+        Retrieves a song with the given title.
+        Returns "None" if a record isn't found.
+        """
+        try:
+            c = self._connect()
+            c.execute("SELECT * FROM SONGS WHERE id = ?", (songId,))
             row = c.fetchone()
 
             if row:
