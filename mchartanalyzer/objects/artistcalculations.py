@@ -11,8 +11,9 @@ class ArtistCalculations(BaseDataObject):
         self.artistId = 0
         self.numChords = 0
         self.mostCommonChordsSpecific = []
+        self.commonChordsSpecOccurences = []
         self.mostCommonChordsGeneral = []
-        self.numChords = 0
+        self.commonChordsGenOccurences = []
 
         # The following properties are derived through database queries,
         # so they don't have corresponding columns in the DB.

@@ -153,7 +153,7 @@ class ChartAnalyzer:
 
     def _analyzeChart(self, chartData):
         """
-        Analyzes a chart,
+        Analyzes a chart. Returns an ChartCalculations object.
         """
         chartCalcs = ChartCalculations()
 
@@ -166,7 +166,21 @@ class ChartAnalyzer:
         return chartCalcs
 
 
-    def _dumpCalculationsToLog(self, artistData, songData, chartData, chartCalcs):
+    def _analyzeArtist(self, artistData):
+        """
+        Analyzes an artist. Returns an ArtistCalculations object.
+        """
+        artistCalcs = ArtistCalculations()
+
+        artistCalcs.numSongs = 0
+        artistCalcs.numCharts = 0
+        artistCalcs.numMajorKeys = 0
+        artistCalcs.numMinorKeys = 0
+
+        return artistCalcs
+
+
+    def _dumpChartCalculationsToLog(self, artistData, songData, chartData, chartCalcs):
         logString = "ARTIST: " + artistData.name + "\n"
         logString += "TITLE: " + songData.title + "\n"
         logString += "SECTIONS: " + chartData.getSectionListString().replace(",", " ") + "\n"
@@ -177,6 +191,20 @@ class ChartAnalyzer:
         logString += "COMPUTED CHORDS: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
         logString += "# OF CHORDS: " + str(chartCalcs.numChords) + "\n"
         logString += "\n========================================\n"
+
+        self._log(logString)
+
+
+    def _dumpArtistCalculationsToLog(self, artistData, artistCalcs):
+        logString = "\n============================================================\n"
+        logString += "ARTIST: " + artistData.name + "\n"
+        logString += "============================================================\n"
+        logString += "# OF SONGS: " + str(artistCalcs.numSongs) + "\n"
+        logString += "# OF CHARTS: " + str(artistCalcs.numCharts) + "\n"
+        logString += "# OF SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
+        logString += "# OF SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
+        logString += "# OF CHORDS: " + str(artistCalcs.numChords) + "\n"
+        logString += "============================================================\n"
 
         self._log(logString)
 
@@ -194,11 +222,13 @@ class ChartAnalyzer:
 
             for freshChartData in freshCharts:
                 songData = self.dbHandler.getSongById(freshChartData.songId)
-                print("Analyzing data for " + songData.title + "...")
+                print("  Analyzing " + songData.title + "...")
                 chartCalcs = self._analyzeChart(freshChartData)
 
                 self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
-                self._dumpCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
+                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
 
+            artistCalcs = self._analyzeArtist(artistData)
+            self._dumpArtistCalculationsToLog(artistData, artistCalcs)
 
         print("Data analyzed and persisted!")
