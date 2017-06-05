@@ -2,6 +2,7 @@ from music21 import harmony
 from music21 import converter
 
 from .objects.artistcalculations import ArtistCalculations
+from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 
 class ChartAnalyzer:
@@ -94,8 +95,16 @@ class ChartAnalyzer:
 
 
     def _analyzeChart(self, chartData):
-        analyzedKey, analyzedKeyCertainty = self._analyzeKey()
-        return None
+        """
+        Analyzes a chart,
+        """
+        chartCalcs = ChartCalculations()
+
+        analyzedKey, analyzedKeyCertainty = self._analyzeKey(chartData.chordsSpecific)
+        chartCalcs.key = analyzedKey
+        chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
+
+        return chartCalcs
 
 
     def analyzeFreshCharts(self):
@@ -107,6 +116,9 @@ class ChartAnalyzer:
 
             freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
 
-            for freshChart in freshCharts:
+            for freshChartData in freshCharts:
                 print("")
-                print(freshChart)
+                print(freshChartData)
+
+                chartCalcs = self._analyzeChart(freshChartData)
+                print(chartCalcs)

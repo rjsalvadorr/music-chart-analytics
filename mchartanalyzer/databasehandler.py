@@ -19,6 +19,7 @@ class DatabaseHandler:
 
     def _connect(self):
         if not self.dbOpened:
+            # This also creates a database if it doesn't exist!
             self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
             self.dbOpened = True
         return self.dbConnection.cursor()
@@ -140,14 +141,28 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def saveChartCalculationData(self, chartData):
+    def saveChartCalculationData(self, chartData, chartCalcs):
         """
         Saves chart calculations to the database.
         """
+        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\', 1, \'{updateTime}\')"
+        updateCalcsStmt = "UPDATE CHART_CALCS SET 'key' = \'{chordList}\', 'key_certainty' = \'{sectionList}\', 'chords_general' = \'{chordsGeneral}\', 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
+
+        updateChartStmt = "UPDATE CHARTS SET 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE id={chartId}"
+
         try:
             c = self._connect()
+            timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
-            # ...
+            if existingChart:
+                # Chart from this source already exists. Update it.
+                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+            else:
+                # Chart does not exist yet. Insert new record.
+                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+
+        except sqlite3.IntegrityError:
+            print('ERROR: ID already exists in PRIMARY KEY column!')
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -354,16 +369,29 @@ class DatabaseHandler:
         """
         Initializes database.
         Creates database file if it doesn't exist.
+        If a database already exists, this function will delete it and recreate it!
         """
+
         try:
+            # delete database if it exists.
+            os.remove(constants.DATABASE_FILE_PATH)
+        except OSError:
+            pass
+        try:
+
             c = self._connect()
 
             print("INITIALIZING DATABASE!")
-            c.execute("DELETE FROM ARTISTS")
-            c.execute("DELETE FROM ARTIST_CALCS")
-            c.execute("DELETE FROM CHARTS")
-            c.execute("DELETE FROM CHART_CALCS")
-            c.execute("DELETE FROM SONGS")
+
+            c.execute("CREATE TABLE ARTISTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT UNIQUE, `source_names` TEXT, `source_urls` TEXT, `update_time` TEXT )")
+            c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id) )")
+            c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
+
+            c.execute("CREATE TABLE \"ARTIST_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )")
+            c.execute("CREATE TABLE \"CHART_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `num_chords` INTEGER, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )")
+
+            c.execute("CREATE TABLE `ARTISTS_DUPL_ASC` ( `id` INTEGER, `primary_artist_id` INTEGER, `duplicate_artist_id` INTEGER, PRIMARY KEY(`id`) )")
+            c.execute("CREATE TABLE `SONGS_DUPL_ASC` ( `id` INTEGER, `primary_song_id` INTEGER, `duplicate_song_id` INTEGER, PRIMARY KEY(`id`) )")
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))

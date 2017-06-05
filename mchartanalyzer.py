@@ -71,9 +71,11 @@ mcAnalyzer = ChartAnalyzer()
 
 testModeEnabled = yamlData["testModeEnabled"]
 mcScraper.testModeEnabled = testModeEnabled
-
 scrapeCooldownEnabled = yamlData["scrapeCooldownEnabled"]
 mcScraper.scrapeCooldownEnabled = scrapeCooldownEnabled
+
+if initializeDatabaseEnabled:
+    dbHandler.initializeDatabase()
 
 if databasePurgeEnabled:
     dbHandler.purgeDatabase()
