@@ -1,5 +1,6 @@
 from music21 import harmony
 from music21 import converter
+from music21 import key
 
 from .objects.artistcalculations import ArtistCalculations
 from .objects.chartcalculations import ChartCalculations
@@ -33,8 +34,41 @@ class ChartAnalyzer:
         return None
 
 
-    def _analyzeArtist(artistData, chartDataList):
+    def _analyzeArtist(self, artistData, chartDataList):
         return None
+
+
+    def _convertChordSymbolToGeneral(self, chordSymbol, m21Key):
+        """
+        From a given key and chord symbol, return a chord symbol in roman numeral notation.
+        For example: ?????
+        """
+        formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
+
+        h = harmony.ChordSymbol(formattedChordSymbol)
+        h.key = key.Key(m21Key)
+
+        # print("chordSymbol=" + chordSymbol + ", formattedChordSymbol=" + formattedChordSymbol + ", m21Key=" + m21Key)
+        # print("h.romanNumeral.romanNumeral=" + h.romanNumeral.romanNumeral)
+        # print("h.romanNumeral=" + str(h.romanNumeral))
+
+        genericChordSymbol = h.romanNumeral.romanNumeral
+
+        return genericChordSymbol.replace("-", "b")
+
+
+    def _convertChordListToGeneral(self, chordList, keyString):
+        """
+        From a given key and chord symbol list, return a list of chord symbols in roman numeral notation.
+        For example: ?????
+        """
+        genericChordList = []
+
+        for chordSym in chordList:
+            formattedKeyString = self._convertKeyTextToMusic21(keyString)
+            genericChordList.append(self._convertChordSymbolToGeneral(chordSym, formattedKeyString))
+
+        return genericChordList
 
 
     def _convertToMusic21ChordSymbol(self, text):
@@ -55,7 +89,22 @@ class ChartAnalyzer:
         return formattedChordSymbol
 
 
-    def _convertMusic21Key(self, text):
+    def _convertKeyTextToMusic21(self, text):
+        """
+        Converts a regular key string to a music21 key string.
+        Music21 key strings use a lowercase tonic for minor keys, and use "-" as a flat accidental instead of "b".
+        For example, this method would convert "Bb Minor" to "b- minor"
+        """
+        textParts = text.split(" ")
+        fText = textParts[0].replace("b", "-")
+
+        if textParts[1].upper() == "MINOR":
+            fText = fText.lower()
+
+        return fText
+
+
+    def _convertMusic21KeyToText(self, text):
         """
         Converts a music21 key string to a regular one.
         Music21 key strings use a lowercase tonic for minor keys, and use "-" as a flat accidental instead of "b".
@@ -91,7 +140,7 @@ class ChartAnalyzer:
         littlePiece = converter.parse(tinyNotationString)
         k = littlePiece.analyze('key')
 
-        return (self._convertMusic21Key(str(k)), round(k.tonalCertainty(), 6))
+        return (self._convertMusic21KeyToText(str(k)), round(k.tonalCertainty(), 6))
 
 
     def _analyzeChart(self, chartData):
@@ -103,6 +152,7 @@ class ChartAnalyzer:
         analyzedKey, analyzedKeyCertainty = self._analyzeKey(chartData.chordsSpecific)
         chartCalcs.key = analyzedKey
         chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
+        chartCalcs.chordsGeneral = self._convertChordListToGeneral(chartData.chordsSpecific, analyzedKey)
 
         return chartCalcs
 
