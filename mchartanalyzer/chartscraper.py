@@ -45,9 +45,7 @@ class ChartScraper:
         dtNow = datetime.now()
         dtDifference = dtNow - dtScrape
 
-        print("Days between the dates: " + str(dtDifference.days))
-
-        if(dtDifference.days > 30):
+        if(dtDifference.days > constants.URL_SCRAPE_COOLDOWN_DAYS):
             return True
         else:
             return False
@@ -60,7 +58,7 @@ class ChartScraper:
         """
         scrapeSourceNames = []
         artistSourceUrls = []
-        print("Scraping for " + artistName + " songs...")
+        print("\nScraping for " + artistName + " songs...")
 
         # Set up artist information, then send it to the parser.
         for scrapeStrategy in self.scrapeStrategies:
@@ -71,22 +69,23 @@ class ChartScraper:
 
         # Scrape the chart sources for song charts, then call the parser for each one.
         for scrapeStrategy in self.scrapeStrategies:
-            songUrls = scrapeStrategy.getSongUrls(artistName)
+            songUrls = scrapeStrategy.getSongUrlsForArtist(artistName)
 
             for index, songUrl in enumerate(songUrls):
+                if self.testModeEnabled and index >= constants.TEST_MODE_SONG_LIMIT:
+                    break
+
                 if self.scrapeCooldownEnabled and not self._isUrlValidTarget(songUrl):
                     print("Invalid URL target: " + songUrl)
-                    break
+                else:
+                    print("Valid URL target: " + songUrl)
 
-                if self.testModeEnabled and index >= 3:
-                    break
+                    resp = requests.get(songUrl)
+                    pageContent = resp.content
+                    soup = BeautifulSoup(pageContent, "html.parser")
+                    chartContentHtml = soup.select(".js-tab-content")[0]
+                    chartContent = chartContentHtml.get_text()
 
-                resp = requests.get(songUrl)
-                pageContent = resp.content
-                soup = BeautifulSoup(pageContent, "html.parser")
-                chartContentHtml = soup.select(".js-tab-content")[0]
-                chartContent = chartContentHtml.get_text()
-
-                self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
+                    self.parser.parseChart(scrapeStrategy.getSongTitle(soup), songUrl, chartContent)
 
         print("Scraping complete!")

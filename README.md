@@ -9,7 +9,7 @@ The goal of this project is to shed some light on the *sonic fingerprint* of cer
 
 ## Overview
 
-This repo is split into two parts: a **scraper** and an **parser**. The scraper retrieves chord/tab sheets from certain websites, and makes it available for the parser to read.
+This repo has a few main parts: a **scraper**, **parser**, and **analyzer**. The scraper retrieves chord/tab sheets from certain websites, and makes it available for the parser to read and send to a database. The analyzer then takes that data and then plays around with it.
 
 ### Scraper
 
@@ -21,7 +21,10 @@ The parser will read through all those charts and identify key features of the s
 
 - Structure/Form: Verses, choruses, etc. We're interested in the number of sections, and their order.
 - Chords: The parser identifies the chords used in the song. Again, we're interested in the number of chords, their order, and number per section.
-- Lyrics: We can do a word count for the lyrics, and maybe make some rough estimates for complexity (using avg. word length, for example).
+
+### Analyzer
+
+...
 
 ## Usage
 

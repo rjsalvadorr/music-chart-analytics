@@ -1,9 +1,6 @@
 import re
-from music21 import harmony
-from music21 import converter
 
 from .databasehandler import DatabaseHandler
-from .logger import Logger
 from .objects.chartdata import ChartData
 from .objects.songdata import SongData
 from .objects.artistdata import ArtistData
@@ -25,8 +22,6 @@ class ChartParser:
     chordSymbols.extend(["13", "add13", "M13", "m13", "maj13"]) # THIRTEENTHS
     chordSymbols.extend(["7b9", "7#9", "67", "6/7", "add2", "5"]) # ALTERATIONS
 
-    logger = Logger()
-
 
     def __init__(self):
         self.dbHandler = DatabaseHandler()
@@ -37,13 +32,6 @@ class ChartParser:
     def _resetSongData(self):
         self.chordList = []
         self.sectionList = []
-
-        self.analyzedKey = None
-        self.analyzedKeyCertainty = None
-
-
-    def log(self, text):
-        ChartParser.logger.log(text)
 
 
     def _isChordSymbol(self, text):
@@ -88,63 +76,6 @@ class ChartParser:
         return finalPattern.fullmatch(text)
 
 
-    def _convertToMusic21ChordSymbol(self, text):
-        """
-        Converts regular chord symbols into ones that music21 understands.
-        The main difference: the flat accidental is "-" on music21, not "b".
-        For example, this method would convert "Bbm7" to "B-m7"
-        """
-        formattedChordSymbol = text.replace("b", "-")
-        # Specific replacements below were added after certain music21 errors.
-        # TODO - find a better way to avoid these issues!
-        formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
-        formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
-        formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj")
-        formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
-        formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
-
-        return formattedChordSymbol
-
-
-    def _convertMusic21Key(self, text):
-        """
-        Converts a music21 key string to a regular one.
-        Music21 key strings use a lowercase tonic for minor keys, and use "-" as a flat accidental instead of "b".
-        For example, this method would convert "b- minor" to "Bb Minor"
-        """
-        fText = text.title()
-        return fText.replace("-", "b")
-
-
-    def _analyzeKey(self):
-        """
-        Determines the song's key by analyzing the chords in the current song.
-        """
-        # Get the pitches used in the current song's chords
-        # And assemble those pitches into a large tinynotation string
-        tinyNotationString = "tinyNotation: 4/4 "
-        for chordSymbol in self.chordList:
-            formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
-            try:
-                h = harmony.ChordSymbol(formattedChordSymbol)
-                for rawPitch in h.pitches:
-                    tnPitch = str(rawPitch)
-                    tnPitch = tnPitch[:-1] # Removes the octave number from the pitch string
-                    tinyNotationString += tnPitch + " "
-            except ValueError as exc:
-                print("Chord parsing failed due to " + repr(exc))
-            except Exception as exc:
-                print("UNEXPECTED ERROR: " + repr(exc))
-                print(traceback.format_exc())
-
-        littlePiece = converter.parse(tinyNotationString)
-        k = littlePiece.analyze('key')
-
-        self.analyzedKeyCertainty = str(round(k.tonalCertainty(), 5))
-
-        return self._convertMusic21Key(str(k))
-
-
     def _parseChords(self, chartText):
         """
         Parses the chord chart for chord symbols, such as "Gmaj7" or "F#m7b5"
@@ -154,7 +85,15 @@ class ChartParser:
         tokens = chartText.split()
         for token in tokens:
             if self._isChordSymbol(token):
-                chords.append(self._removeSlashChordBass(token))
+                formattedToken = self._removeSlashChordBass(token)
+
+                if len(chords) == 0:
+                    # if the chords list is empty, add the chordSymbol
+                    chords.append(formattedToken)
+                else:
+                    if formattedToken != chords[-1]:
+                        # add the chord symbol only if it's different from the previous one.
+                        chords.append(formattedToken)
 
         return chords
 
@@ -192,8 +131,8 @@ class ChartParser:
         chartData = ChartData()
         lines = chartContent.splitlines()
 
-        chartData.artist = self.artistData.name
-        chartData.title = songTitle.upper()
+        chartData.artist = self.artistData.name # TODO - check if this is still needed
+        chartData.title = songTitle.upper() # TODO - check if this is still needed
         chartData.source = chartSourceUrl
 
         for line in lines:
@@ -201,13 +140,9 @@ class ChartParser:
             self.sectionList.extend(self._parseSections(line))
 
         chartData.chordsSpecific = self.chordList
-        chartData.key = self._analyzeKey()
-        chartData.keyAnalysisCertainty = self.analyzedKeyCertainty
         chartData.sections = self.sectionList
 
         self._resetSongData()
-        self.log(chartData.toLogString())
-        self.log("----------\n")
 
         print("Parsed data for " + chartData.title)
 
@@ -226,16 +161,9 @@ class ChartParser:
         freshArtistData = ArtistData()
         freshArtistData.name = name.upper()
         freshArtistData.sourceNames = sources
-        freshArtistData.soureUrls = artistSourceUrls
+        freshArtistData.sourceUrls = artistSourceUrls
 
         self.artistData = freshArtistData
 
         print("Saving artist data to database...")
         self.dbHandler.saveArtistData(self.artistData)
-
-
-    def analyzeData(self):
-        """
-        Calls a series of internal analysis methods to analyze data and get it ready for persistence.
-        """
-        return 0
