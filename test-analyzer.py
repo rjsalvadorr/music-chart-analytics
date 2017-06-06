@@ -33,3 +33,8 @@ for index, chordSym in enumerate(chordSymbolList2):
 print(keyList[2])
 for index, chordSym in enumerate(chordSymbolList3):
     print(chordSym + " -> " + genChordList3[index])
+
+print("\n===== GETTING MOST COMMON CHORDS =====")
+chordList = "F,F9,C,F9,C,G,F,F9,C,F9,C,G,F,G,Em7,F,G,F,F9,C,F9,C,G,F,F9,C,F9,C,G,F,G,Em7,F,G,B,E,A,D,G,F,G,Em7,F,G".split(",")
+res = cAnalyzer._getMostCommonChords(chordList)
+print(res)

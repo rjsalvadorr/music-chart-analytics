@@ -5,6 +5,7 @@ from music21 import key
 from .objects.artistcalculations import ArtistCalculations
 from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
+from . import constants
 from .logger import Logger
 
 class ChartAnalyzer:
@@ -30,8 +31,50 @@ class ChartAnalyzer:
         return None
 
 
-    def _getMostCommonChords(self, chartData):
-        return None
+    def _getMostCommonChords(self, chordList):
+        """
+        Gets the most common chord symbols in the given chord list.
+        Returns a dictionary with chord symbols as keys, and counts as values.
+        Output is limited to the five most common chords.
+        """
+        rawDict = dict()
+        returnDict = dict()
+
+
+        for chordSym in chordList:
+            if chordSym in rawDict:
+                # if the chord is already in the dictionary, increment counter
+                rawDict[chordSym] = rawDict[chordSym] + 1
+            else:
+                # if it's a new chord, create a new dict entry
+                rawDict[chordSym] = 1
+
+        return rawDict
+
+
+    def _mergeMostCommonChords(self, dict1, dict2):
+        # dict1 is considered the "trunk" that we're merging dict2 into.
+        for chordSym in dict2:
+            if chordSym in dict1:
+                # if the chord is already in the dictionary, add both values together
+                dict1[chordSym] = dict1[chordSym] + dict2[chordSym]
+            else:
+                # if it's a new chord, create a new dict entry
+                dict1[chordSym] = dict2[chordSym]
+
+        return dict1
+
+
+    def _trimDictionary(self, oldDict, limit):
+        newDict = dict()
+        ctr = 0
+        for dKey in sorted(oldDict, key=oldDict.get, reverse=True):
+            ctr += 1
+            newDict[dKey] = oldDict[dKey]
+            if ctr >= limit:
+                break
+
+        return newDict
 
 
     def _getNumKeys(self, chartData):
@@ -194,13 +237,22 @@ class ChartAnalyzer:
 
     def _dumpArtistCalculationsToLog(self, artistData, artistCalcs):
         logString = "\n============================================================\n"
-        logString += "  ARTIST: " + artistData.name + "\n"
+        logString += " ARTIST: " + artistData.name + "\n"
         logString += "============================================================\n"
-        logString += "  SONGS ENCOUNTERED: " + str(artistCalcs.numSongs) + "\n"
-        logString += "  CHARTS ENCOUNTERED: " + str(artistCalcs.numCharts) + "\n"
-        logString += "  SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
-        logString += "  SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
-        logString += "  CHORDS ENCOUNTERED: " + str(artistCalcs.numChords) + "\n"
+        logString += " SONGS: " + str(artistCalcs.numSongs) + "\n"
+        logString += " CHARTS: " + str(artistCalcs.numCharts) + "\n"
+        logString += " SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
+        logString += " SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
+        logString += " CHORDS ENCOUNTERED: " + str(artistCalcs.numChords) + "\n"
+
+        logString += " MOST COMMON CHORDS (SPECIFIC):\n"
+        for chordSym in artistCalcs.mostCommonChordsSpecific:
+            logString += "    " + chordSym + " - seen " + str(artistCalcs.mostCommonChordsSpecific[chordSym]) + " times\n"
+
+        logString += " MOST COMMON CHORDS (GENERIC):\n"
+        for chordSym in artistCalcs.mostCommonChordsGeneric:
+            logString += "    " + chordSym + " - seen " + str(artistCalcs.mostCommonChordsGeneric[chordSym]) + " times\n"
+
         logString += "============================================================\n"
 
         self._log(logString)
@@ -216,6 +268,8 @@ class ChartAnalyzer:
         for artistData in freshArtists:
             print("Analyzing data for " + artistData.name + "...")
             freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
+            totalMostCommonChordsSpec = dict()
+            totalMostCommonChordsGen = dict()
 
             for freshChartData in freshCharts:
                 songData = self.dbHandler.getSongById(freshChartData.songId)
@@ -225,7 +279,19 @@ class ChartAnalyzer:
                 self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
                 self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
 
+                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
+                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+
+                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
+                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
+
+            finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
+            finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
+
             artistCalcs = self._analyzeArtist(artistData)
+            artistCalcs.mostCommonChordsSpecific = finalDictSpec
+            artistCalcs.mostCommonChordsGeneric = finalDictGen
+
             self._dumpArtistCalculationsToLog(artistData, artistCalcs)
 
         print("Data analyzed and persisted!")
