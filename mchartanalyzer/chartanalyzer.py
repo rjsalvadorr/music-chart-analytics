@@ -170,12 +170,9 @@ class ChartAnalyzer:
         """
         Analyzes an artist. Returns an ArtistCalculations object.
         """
-        artistCalcs = ArtistCalculations()
+        artistCalcs = self.dbHandler.getBasicArtistStatistics(artistData)
 
-        artistCalcs.numSongs = 0
-        artistCalcs.numCharts = 0
-        artistCalcs.numMajorKeys = 0
-        artistCalcs.numMinorKeys = 0
+        # DO OTHER ANALYSIS HERE
 
         return artistCalcs
 
@@ -197,13 +194,13 @@ class ChartAnalyzer:
 
     def _dumpArtistCalculationsToLog(self, artistData, artistCalcs):
         logString = "\n============================================================\n"
-        logString += "ARTIST: " + artistData.name + "\n"
+        logString += "  ARTIST: " + artistData.name + "\n"
         logString += "============================================================\n"
-        logString += "# OF SONGS: " + str(artistCalcs.numSongs) + "\n"
-        logString += "# OF CHARTS: " + str(artistCalcs.numCharts) + "\n"
-        logString += "# OF SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
-        logString += "# OF SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
-        logString += "# OF CHORDS: " + str(artistCalcs.numChords) + "\n"
+        logString += "  SONGS ENCOUNTERED: " + str(artistCalcs.numSongs) + "\n"
+        logString += "  CHARTS ENCOUNTERED: " + str(artistCalcs.numCharts) + "\n"
+        logString += "  SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
+        logString += "  SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
+        logString += "  CHORDS ENCOUNTERED: " + str(artistCalcs.numChords) + "\n"
         logString += "============================================================\n"
 
         self._log(logString)

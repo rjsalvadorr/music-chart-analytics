@@ -7,6 +7,8 @@ from . import constants
 from .objects.artistdata import ArtistData
 from .objects.songdata import SongData
 from .objects.chartdata import ChartData
+from .objects.artistcalculations import ArtistCalculations
+from .objects.chartcalculations import ChartCalculations
 
 class DatabaseHandler:
     """
@@ -403,6 +405,45 @@ class DatabaseHandler:
             self._close()
 
         return chartRecords
+
+
+    def getBasicArtistStatistics(self, artistData):
+        """
+        For a given artist, retrieves basic statistics.
+        """
+        artistCalcs = ArtistCalculations()
+
+        stmtArtistSongs = "SELECT SONGS.*, CHART_CALCS.key FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ? GROUP BY SONGS.id"
+
+        stmtArtistCharts = "SELECT CHARTS.*, CHART_CALCS.num_chords FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ?"
+
+        try:
+            c = self._connect()
+
+            c.execute(stmtArtistSongs, (artistData.id,))
+            for row in c:
+                artistCalcs.numSongs += 1
+                keyString = row[4]
+                if keyString.lower().find("major") >= 0:
+                    artistCalcs.numMajorKeys += 1
+
+            c.execute(stmtArtistCharts, (artistData.id,))
+            for row in c:
+                artistCalcs.numCharts += 1
+                artistCalcs.numChords += row[7]
+
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        artistCalcs.numMinorKeys = artistCalcs.numCharts - artistCalcs.numMajorKeys
+
+
+        return artistCalcs
 
 
     def initializeDatabase(self):
