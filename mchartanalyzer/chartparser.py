@@ -149,7 +149,6 @@ class ChartParser:
         newSongData = SongData()
         newSongData.title = chartData.title
 
-        print("Saving song and chart data to database...")
         self.dbHandler.saveSongData(self.artistData, newSongData)
         self.dbHandler.saveChartData(newSongData, chartData)
 

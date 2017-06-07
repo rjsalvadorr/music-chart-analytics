@@ -33,7 +33,7 @@ print("sqlite3.sqlite_version = " + sqlite3.sqlite_version + "\n")
 # Reading program arguments
 if len(sys.argv) > 0:
     for arg in sys.argv:
-        if(arg.lower() == "--help" or arg.lower() == "-?"):
+        if(arg.lower() == "--help" or arg.lower() == "-?" or arg.lower() == "?"):
             print("AVAILABLE FLAGS:\n")
             print("--initialize-database")
             print("    For local database use. Initializes the database by setting up the table structure.\n")
@@ -85,8 +85,7 @@ if databasePurgeEnabled:
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)
 
-print ("\nAnalyzing charts...")
 mcAnalyzer.analyzeFreshCharts()
 
-print("Finished!")
+print("\nFinished!")
 sys.exit(0)

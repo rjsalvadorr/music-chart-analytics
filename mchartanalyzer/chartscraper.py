@@ -76,9 +76,9 @@ class ChartScraper:
                     break
 
                 if self.scrapeCooldownEnabled and not self._isUrlValidTarget(songUrl):
-                    print("Invalid URL target: " + songUrl)
+                    print("Skipping chart: " + songUrl)
                 else:
-                    print("Valid URL target: " + songUrl)
+                    print("Parsing chart in: " + songUrl)
 
                     resp = requests.get(songUrl)
                     pageContent = resp.content
