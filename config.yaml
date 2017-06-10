@@ -3,8 +3,6 @@
 # Artists whose songs will be analyzed
 artists:
   - Marvin Gaye
-  - Phish
-  - Michael Jackson
   - System of a Down
 
 # If true, log files will be written for each run of the program

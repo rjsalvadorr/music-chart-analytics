@@ -1,3 +1,5 @@
+import re
+
 from music21 import harmony
 from music21 import converter
 from music21 import key
@@ -18,14 +20,6 @@ class ChartAnalyzer:
 
     def __init__(self):
         self.dbHandler = DatabaseHandler()
-
-
-    def _getNumKeys(self, chartDataList):
-        return None
-
-
-    def _getNumMajorKeys(self, chartDataList):
-        return None
 
 
     def _getMostCommonChordProgressions(self, numChords, chartData):
@@ -100,7 +94,8 @@ class ChartAnalyzer:
         mChord = harmony.ChordSymbol(formattedChordSymbol)
         mKey = key.Key(m21Key)
         mRomanNumeral = roman.romanNumeralFromChord(mChord, mKey)
-        genericChordSymbol = mRomanNumeral.figure
+
+        genericChordSymbol = mRomanNumeral.romanNumeral + " " + mChord.commonName
 
         return genericChordSymbol.replace("-", "b")
 
@@ -261,6 +256,42 @@ class ChartAnalyzer:
         if(len(freshArtists) == 0):
             print("No fresh data! No analysis will be done.")
             return
+
+        for artistData in freshArtists:
+            print("\nAnalyzing data for " + artistData.name + "...")
+            freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
+            totalMostCommonChordsSpec = dict()
+            totalMostCommonChordsGen = dict()
+
+            for freshChartData in freshCharts:
+                songData = self.dbHandler.getSongById(freshChartData.songId)
+                chartCalcs = self._analyzeChart(freshChartData)
+
+                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
+                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
+
+                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
+                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+
+                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
+                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
+
+                print("    Analyzed " + songData.title)
+
+            finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
+            finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
+
+            artistCalcs = self._analyzeArtist(artistData)
+            artistCalcs.mostCommonChordsSpecific = finalDictSpec
+            artistCalcs.mostCommonChordsGeneric = finalDictGen
+
+            self._dumpArtistCalculationsToLog(artistData, artistCalcs)
+
+        print("\nData analyzed and persisted!")
+
+
+    def analyzeAllCharts(self):
+        freshArtists = self.dbHandler.getAllArtists()
 
         for artistData in freshArtists:
             print("\nAnalyzing data for " + artistData.name + "...")

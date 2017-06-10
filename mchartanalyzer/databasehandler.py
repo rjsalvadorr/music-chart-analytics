@@ -373,6 +373,37 @@ class DatabaseHandler:
         return artistRecords
 
 
+    def getAllArtists(self):
+        """
+        Retrieves artists.
+        Returns an empty list if there are no such artists
+        """
+        artistRecords = []
+        try:
+            c = self._connect()
+
+            c.execute("SELECT * FROM ARTISTS")
+            for row in c:
+                newArtistData = ArtistData()
+
+                newArtistData.id = row[0]
+                newArtistData.name = row[1]
+                newArtistData.setSourceNamesFromString(row[2])
+                newArtistData.setSourceUrlsFromString(row[3])
+                newArtistData.updateTime = row[4]
+
+                artistRecords.append(newArtistData)
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return artistRecords
+
+
     def getFreshChartsForArtist(self, artistName):
         """
         For a given artist, retrieves charts that haven't been analyzed yet.
@@ -383,6 +414,40 @@ class DatabaseHandler:
             c = self._connect()
 
             c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?", (artistName.upper(),))
+
+            for row in c:
+                newChartData = ChartData()
+
+                newChartData.id = row[0]
+                newChartData.songId = row[1]
+                newChartData.source = row[2]
+                newChartData.setChordListFromString(row[3])
+                newChartData.setSectionsFromString(row[4])
+                newChartData.isNew = row[5]
+                newChartData.updateTime = row[6]
+
+                chartRecords.append(newChartData)
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return chartRecords
+
+
+    def getFreshChartsForArtist(self, artistName):
+        """
+        For a given artist, retrieves charts that haven't been analyzed yet.
+        Returns an empty list if there are no new charts.
+        """
+        chartRecords = []
+        try:
+            c = self._connect()
+
+            c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?", (artistName.upper(),))
 
             for row in c:
                 newChartData = ChartData()
