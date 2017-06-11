@@ -80,8 +80,6 @@ class DatabaseHandler:
         Saves song data to the database.
         If a song with the same name exists in the database, nothing happens.
         """
-
-        # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
         insertStmt = "INSERT INTO SONGS('artist_id','title','update_time') VALUES ({artistId}, \'{songTitle}\', \'{updateTime}\')"
 
         try:
@@ -186,7 +184,6 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
-
             # ...
 
         except Exception as exc:
@@ -231,7 +228,8 @@ class DatabaseHandler:
         # If it gets to this point, I don't even know what to do.
         return None
 
-
+    # TODO - fix this method, so it's getting a song by title AND artist name!!!
+    # Remember, multiple musicians can release songs with the same title!!
     def getSongByTitle(self, title, keepConnectionOpen=None):
         """
         Retrieves a song with the given title.
@@ -296,6 +294,40 @@ class DatabaseHandler:
                 self._close()
 
         return 0
+
+
+    def getChartsForSong(self, songData):
+        """
+        Retrieves all charts for a given song.
+        """
+        chartRecords = []
+        try:
+            c = self._connect()
+
+            c.execute("SELECT CHARTS.* FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.song_id = ?", (songData.id,))
+
+            for row in c:
+                newChartData = ChartData()
+
+                newChartData.id = row[0]
+                newChartData.songId = row[1]
+                newChartData.source = row[2]
+                newChartData.setChordListFromString(row[3])
+                newChartData.setSectionsFromString(row[4])
+                newChartData.isNew = row[5]
+                newChartData.isDefinitive = row[6]
+                newChartData.updateTime = row[7]
+
+                chartRecords.append(newChartData)
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            self._close()
+
+        return chartRecords
 
 
     def getChartByUrl(self, sourceUrl, keepConnectionOpen=None):
@@ -416,7 +448,8 @@ class DatabaseHandler:
                 newChartData.setChordListFromString(row[3])
                 newChartData.setSectionsFromString(row[4])
                 newChartData.isNew = row[5]
-                newChartData.updateTime = row[6]
+                newChartData.isDefinitive = row[6]
+                newChartData.updateTime = row[7]
 
                 chartRecords.append(newChartData)
 
@@ -430,7 +463,7 @@ class DatabaseHandler:
         return chartRecords
 
 
-    def getFreshChartsForArtist(self, artistName):
+    def getAllChartsForArtist(self, artistName):
         """
         For a given artist, retrieves charts that haven't been analyzed yet.
         Returns an empty list if there are no new charts.
@@ -450,7 +483,8 @@ class DatabaseHandler:
                 newChartData.setChordListFromString(row[3])
                 newChartData.setSectionsFromString(row[4])
                 newChartData.isNew = row[5]
-                newChartData.updateTime = row[6]
+                newChartData.isDefinitive = row[6]
+                newChartData.updateTime = row[7]
 
                 chartRecords.append(newChartData)
 

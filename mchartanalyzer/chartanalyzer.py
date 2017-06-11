@@ -186,7 +186,7 @@ class ChartAnalyzer:
         return (self._convertMusic21KeyToText(str(k)), round(k.tonalCertainty(), 6))
 
 
-    def _analyzeChart(self, chartData):
+    def _getBasicChartCalculations(self, chartData):
         """
         Analyzes a chart. Returns an ChartCalculations object.
         """
@@ -250,77 +250,59 @@ class ChartAnalyzer:
         self._log(logString)
 
 
+    def _analyzeCharts(self, artistDataList):
+        """
+        Perform analysis on song charts associated to certain artists.
+        """
+        for artistData in artistDataList:
+            print("\nAnalyzing data for " + artistData.name + "...")
+            freshCharts = self.dbHandler.getAllChartsForArtist(artistData.name)
+            totalMostCommonChordsSpec = dict()
+            totalMostCommonChordsGen = dict()
+
+            for freshChartData in freshCharts:
+                songData = self.dbHandler.getSongById(freshChartData.songId)
+                chartCalcs = self._getBasicChartCalculations(freshChartData)
+
+                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
+                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
+
+                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
+                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+
+                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
+                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
+
+                print("    Analyzed " + songData.title)
+
+            finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
+            finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
+
+            artistCalcs = self._analyzeArtist(artistData)
+            artistCalcs.mostCommonChordsSpecific = finalDictSpec
+            artistCalcs.mostCommonChordsGeneric = finalDictGen
+
+            self._dumpArtistCalculationsToLog(artistData, artistCalcs)
+
+        print("\nData analyzed and persisted!")
+
+
     def analyzeFreshCharts(self):
+        """
+        Perform analysis on artists with fresh data.
+        """
         freshArtists = self.dbHandler.getArtistsWithFreshCharts()
 
         if(len(freshArtists) == 0):
             print("No fresh data! No analysis will be done.")
             return
 
-        for artistData in freshArtists:
-            print("\nAnalyzing data for " + artistData.name + "...")
-            freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
-            totalMostCommonChordsSpec = dict()
-            totalMostCommonChordsGen = dict()
-
-            for freshChartData in freshCharts:
-                songData = self.dbHandler.getSongById(freshChartData.songId)
-                chartCalcs = self._analyzeChart(freshChartData)
-
-                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
-                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
-
-                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
-                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
-
-                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
-                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
-
-                print("    Analyzed " + songData.title)
-
-            finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
-            finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
-
-            artistCalcs = self._analyzeArtist(artistData)
-            artistCalcs.mostCommonChordsSpecific = finalDictSpec
-            artistCalcs.mostCommonChordsGeneric = finalDictGen
-
-            self._dumpArtistCalculationsToLog(artistData, artistCalcs)
-
-        print("\nData analyzed and persisted!")
+        self._analyzeCharts(freshArtists)
 
 
     def analyzeAllCharts(self):
-        freshArtists = self.dbHandler.getAllArtists()
-
-        for artistData in freshArtists:
-            print("\nAnalyzing data for " + artistData.name + "...")
-            freshCharts = self.dbHandler.getFreshChartsForArtist(artistData.name)
-            totalMostCommonChordsSpec = dict()
-            totalMostCommonChordsGen = dict()
-
-            for freshChartData in freshCharts:
-                songData = self.dbHandler.getSongById(freshChartData.songId)
-                chartCalcs = self._analyzeChart(freshChartData)
-
-                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
-                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
-
-                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
-                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
-
-                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
-                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
-
-                print("    Analyzed " + songData.title)
-
-            finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
-            finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
-
-            artistCalcs = self._analyzeArtist(artistData)
-            artistCalcs.mostCommonChordsSpecific = finalDictSpec
-            artistCalcs.mostCommonChordsGeneric = finalDictGen
-
-            self._dumpArtistCalculationsToLog(artistData, artistCalcs)
-
-        print("\nData analyzed and persisted!")
+        """
+        Perform analysis on all artists.
+        """
+        allArtists = self.dbHandler.getAllArtists()
+        self._analyzeCharts(allArtists)
