@@ -66,8 +66,9 @@ class DatabaseHandler:
                 # print("Running query: " + finalQuery)
                 c.execute(finalQuery)
 
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as exc:
             print('ERROR: ID already exists in PRIMARY KEY column!')
+            print(repr(exc))
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -98,8 +99,9 @@ class DatabaseHandler:
                 # print("Running query: " + finalQuery)
                 c.execute(finalQuery)
 
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as exc:
             print('ERROR: ID already exists in PRIMARY KEY column!')
+            print(repr(exc))
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -116,7 +118,8 @@ class DatabaseHandler:
         """
 
         # Sample SQLite snippet: INSERT INTO CHARTS('id','song_id','source_url','chords_specific','sections','is_new','update_time') VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{updateTime}\')"
+        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','is_definitive','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{isDefinitive}\', \'{updateTime}\')"
+
         updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE song_id={songId} AND source_url=\'{url}\'"
 
         try:
@@ -127,13 +130,14 @@ class DatabaseHandler:
 
             if existingChart:
                 # Chart from this source already exists. Update it.
-                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
             else:
                 # Chart does not exist yet. Insert new record.
-                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
 
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as exc:
             print('ERROR: ID already exists in PRIMARY KEY column!')
+            print(repr(exc))
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -147,19 +151,21 @@ class DatabaseHandler:
         """
         Saves chart calculations to the database.
         """
-        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'num_chords', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\',  \'{numChords}\', \'{updateTime}\')"
+        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'num_chords', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\', \'{numChords}\', \'{updateTime}\')"
+
         updateCalcsStmt = "UPDATE CHART_CALCS SET 'key' = \'{key}\', 'key_certainty' = \'{keyCertainty}\', 'chords_general' = \'{chordsGeneral}\', 'num_chords' = \'{numChords}\', 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
 
-        updateChartStmt = "UPDATE CHARTS SET 'is_new' = 0, 'update_time' = \'{updateTime}\' WHERE id={chartId}"
+        updateChartStmt = "UPDATE CHARTS SET is_new = 0, update_time = \'{updateTime}\' WHERE id={chartId}"
 
-        selectCalcsStmt = "SELECT * from CHART_CALCS WHERE 'chart_id' = {chartId}"
+        selectCalcsStmt = "SELECT * from CHART_CALCS WHERE chart_id = {chartId}"
 
         try:
             c = self._connect()
             c.execute(selectCalcsStmt.format(chartId=chartData.id))
+            existingChartCalc = c.fetchone()
             timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
-            if c.rowcount > 0:
+            if existingChartCalc:
                 # Chart from this source already exists. Update it.
                 c.execute(updateCalcsStmt.format(chartId=chartData.id, key=chartCalcs.key, keyCertainty=chartCalcs.keyAnalysisCertainty, chordsGeneral=chartCalcs.getChordListString(), numChords=chartCalcs.numChords, updateTime=timestampStr))
             else:
@@ -170,8 +176,9 @@ class DatabaseHandler:
             c.execute(updateChartStmt.format(chartId=chartData.id,  updateTime=timestampStr))
 
 
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as exc:
             print('ERROR: ID already exists in PRIMARY KEY column!')
+            print(repr(exc))
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -318,7 +325,8 @@ class DatabaseHandler:
                 newChartData.setChordListFromString(row[3])
                 newChartData.setSectionsFromString(row[4])
                 newChartData.isNew = row[5]
-                newChartData.updateTime = row[6]
+                newChartData.isDefinitive = row[6]
+                newChartData.updateTime = row[7]
 
                 return newChartData
             else:
@@ -495,7 +503,7 @@ class DatabaseHandler:
             c.execute(stmtArtistCharts, (artistData.id,))
             for row in c:
                 artistCalcs.numCharts += 1
-                artistCalcs.numChords += row[7]
+                artistCalcs.numChords += row[8]
 
 
         except Exception as exc:
@@ -521,17 +529,19 @@ class DatabaseHandler:
         try:
             # delete database if it exists.
             os.remove(constants.DATABASE_FILE_PATH)
-        except OSError:
-            pass
+            print("Database file deleted!")
+        except OSError as exc:
+            print(repr(exc))
+
         try:
 
             c = self._connect()
 
-            print("INITIALIZING DATABASE!")
+            print("Initializing Database!")
 
             c.execute("CREATE TABLE ARTISTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT UNIQUE, `source_names` TEXT, `source_urls` TEXT, `update_time` TEXT )")
             c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id) )")
-            c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
+            c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `is_definitive` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
 
             c.execute("CREATE TABLE \"ARTIST_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )")
             c.execute("CREATE TABLE \"CHART_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `num_chords` INTEGER, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )")

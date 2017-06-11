@@ -13,6 +13,7 @@ class ChartData(BaseDataObject):
         self.chordsSpecific = []
         self.sections = []
         self.isNew = 0
+        self.isDefinitive = 0
 
         # properties not used in the database
         self.artist = None
