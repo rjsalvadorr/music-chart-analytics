@@ -45,8 +45,6 @@ class DatabaseHandler:
         """
         Saves artist data to the database.
         """
-
-        # Sample SQLite snippet: INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES ('test_script','sources','urls','times');
         insertStmt = "INSERT INTO ARTISTS('name','source_names','source_urls','update_time') VALUES (\'{artistName}\', \'{sourceNames}\', \'{sourceUrls}\', \'{updateTime}\')"
         updateStmt = "UPDATE ARTISTS SET 'source_names' = \'{sourceNames}\', 'source_urls' = \'{sourceUrls}\', 'update_time' = \'{updateTime}\' WHERE name=\'{artistName}\'"
 
@@ -67,7 +65,6 @@ class DatabaseHandler:
                 c.execute(finalQuery)
 
         except sqlite3.IntegrityError as exc:
-            print('ERROR: ID already exists in PRIMARY KEY column!')
             print(repr(exc))
 
         except Exception as exc:
@@ -100,7 +97,6 @@ class DatabaseHandler:
                 c.execute(finalQuery)
 
         except sqlite3.IntegrityError as exc:
-            print('ERROR: ID already exists in PRIMARY KEY column!')
             print(repr(exc))
 
         except Exception as exc:
@@ -116,8 +112,6 @@ class DatabaseHandler:
         Saves chart data to the database.
         If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
         """
-
-        # Sample SQLite snippet: INSERT INTO CHARTS('id','song_id','source_url','chords_specific','sections','is_new','update_time') VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL);
         insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','is_definitive','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{isDefinitive}\', \'{updateTime}\')"
 
         updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE song_id={songId} AND source_url=\'{url}\'"
@@ -136,7 +130,6 @@ class DatabaseHandler:
                 c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
 
         except sqlite3.IntegrityError as exc:
-            print('ERROR: ID already exists in PRIMARY KEY column!')
             print(repr(exc))
 
         except Exception as exc:
@@ -177,7 +170,6 @@ class DatabaseHandler:
 
 
         except sqlite3.IntegrityError as exc:
-            print('ERROR: ID already exists in PRIMARY KEY column!')
             print(repr(exc))
 
         except Exception as exc:
@@ -351,14 +343,6 @@ class DatabaseHandler:
         artistRecords = []
         try:
             c = self._connect()
-
-            # Sample Query:
-            # SELECT ARTISTS.* FROM ARTISTS
-            # INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id
-            # INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id
-            # WHERE CHARTS.is_new != 0
-            # GROUP BY ARTISTS.name
-
             c.execute("SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name")
             for row in c:
                 newArtistData = ArtistData()
