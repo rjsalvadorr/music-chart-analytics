@@ -5,7 +5,7 @@ class ChartData(BaseDataObject):
     Encapsulates data extracted from a chord chart.
     """
 
-    def __init__(self):
+    def __init__(self, databaseRow=None):
         BaseDataObject.__init__(self)
 
         self.songId = 0
@@ -13,11 +13,19 @@ class ChartData(BaseDataObject):
         self.chordsSpecific = []
         self.sections = []
         self.isNew = 0
-        self.isDefinitive = 0
 
         # properties not used in the database
         self.artist = None
         self.title = None
+
+        if databaseRow:
+            self.id = databaseRow[0]
+            self.songId = databaseRow[1]
+            self.source = databaseRow[2]
+            self.chordsSpecific = databaseRow[3]
+            self.sections = databaseRow[4]
+            self.isNew = databaseRow[5]
+            self.updateTime = databaseRow[6]
 
 
     def setChordListFromString(self, chordListStr):
