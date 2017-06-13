@@ -24,6 +24,7 @@ class DatabaseHandler:
             # This also creates a database if it doesn't exist!
             self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
             self.dbOpened = True
+            print("---- DB connection opened")
         return self.dbConnection.cursor()
 
     def _commit(self):
@@ -39,6 +40,56 @@ class DatabaseHandler:
             self.dbConnection.commit()
             self.dbConnection.close()
             self.dbOpened = False
+            print("---- DB connection closed")
+
+    def _executeOperation(self, statement, keepConnectionOpen=None):
+        """
+        Executes a database operation, and doesn't return a value.
+        Intended for insert/update/delete operations.
+        :param query:
+        """
+        try:
+            c = self._connect()
+            c.execute(statement)
+
+        except sqlite3.IntegrityError as exc:
+            print(repr(exc))
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            if keepConnectionOpen:
+                self._commit()
+            else:
+                self._commitAndClose()
+
+    def _executeQuery(self, query, keepConnectionOpen=None):
+        """
+        Executes a query, and returns any retrieved rows.
+        For queries that return no rows, this function will return an empty list.
+        Intended for select statements.
+        :param query:
+        :return: rows
+        """
+        try:
+            c = self._connect()
+            c.execute(query)
+            return c.fetchall()
+
+        except sqlite3.IntegrityError as exc:
+            print(repr(exc))
+
+        except Exception as exc:
+            print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+        finally:
+            if keepConnectionOpen:
+                self._commit()
+            else:
+                self._commitAndClose()
 
 
     def saveArtistData(self, artistData):
@@ -85,7 +136,7 @@ class DatabaseHandler:
         try:
             c = self._connect()
             existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
-            existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
+            existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if not existingSong:
@@ -105,7 +156,7 @@ class DatabaseHandler:
             self._commitAndClose()
 
 
-    def saveChartData(self, songData, chartData):
+    def saveChartData(self, artistData, songData, chartData):
         """
         Saves chart data to the database.
         If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
@@ -117,14 +168,14 @@ class DatabaseHandler:
         try:
             c = self._connect()
             existingChart = self.getChartByUrl(chartData.source, keepConnectionOpen=True)
-            existingSong = self.getSongByTitle(songData.title, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if existingChart:
                 # Chart from this source already exists. Update it.
-                c.execute(updateStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
+                c.execute(updateStmt.format(songId=existingChart.songId, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
             else:
                 # Chart does not exist yet. Insert new record.
+                existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
                 c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
 
         except sqlite3.IntegrityError as exc:
@@ -177,7 +228,6 @@ class DatabaseHandler:
         finally:
             self._commitAndClose()
 
-
     def saveArtistCalculationData(self, chartData):
         """
         Saves artist calculations to the database.
@@ -193,131 +243,54 @@ class DatabaseHandler:
         finally:
             self._commitAndClose()
 
-
     def getArtistByName(self, artistName, keepConnectionOpen=None):
         """
         Retrieves an artist with the given name.
         Returns "None" if a record isn't found.
         """
-        try:
-            c = self._connect()
-            c.execute("SELECT * FROM ARTISTS WHERE name = ?", (artistName,))
-            row = c.fetchone()
+        artistRows = self._executeQuery("SELECT * FROM ARTISTS WHERE name = ?", (artistName,), keepConnectionOpen)
+        if len(artistRows) > 0:
+            newArtistData = ArtistData(databaseRow=artistRows[0])
+            return newArtistData
+        else:
+            return None
 
-            if row:
-                newArtistData = ArtistData()
-
-                newArtistData.id = row[0]
-                newArtistData.name = row[1]
-                newArtistData.setSourceNamesFromString(row[2])
-                newArtistData.setSourceUrlsFromString(row[3])
-                newArtistData.updateTime = row[4]
-
-                return newArtistData
-            else:
-                return None
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            if not keepConnectionOpen:
-                self._close()
-
-        # If it gets to this point, I don't even know what to do.
-        return None
-
-    # TODO - fix this method, so it's getting a song by title AND artist name!!!
-    # Remember, multiple musicians can release songs with the same title!!
-    def getSongByTitle(self, title, keepConnectionOpen=None):
+    def getSongByTitleAndArtistName(self, title, artistName, keepConnectionOpen=None):
         """
         Retrieves a song with the given title.
         Returns "None" if a record isn't found.
         """
-        try:
-            c = self._connect()
-            c.execute("SELECT * FROM SONGS WHERE title = ?", (title,))
-            row = c.fetchone()
-
-            if row:
-                newSongData = SongData()
-
-                newSongData.id = row[0]
-                newSongData.artistId = row[1]
-                newSongData.title = row[2]
-                newSongData.updateTime = row[3]
-
-                return newSongData
-            else:
-                return None
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            if not keepConnectionOpen:
-                self._close()
-
-        return 0
-
+        songRows = self._executeQuery("SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTIST.name = ?", (title, artistName), keepConnectionOpen)
+        if len(songRows) > 0:
+            newSongData = SongData(databaseRow=songRows[0])
+            return newSongData
+        else:
+            return None
 
     def getSongById(self, songId, keepConnectionOpen=None):
         """
-        Retrieves a song with the given title.
+        Retrieves a song with the given ID.
         Returns "None" if a record isn't found.
         """
-        try:
-            c = self._connect()
-            c.execute("SELECT * FROM SONGS WHERE id = ?", (songId,))
-            row = c.fetchone()
+        songRows = self._executeQuery("SELECT * FROM SONGS WHERE id = ?", (songId,), keepConnectionOpen)
+        if len(songRows) > 0:
+            newSongData = SongData(databaseRow=songRows[0])
+            return newSongData
+        else:
+            return None
 
-            if row:
-                newSongData = SongData()
-
-                newSongData.id = row[0]
-                newSongData.artistId = row[1]
-                newSongData.title = row[2]
-                newSongData.updateTime = row[3]
-
-                return newSongData
-            else:
-                return None
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            if not keepConnectionOpen:
-                self._close()
-
-        return 0
-
-
-    def getChartsForSong(self, songData):
+    def getChartsForSong(self, artistData, songData):
         """
         Retrieves all charts for a given song.
         """
         chartRecords = []
         try:
             c = self._connect()
-
-            c.execute("SELECT CHARTS.* FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.song_id = ?", (songData.id,))
+            existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
+            c.execute("SELECT CHARTS.* FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.song_id = ?", (existingSong.id,))
 
             for row in c:
-                newChartData = ChartData()
-
-                newChartData.id = row[0]
-                newChartData.songId = row[1]
-                newChartData.source = row[2]
-                newChartData.setChordListFromString(row[3])
-                newChartData.setSectionsFromString(row[4])
-                newChartData.isNew = row[5]
-                newChartData.isDefinitive = row[6]
-                newChartData.updateTime = row[7]
-
+                newChartData = ChartData(databaseRow=row)
                 chartRecords.append(newChartData)
 
         except Exception as exc:
@@ -329,42 +302,17 @@ class DatabaseHandler:
 
         return chartRecords
 
-
     def getChartByUrl(self, sourceUrl, keepConnectionOpen=None):
         """
         Retrieves a chart with the given source URL.
         Returns "None" if a record isn't found.
         """
-        try:
-            c = self._connect()
-            c.execute("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,))
-            row = c.fetchone()
-
-            if row:
-                newChartData = ChartData()
-
-                newChartData.id = row[0]
-                newChartData.songId = row[1]
-                newChartData.source = row[2]
-                newChartData.setChordListFromString(row[3])
-                newChartData.setSectionsFromString(row[4])
-                newChartData.isNew = row[5]
-                newChartData.isDefinitive = row[6]
-                newChartData.updateTime = row[7]
-
-                return newChartData
-            else:
-                return None
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            if not keepConnectionOpen:
-                self._close()
-
-        return None
+        chartRows = self._executeQuery("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,), keepConnectionOpen)
+        if len(chartRows) > 0:
+            newChartData = ChartData(databaseRow=chartRows[0])
+            return newChartData
+        else:
+            return None
 
 
     def getArtistsWithFreshCharts(self):
@@ -377,14 +325,7 @@ class DatabaseHandler:
             c = self._connect()
             c.execute("SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name")
             for row in c:
-                newArtistData = ArtistData()
-
-                newArtistData.id = row[0]
-                newArtistData.name = row[1]
-                newArtistData.setSourceNamesFromString(row[2])
-                newArtistData.setSourceUrlsFromString(row[3])
-                newArtistData.updateTime = row[4]
-
+                newArtistData = ArtistData(databaseRow=row)
                 artistRecords.append(newArtistData)
 
         except Exception as exc:
@@ -408,14 +349,7 @@ class DatabaseHandler:
 
             c.execute("SELECT * FROM ARTISTS")
             for row in c:
-                newArtistData = ArtistData()
-
-                newArtistData.id = row[0]
-                newArtistData.name = row[1]
-                newArtistData.setSourceNamesFromString(row[2])
-                newArtistData.setSourceUrlsFromString(row[3])
-                newArtistData.updateTime = row[4]
-
+                newArtistData = ArtistData(databaseRow=row)
                 artistRecords.append(newArtistData)
 
         except Exception as exc:
@@ -440,17 +374,7 @@ class DatabaseHandler:
             c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?", (artistName.upper(),))
 
             for row in c:
-                newChartData = ChartData()
-
-                newChartData.id = row[0]
-                newChartData.songId = row[1]
-                newChartData.source = row[2]
-                newChartData.setChordListFromString(row[3])
-                newChartData.setSectionsFromString(row[4])
-                newChartData.isNew = row[5]
-                newChartData.isDefinitive = row[6]
-                newChartData.updateTime = row[7]
-
+                newChartData = ChartData(databaseRow=row)
                 chartRecords.append(newChartData)
 
         except Exception as exc:
@@ -469,35 +393,16 @@ class DatabaseHandler:
         Returns an empty list if there are no new charts.
         """
         chartRecords = []
-        try:
-            c = self._connect()
 
-            c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?", (artistName.upper(),))
-
-            for row in c:
-                newChartData = ChartData()
-
-                newChartData.id = row[0]
-                newChartData.songId = row[1]
-                newChartData.source = row[2]
-                newChartData.setChordListFromString(row[3])
-                newChartData.setSectionsFromString(row[4])
-                newChartData.isNew = row[5]
-                newChartData.isDefinitive = row[6]
-                newChartData.updateTime = row[7]
-
-                chartRecords.append(newChartData)
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._close()
+        rows = self._executeQuery("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?", (artistName.upper(),))
+        for row in rows:
+            newChartData = ChartData(databaseRow=row)
+            chartRecords.append(newChartData)
 
         return chartRecords
 
 
+    # TODO - remove this. Logic like this has no place in the databaseHandler.
     def getBasicArtistStatistics(self, artistData):
         """
         For a given artist, retrieves basic statistics.
