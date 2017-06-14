@@ -75,7 +75,7 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
-            # print(repr(query))
+            print(repr(query))
             if type(query) is tuple:
                 c.execute(query[0], query[1])
             else:
@@ -166,10 +166,6 @@ class DatabaseHandler:
         updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE source_url=\'{url}\'"
 
         updateSongDefinitive = "UPDATE SONGS SET definitive_chart_id = (SELECT id FROM CHARTS WHERE source_url = \'{sourceUrl}\') WHERE id = {songId}"
-
-        # TODO - change song saving if this chart is the definitive one!
-        # - requires getting the chart ID, and connecting that to the updated song
-        # - might be possible through the chart URL
 
         try:
             c = self._connect()
@@ -293,6 +289,21 @@ class DatabaseHandler:
         else:
             return None
 
+    def getSongsByArtist(self, artistData):
+        """
+        Retrieves all songs by the given artist.
+        Returns an empty list if a record isn't found.
+        """
+        songRecords = []
+        query = ("SELECT SONGS.*, CHART_CALCS.key FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ? GROUP BY SONGS.id", (artistData.id,))
+        songRows = self._executeQuery(query)
+
+        for row in songRows:
+            newSongData = SongData(databaseRow=row)
+            songRecords.append(newSongData)
+
+        return songRecords
+
     def getChartsForSong(self, artistData, songData):
         """
         Retrieves all charts for a given song.
@@ -376,11 +387,41 @@ class DatabaseHandler:
 
         return chartRecords
 
+    def getDefinitiveChartsForArtist(self, artistName):
+        """
+        For a given artist, retrieves their "definitive" charts.
+        If no charts are found, this returns an empty list.
+        """
+        chartRecords = []
+
+        query = ("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ? AND CHARTS.id = SONGS.definitive_chart_id", (artistName.upper(),))
+        rows = self._executeQuery(query)
+        for row in rows:
+            newChartData = ChartData(databaseRow=row)
+            chartRecords.append(newChartData)
+
+        return chartRecords
+
+    def getDefinitiveChartCalcsForArtist(self, artistName):
+        """
+        For a given artist, retrieves their "definitive" chart calculations.
+        If no charts are found, this returns an empty list.
+        """
+        chartCalcs = []
+
+        query = ("SELECT CHART_CALCS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE ARTISTS.name = ? AND CHARTS.id = SONGS.definitive_chart_id", (artistName.upper(),))
+        rows = self._executeQuery(query)
+
+        for row in rows:
+            newChartCalc = ChartCalculations(databaseRow=row)
+            chartCalcs.append(newChartCalc)
+
+        return chartCalcs
 
     def getAllChartsForArtist(self, artistName):
         """
-        For a given artist, retrieves charts that haven't been analyzed yet.
-        Returns an empty list if there are no new charts.
+        For a given artist, retrieves all their charts.
+        If no charts are found, this returns an empty list.
         """
         chartRecords = []
 
@@ -392,45 +433,6 @@ class DatabaseHandler:
 
         return chartRecords
 
-
-    # TODO - remove this. Logic like this has no place in the databaseHandler.
-    def getBasicArtistStatistics(self, artistData):
-        """
-        For a given artist, retrieves basic statistics.
-        """
-        artistCalcs = ArtistCalculations()
-
-        stmtArtistSongs = "SELECT SONGS.*, CHART_CALCS.key FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ? GROUP BY SONGS.id"
-
-        stmtArtistCharts = "SELECT CHARTS.*, CHART_CALCS.num_chords FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ?"
-
-        try:
-            c = self._connect()
-
-            c.execute(stmtArtistSongs, (artistData.id,))
-            for row in c:
-                artistCalcs.numSongs += 1
-                keyString = row[4]
-                if keyString.lower().find("major") >= 0:
-                    artistCalcs.numMajorKeys += 1
-
-            c.execute(stmtArtistCharts, (artistData.id,))
-            for row in c:
-                artistCalcs.numCharts += 1
-                artistCalcs.numChords += row[7]
-
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._close()
-
-        artistCalcs.numMinorKeys = artistCalcs.numCharts - artistCalcs.numMajorKeys
-
-
-        return artistCalcs
 
 
     def initializeDatabase(self):

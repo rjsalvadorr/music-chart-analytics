@@ -205,9 +205,22 @@ class ChartAnalyzer:
         """
         Analyzes an artist. Returns an ArtistCalculations object.
         """
-        artistCalcs = self.dbHandler.getBasicArtistStatistics(artistData)
+        # artistCalcs = self.dbHandler.getBasicArtistStatistics(artistData)
 
-        # DO OTHER ANALYSIS HERE
+        artistCalcs = ArtistCalculations()
+        artistChartCalcs = self.dbHandler.getDefinitiveChartCalcsForArtist(artistData.name)
+        artistAllCharts = self.dbHandler.getAllChartsForArtist(artistData.name)
+
+        for chart in artistAllCharts:
+            artistCalcs.numCharts += 1
+
+        for chartCalc in artistChartCalcs:
+            artistCalcs.numSongs += 1
+            if chartCalc.key.lower().find("major") >= 0:
+                artistCalcs.numMajorKeys += 1
+            artistCalcs.numChords += chartCalc.numChords
+
+        artistCalcs.numMinorKeys = artistCalcs.numSongs - artistCalcs.numMajorKeys
 
         return artistCalcs
 
