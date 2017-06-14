@@ -121,3 +121,6 @@ log*.txt
 # etc
 **.sqbpro
 **.db-journal
+
+# intelliJ
+.idea/**

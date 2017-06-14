@@ -5,7 +5,7 @@ class ChartCalculations(BaseDataObject):
     Encapsulates data extracted from a chord chart.
     """
 
-    def __init__(self):
+    def __init__(self, databaseRow=None):
         BaseDataObject.__init__(self)
 
         self.chartId= 0
@@ -13,6 +13,17 @@ class ChartCalculations(BaseDataObject):
         self.keyAnalysisCertainty = ""
         self.chordsGeneral = []
         self.numChords = 0
+        self.numSections = 0
+
+        if databaseRow:
+            self.id = databaseRow[0]
+            self.chartId = databaseRow[1]
+            self.key = databaseRow[2]
+            self.keyAnalysisCertainty = databaseRow[3]
+            self.chordsGeneral = self._convertStringToList(databaseRow[4])
+            self.numChords = databaseRow[5]
+            self.numSections = databaseRow[6]
+            self.updateTime = databaseRow[7]
 
 
     def setChordListFromString(self, chordListStr):

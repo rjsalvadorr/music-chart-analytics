@@ -17,6 +17,7 @@ pPrinter = pprint.PrettyPrinter(indent=2, width=120)
 
 initializeDatabaseEnabled = False
 databasePurgeEnabled = False
+forceAnalysisEnabled = False
 
 print("\n===============================================================")
 print("        _____ _           _   _____         _                 ")
@@ -33,11 +34,13 @@ print("sqlite3.sqlite_version = " + sqlite3.sqlite_version + "\n")
 # Reading program arguments
 if len(sys.argv) > 0:
     for arg in sys.argv:
-        if(arg.lower() == "--help" or arg.lower() == "-?"):
+        if(arg.lower() == "--help" or arg.lower() == "-?" or arg.lower() == "?"):
             print("AVAILABLE FLAGS:\n")
             print("--initialize-database")
             print("    For local database use. Initializes the database by setting up the table structure.\n")
             print("--purge-database")
+            print("    For local database use. Removes all the data stored in the database.\n")
+            print("--force-analysis")
             print("    For local database use. Removes all the data stored in the database.\n")
             print("")
             sys.exit(0)
@@ -45,6 +48,10 @@ if len(sys.argv) > 0:
         if(arg.lower() == "--purge-database"):
             print("Database purge enabled. All data from the database will be removed before scraping data.")
             databasePurgeEnabled = True
+
+        if(arg.lower() == "--force-analysis"):
+            print("Song analysis will be forced")
+            forceAnalysisEnabled = True
 
         if(arg.lower() == "--initialize-database"):
             print("Database will be initialized.")
@@ -85,8 +92,10 @@ if databasePurgeEnabled:
 for artist in yamlData["artists"]:
     mcScraper.scrape(artist)
 
-print ("\nAnalyzing charts...")
-mcAnalyzer.analyzeFreshCharts()
+if forceAnalysisEnabled:
+    mcAnalyzer.analyzeAllCharts()
+else:
+    mcAnalyzer.analyzeFreshCharts()
 
-print("Finished!")
+print("\nFinished!")
 sys.exit(0)

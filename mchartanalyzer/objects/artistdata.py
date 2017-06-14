@@ -5,12 +5,19 @@ class ArtistData(BaseDataObject):
     Class encapsulating basic information about an artist/musician.
     """
 
-    def __init__(self):
+    def __init__(self, databaseRow=None):
         BaseDataObject.__init__(self)
 
         self.name = ""
         self.sourceNames = []
         self.sourceUrls = []
+
+        if databaseRow:
+            self.id = databaseRow[0]
+            self.name = databaseRow[1]
+            self.sourceNames = self._convertStringToList(databaseRow[2])
+            self.sourceUrls = self._convertStringToList(databaseRow[3])
+            self.updateTime = databaseRow[4]
 
 
     def setSourceNamesFromString(self, sourceNamesStr):

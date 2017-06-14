@@ -23,4 +23,7 @@ class BaseDataObject:
         """
         Returns a list from its string representation
         """
-        return listString.split(self.delim2)
+        if listString:
+            return listString.split(self.delim2)
+        else:
+            return []
