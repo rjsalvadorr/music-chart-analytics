@@ -24,7 +24,6 @@ class DatabaseHandler:
             # This also creates a database if it doesn't exist!
             self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
             self.dbOpened = True
-            print("---- DB connection opened")
         return self.dbConnection.cursor()
 
     def _commit(self):
@@ -40,7 +39,6 @@ class DatabaseHandler:
             self.dbConnection.commit()
             self.dbConnection.close()
             self.dbOpened = False
-            print("---- DB connection closed")
 
     def _executeOperation(self, statement, keepConnectionOpen=None):
         """
@@ -50,10 +48,12 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
+            # print(repr(statement))
             c.execute(statement)
 
         except sqlite3.IntegrityError as exc:
             print(repr(exc))
+            print(traceback.format_exc())
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -75,8 +75,7 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
-            print(repr(query))
-            print(type(query))
+            # print(repr(query))
             if type(query) is tuple:
                 c.execute(query[0], query[1])
             else:
@@ -91,6 +90,7 @@ class DatabaseHandler:
 
         except sqlite3.IntegrityError as exc:
             print(repr(exc))
+            print(traceback.format_exc())
 
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
@@ -143,21 +143,17 @@ class DatabaseHandler:
         If a song with the same name exists in the database, nothing happens.
         """
         insertStmt = "INSERT INTO SONGS(artist_id, title, definitive_chart_id, update_time) VALUES ({artistId}, \'{songTitle}\', {definitiveChartId}, \'{updateTime}\')"
-        updateStmt = "UPDATE SONGS SET artist_id = {artistId}, title = \'{songTitle}\', definitive_chart_id = {definitiveChartId}, update_time = \'{updateTime}\'"
 
         existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
         existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
+
         timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
-        defChartId = songData.definitiveChartId if songData.definitiveChartId > 0 else None
+        defChartId = songData.definitiveChartId if songData.definitiveChartId > 0 else 'NULL'
 
         if not existingSong:
             # Song does not exist yet. Insert new record.
             finalQuery = insertStmt.format(artistId=existingArtist.id, songTitle=songData.title, definitiveChartId=defChartId, updateTime=timestampStr)
-        else:
-            # Song exists. Update it.
-            finalQuery = updateStmt.format(artistId=existingArtist.id, songTitle=songData.title, definitiveChartId=defChartId, updateTime=timestampStr)
-
-        self._executeQuery(finalQuery)
+            self._executeOperation(finalQuery)
 
 
     def saveChartData(self, artistData, songData, chartData, isDefinitiveChart):
@@ -165,25 +161,31 @@ class DatabaseHandler:
         Saves chart data to the database.
         If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
         """
-        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','is_definitive','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{isDefinitive}\', \'{updateTime}\')"
+        insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{updateTime}\')"
 
-        updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE song_id={songId} AND source_url=\'{url}\'"
+        updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE source_url=\'{url}\'"
+
+        updateSongDefinitive = "UPDATE SONGS SET definitive_chart_id = (SELECT id FROM CHARTS WHERE source_url = \'{sourceUrl}\') WHERE id = {songId}"
 
         # TODO - change song saving if this chart is the definitive one!
         # - requires getting the chart ID, and connecting that to the updated song
+        # - might be possible through the chart URL
 
         try:
             c = self._connect()
             existingChart = self.getChartByUrl(chartData.source, keepConnectionOpen=True)
+            existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
             timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
 
             if existingChart:
                 # Chart from this source already exists. Update it.
-                c.execute(updateStmt.format(songId=existingChart.songId, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
+                c.execute(updateStmt.format(url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
             else:
                 # Chart does not exist yet. Insert new record.
-                existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
-                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), isDefinitive=chartData.isDefinitive, updateTime=timestampStr))
+                c.execute(insertStmt.format(songId=existingSong.id, url=chartData.source, chordList=chartData.getChordListString(), sectionList=chartData.getSectionListString(), updateTime=timestampStr))
+
+            if isDefinitiveChart:
+                c.execute(updateSongDefinitive.format(sourceUrl=chartData.source, songId=existingSong.id))
 
         except sqlite3.IntegrityError as exc:
             print(repr(exc))
@@ -268,10 +270,12 @@ class DatabaseHandler:
         Retrieves a song with the given title.
         Returns "None" if a record isn't found.
         """
-        query = ("SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTIST.name = ?", (title, artistName))
+        query = ("SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTISTS.name = ?", (title, artistName))
+
         songRows = self._executeQuery(query, keepConnectionOpen)
         if len(songRows) > 0:
             newSongData = SongData(databaseRow=songRows[0])
+            # print("getSongByTitleAndArtistName(" + title + ", " + artistName + ") = " + str(newSongData))
             return newSongData
         else:
             return None
@@ -413,7 +417,7 @@ class DatabaseHandler:
             c.execute(stmtArtistCharts, (artistData.id,))
             for row in c:
                 artistCalcs.numCharts += 1
-                artistCalcs.numChords += row[8]
+                artistCalcs.numChords += row[7]
 
 
         except Exception as exc:
@@ -450,7 +454,7 @@ class DatabaseHandler:
             print("Initializing Database!")
 
             c.execute("CREATE TABLE ARTISTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT UNIQUE, `source_names` TEXT, `source_urls` TEXT, `update_time` TEXT )")
-            c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `definitive_chart_id` INTEGER, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id) ), FOREIGN KEY(`definitive_chart_id`) REFERENCES CHARTS(id) )")
+            c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `definitive_chart_id` INTEGER, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id), FOREIGN KEY(`definitive_chart_id`) REFERENCES CHARTS(id) )")
             c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
 
             c.execute("CREATE TABLE \"ARTIST_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )")

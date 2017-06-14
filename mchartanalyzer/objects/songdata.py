@@ -22,9 +22,10 @@ class SongData(BaseDataObject):
 
     def __str__(self):
         stringRep = "SongData { id=" + str(self.id) + ", "
-        
+
         stringRep += "artistId=" + str(self.artistId) + ", "
         stringRep += "title=" + self.title + ", "
+        stringRep += "definitiveChartId=" + str(self.definitiveChartId) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 

@@ -19,7 +19,7 @@ class ChartCalculations(BaseDataObject):
             self.chartId = databaseRow[1]
             self.key = databaseRow[2]
             self.keyAnalysisCertainty = databaseRow[3]
-            self.chordsGeneral = databaseRow[4]
+            self.chordsGeneral = self._convertStringToList(databaseRow[4])
             self.numChords = databaseRow[5]
             self.updateTime = databaseRow[6]
 

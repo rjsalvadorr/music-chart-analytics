@@ -22,8 +22,8 @@ class ChartData(BaseDataObject):
             self.id = databaseRow[0]
             self.songId = databaseRow[1]
             self.source = databaseRow[2]
-            self.chordsSpecific = databaseRow[3]
-            self.sections = databaseRow[4]
+            self.chordsSpecific = self._convertStringToList(databaseRow[3])
+            self.sections = self._convertStringToList(databaseRow[4])
             self.isNew = databaseRow[5]
             self.updateTime = databaseRow[6]
 

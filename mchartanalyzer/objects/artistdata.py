@@ -15,8 +15,8 @@ class ArtistData(BaseDataObject):
         if databaseRow:
             self.id = databaseRow[0]
             self.name = databaseRow[1]
-            self.sourceNames = databaseRow[2]
-            self.sourceUrls = databaseRow[3]
+            self.sourceNames = self._convertStringToList(databaseRow[2])
+            self.sourceUrls = self._convertStringToList(databaseRow[3])
             self.updateTime = databaseRow[4]
 
 
