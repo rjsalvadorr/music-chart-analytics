@@ -10,6 +10,7 @@ class ArtistCalculations(BaseDataObject):
 
         self.artistId = 0
         self.numChords = 0
+        self.numSections = 0
         self.mostCommonChordsSpecific = {}
         self.mostCommonChordsGeneric = {}
 
@@ -30,6 +31,7 @@ class ArtistCalculations(BaseDataObject):
         stringRep += "numMajorKeys=" + str(self.numMajorKeys) + ", "
         stringRep += "numMinorKeys=" + str(self.numMinorKeys) + ", "
         stringRep += "numChords=" + str(self.numChords) + ", "
+        stringRep += "numSections=" + str(self.numSections) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 

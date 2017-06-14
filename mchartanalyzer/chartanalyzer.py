@@ -75,11 +75,6 @@ class ChartAnalyzer:
     def _getNumKeys(self, chartData):
         return None
 
-
-    def _analyzeArtist(self, artistData, chartDataList):
-        return None
-
-
     def _log(self, text):
         ChartAnalyzer.logger.log(text)
 
@@ -197,6 +192,10 @@ class ChartAnalyzer:
         chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
         chartCalcs.chordsGeneral = self._convertChordListToGeneral(chartData.chordsSpecific, analyzedKey)
         chartCalcs.numChords = len(chartData.chordsSpecific)
+        chartCalcs.numSections = len(chartData.sections)
+
+        if chartCalcs.numSections is 1:
+            print(str(chartData))
 
         return chartCalcs
 
@@ -205,20 +204,19 @@ class ChartAnalyzer:
         """
         Analyzes an artist. Returns an ArtistCalculations object.
         """
-        # artistCalcs = self.dbHandler.getBasicArtistStatistics(artistData)
-
         artistCalcs = ArtistCalculations()
-        artistChartCalcs = self.dbHandler.getDefinitiveChartCalcsForArtist(artistData.name)
+        artistDefinitiveChartCalcs = self.dbHandler.getDefinitiveChartCalcsForArtist(artistData.name)
         artistAllCharts = self.dbHandler.getAllChartsForArtist(artistData.name)
 
         for chart in artistAllCharts:
             artistCalcs.numCharts += 1
 
-        for chartCalc in artistChartCalcs:
+        for chartCalc in artistDefinitiveChartCalcs:
             artistCalcs.numSongs += 1
             if chartCalc.key.lower().find("major") >= 0:
                 artistCalcs.numMajorKeys += 1
             artistCalcs.numChords += chartCalc.numChords
+            artistCalcs.numSections += chartCalc.numSections
 
         artistCalcs.numMinorKeys = artistCalcs.numSongs - artistCalcs.numMajorKeys
 
@@ -226,15 +224,17 @@ class ChartAnalyzer:
 
 
     def _dumpChartCalculationsToLog(self, artistData, songData, chartData, chartCalcs):
-        logString = "ARTIST: " + artistData.name + "\n"
-        logString += "TITLE: " + songData.title + "\n"
-        logString += "SECTIONS: " + chartData.getSectionListString().replace(",", " ") + "\n"
-        logString += "ORIGINAL CHORDS: " + chartData.getChordListString().replace(",", " ") + "\n"
+        logString = " source: " + chartData.source + "\n"
+        logString += " artist: " + artistData.name + "\n"
+        logString += " title: " + songData.title + "\n"
+        logString += " sections: " + chartData.getSectionListString().replace(",", " ") + "\n"
+        logString += " original chords: " + chartData.getChordListString().replace(",", " ") + "\n"
         logString += "\n"
-        logString += "COMPUTED KEY: " + chartCalcs.key + "\n"
-        logString += "COMPUTED KEY CERTAINTY: " + chartCalcs.keyAnalysisCertainty + "\n"
-        logString += "COMPUTED CHORDS: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
-        logString += "# OF CHORDS: " + str(chartCalcs.numChords) + "\n"
+        logString += " computed key: " + chartCalcs.key + "\n"
+        logString += " computed key certainty: " + chartCalcs.keyAnalysisCertainty + "\n"
+        logString += " computed chords: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
+        logString += " number of chords: " + str(chartCalcs.numChords) + "\n"
+        logString += " number of sections: " + str(chartCalcs.numSections) + "\n"
         logString += "\n========================================\n"
 
         self._log(logString)
@@ -242,19 +242,23 @@ class ChartAnalyzer:
 
     def _dumpArtistCalculationsToLog(self, artistData, artistCalcs):
         logString = "\n============================================================\n"
-        logString += " ARTIST: " + artistData.name + "\n"
+        logString += " artist summary: " + artistData.name + "\n"
         logString += "============================================================\n"
-        logString += " SONGS: " + str(artistCalcs.numSongs) + "\n"
-        logString += " CHARTS: " + str(artistCalcs.numCharts) + "\n"
-        logString += " SONGS IN MAJOR: " + str(artistCalcs.numMajorKeys) + "\n"
-        logString += " SONGS IN MINOR: " + str(artistCalcs.numMinorKeys) + "\n"
-        logString += " CHORDS ENCOUNTERED: " + str(artistCalcs.numChords) + "\n"
+        logString += " total charts encountered: " + str(artistCalcs.numCharts) + "\n"
+        logString += " songs: " + str(artistCalcs.numSongs) + "\n"
+        logString += " songs in major: " + str(artistCalcs.numMajorKeys) + "\n"
+        logString += " songs in minor: " + str(artistCalcs.numMinorKeys) + "\n"
+        logString += " chords encountered: " + str(artistCalcs.numChords) + "\n"
+        logString += " sections encountered: " + str(artistCalcs.numSections) + "\n"
 
-        logString += " MOST COMMON CHORDS (SPECIFIC):\n"
+        logString += " avg. chords per song: " + str(artistCalcs.numChords / artistCalcs.numSongs) + "\n"
+        logString += " avg. sections per song: " + str(artistCalcs.numSections / artistCalcs.numSongs) + "\n"
+
+        logString += " most common chords (specific):\n"
         for chordSym in artistCalcs.mostCommonChordsSpecific:
             logString += "    " + chordSym + " - seen " + str(artistCalcs.mostCommonChordsSpecific[chordSym]) + " times\n"
 
-        logString += " MOST COMMON CHORDS (GENERIC):\n"
+        logString += " most common chords (generic):\n"
         for chordSym in artistCalcs.mostCommonChordsGeneric:
             logString += "    " + chordSym + " - seen " + str(artistCalcs.mostCommonChordsGeneric[chordSym]) + " times\n"
 
