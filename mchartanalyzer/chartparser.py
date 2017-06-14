@@ -5,6 +5,7 @@ from .objects.chartdata import ChartData
 from .objects.songdata import SongData
 from .objects.artistdata import ArtistData
 
+
 class ChartParser:
     """
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
@@ -123,6 +124,26 @@ class ChartParser:
         return sections
 
 
+    def _checkIfChartIsDefinitive(self, currentChartData, otherCharts):
+        """
+        Checks multiple charts for this song to determine the "definitive" version.
+        Returns true if the current chart is more detailed, meaning it has more sections OR has more chord symbols
+        """
+        isDefinitive = 0
+
+        if len(otherCharts) > 0:
+            for otherChartData in otherCharts:
+                if (len(currentChartData.chordsSpecific) > len(otherChartData.chordsSpecific)
+                    or len(currentChartData.sections) > len(otherChartData.sections)):
+                    # currentChartData is more detailed, and is more definitive!
+                    isDefinitive = 1
+        else:
+            # If there are no other charts, this one is the definitive!
+            isDefinitive = 1
+
+        return isDefinitive
+
+
     def parseChart(self, songTitle, chartSourceUrl, chartContent):
         """
         Core function of the Parser.
@@ -148,9 +169,15 @@ class ChartParser:
 
         newSongData = SongData()
         newSongData.title = chartData.title
-
         self.dbHandler.saveSongData(self.artistData, newSongData)
-        self.dbHandler.saveChartData(newSongData, chartData)
+
+        # Check other charts for this song.
+        # If this chart is more detailed (has more sections and has more chord symbols),
+        # This current chart becomes the "definitive" chart for that song.
+        otherCharts = self.dbHandler.getChartsForSong(self.artistData, newSongData)
+        isDefinitiveChart = self._checkIfChartIsDefinitive(chartData, otherCharts)
+
+        self.dbHandler.saveChartData(self.artistData, newSongData, chartData, isDefinitiveChart)
 
 
     def setArtistData(self, name, sources, artistSourceUrls):

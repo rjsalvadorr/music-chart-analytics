@@ -75,8 +75,19 @@ class DatabaseHandler:
         """
         try:
             c = self._connect()
-            c.execute(query)
-            return c.fetchall()
+            print(repr(query))
+            print(type(query))
+            if type(query) is tuple:
+                c.execute(query[0], query[1])
+            else:
+                c.execute(query)
+
+            rows = c.fetchall()
+
+            if rows is None:
+                return []
+            else:
+                return rows
 
         except sqlite3.IntegrityError as exc:
             print(repr(exc))
@@ -131,32 +142,25 @@ class DatabaseHandler:
         Saves song data to the database.
         If a song with the same name exists in the database, nothing happens.
         """
-        insertStmt = "INSERT INTO SONGS('artist_id','title','update_time') VALUES ({artistId}, \'{songTitle}\', \'{updateTime}\')"
+        insertStmt = "INSERT INTO SONGS(artist_id, title, definitive_chart_id, update_time) VALUES ({artistId}, \'{songTitle}\', {definitiveChartId}, \'{updateTime}\')"
+        updateStmt = "UPDATE SONGS SET artist_id = {artistId}, title = \'{songTitle}\', definitive_chart_id = {definitiveChartId}, update_time = \'{updateTime}\'"
 
-        try:
-            c = self._connect()
-            existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
-            existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
-            timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
+        existingArtist = self.getArtistByName(artistData.name, keepConnectionOpen=True)
+        existingSong = self.getSongByTitleAndArtistName(songData.title, artistData.name, keepConnectionOpen=True)
+        timestampStr = datetime.now().strftime(constants.DATETIME_FORMAT)
+        defChartId = songData.definitiveChartId if songData.definitiveChartId > 0 else None
 
-            if not existingSong:
-                # Song does not exist yet. Insert new record.
-                finalQuery = insertStmt.format(artistId=existingArtist.id, songTitle=songData.title, updateTime=timestampStr)
-                # print("Running query: " + finalQuery)
-                c.execute(finalQuery)
+        if not existingSong:
+            # Song does not exist yet. Insert new record.
+            finalQuery = insertStmt.format(artistId=existingArtist.id, songTitle=songData.title, definitiveChartId=defChartId, updateTime=timestampStr)
+        else:
+            # Song exists. Update it.
+            finalQuery = updateStmt.format(artistId=existingArtist.id, songTitle=songData.title, definitiveChartId=defChartId, updateTime=timestampStr)
 
-        except sqlite3.IntegrityError as exc:
-            print(repr(exc))
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._commitAndClose()
+        self._executeQuery(finalQuery)
 
 
-    def saveChartData(self, artistData, songData, chartData):
+    def saveChartData(self, artistData, songData, chartData, isDefinitiveChart):
         """
         Saves chart data to the database.
         If a chart with the same URL exists, the existing record is updated with the newer chords and sections.
@@ -164,6 +168,9 @@ class DatabaseHandler:
         insertStmt = "INSERT INTO CHARTS('song_id','source_url','chords_specific','sections','is_new','is_definitive','update_time') VALUES ({songId}, \'{url}\', \'{chordList}\', \'{sectionList}\', 1, \'{isDefinitive}\', \'{updateTime}\')"
 
         updateStmt = "UPDATE CHARTS SET 'chords_specific' = \'{chordList}\', 'sections' = \'{sectionList}\', 'is_new' = 1, 'update_time' = \'{updateTime}\' WHERE song_id={songId} AND source_url=\'{url}\'"
+
+        # TODO - change song saving if this chart is the definitive one!
+        # - requires getting the chart ID, and connecting that to the updated song
 
         try:
             c = self._connect()
@@ -248,7 +255,8 @@ class DatabaseHandler:
         Retrieves an artist with the given name.
         Returns "None" if a record isn't found.
         """
-        artistRows = self._executeQuery("SELECT * FROM ARTISTS WHERE name = ?", (artistName,), keepConnectionOpen)
+        query = ("SELECT * FROM ARTISTS WHERE name = ?", (artistName,))
+        artistRows = self._executeQuery(query, keepConnectionOpen)
         if len(artistRows) > 0:
             newArtistData = ArtistData(databaseRow=artistRows[0])
             return newArtistData
@@ -260,7 +268,8 @@ class DatabaseHandler:
         Retrieves a song with the given title.
         Returns "None" if a record isn't found.
         """
-        songRows = self._executeQuery("SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTIST.name = ?", (title, artistName), keepConnectionOpen)
+        query = ("SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTIST.name = ?", (title, artistName))
+        songRows = self._executeQuery(query, keepConnectionOpen)
         if len(songRows) > 0:
             newSongData = SongData(databaseRow=songRows[0])
             return newSongData
@@ -272,7 +281,8 @@ class DatabaseHandler:
         Retrieves a song with the given ID.
         Returns "None" if a record isn't found.
         """
-        songRows = self._executeQuery("SELECT * FROM SONGS WHERE id = ?", (songId,), keepConnectionOpen)
+        query = ("SELECT * FROM SONGS WHERE id = ?", (songId,))
+        songRows = self._executeQuery(query, keepConnectionOpen)
         if len(songRows) > 0:
             newSongData = SongData(databaseRow=songRows[0])
             return newSongData
@@ -307,7 +317,8 @@ class DatabaseHandler:
         Retrieves a chart with the given source URL.
         Returns "None" if a record isn't found.
         """
-        chartRows = self._executeQuery("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,), keepConnectionOpen)
+        query = ("SELECT * FROM CHARTS WHERE source_url = ?", (sourceUrl,))
+        chartRows = self._executeQuery(query, keepConnectionOpen)
         if len(chartRows) > 0:
             newChartData = ChartData(databaseRow=chartRows[0])
             return newChartData
@@ -321,19 +332,11 @@ class DatabaseHandler:
         Returns an empty list if there are no such artists
         """
         artistRecords = []
-        try:
-            c = self._connect()
-            c.execute("SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name")
-            for row in c:
-                newArtistData = ArtistData(databaseRow=row)
-                artistRecords.append(newArtistData)
 
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._close()
+        rows = self._executeQuery("SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name")
+        for row in rows:
+            newArtistData = ArtistData(databaseRow=row)
+            artistRecords.append(newArtistData)
 
         return artistRecords
 
@@ -344,20 +347,11 @@ class DatabaseHandler:
         Returns an empty list if there are no such artists
         """
         artistRecords = []
-        try:
-            c = self._connect()
 
-            c.execute("SELECT * FROM ARTISTS")
-            for row in c:
-                newArtistData = ArtistData(databaseRow=row)
-                artistRecords.append(newArtistData)
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._close()
+        rows = self._executeQuery("SELECT * FROM ARTISTS")
+        for row in rows:
+            newArtistData = ArtistData(databaseRow=row)
+            artistRecords.append(newArtistData)
 
         return artistRecords
 
@@ -368,21 +362,13 @@ class DatabaseHandler:
         Returns an empty list if there are no new charts.
         """
         chartRecords = []
-        try:
-            c = self._connect()
 
-            c.execute("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?", (artistName.upper(),))
+        query = ("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?", (artistName.upper(),))
+        rows = self._executeQuery(query)
 
-            for row in c:
-                newChartData = ChartData(databaseRow=row)
-                chartRecords.append(newChartData)
-
-        except Exception as exc:
-            print("UNEXPECTED ERROR: " + repr(exc))
-            print(traceback.format_exc())
-
-        finally:
-            self._close()
+        for row in rows:
+            newChartData = ChartData(databaseRow=row)
+            chartRecords.append(newChartData)
 
         return chartRecords
 
@@ -394,7 +380,8 @@ class DatabaseHandler:
         """
         chartRecords = []
 
-        rows = self._executeQuery("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?", (artistName.upper(),))
+        query = ("SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?", (artistName.upper(),))
+        rows = self._executeQuery(query)
         for row in rows:
             newChartData = ChartData(databaseRow=row)
             chartRecords.append(newChartData)
@@ -463,8 +450,8 @@ class DatabaseHandler:
             print("Initializing Database!")
 
             c.execute("CREATE TABLE ARTISTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT UNIQUE, `source_names` TEXT, `source_urls` TEXT, `update_time` TEXT )")
-            c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id) )")
-            c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `is_definitive` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
+            c.execute("CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `definitive_chart_id` INTEGER, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id) ), FOREIGN KEY(`definitive_chart_id`) REFERENCES CHARTS(id) )")
+            c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
 
             c.execute("CREATE TABLE \"ARTIST_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )")
             c.execute("CREATE TABLE \"CHART_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `num_chords` INTEGER, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )")
