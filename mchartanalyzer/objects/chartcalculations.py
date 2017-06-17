@@ -15,6 +15,9 @@ class ChartCalculations(BaseDataObject):
         self.numChords = 0 # TODO - remove?
         self.numSections = 0 # TODO - remove?
 
+        # When returning a ChartCalculations object from the database, this can be initialized.
+        self.chartData = None
+
         if databaseRow:
             self.id = databaseRow[0]
             self.chartId = databaseRow[1]

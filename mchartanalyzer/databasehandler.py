@@ -341,6 +341,20 @@ class DatabaseHandler:
             return None
 
 
+    def getChartById(self, chartId, keepConnectionOpen=None):
+        """
+        Retrieves a chart with the given source URL.
+        Returns "None" if a record isn't found.
+        """
+        query = ("SELECT * FROM CHARTS WHERE id = ?", (chartId,))
+        chartRows = self._executeQuery(query, keepConnectionOpen)
+        if len(chartRows) > 0:
+            newChartData = ChartData(databaseRow=chartRows[0])
+            return newChartData
+        else:
+            return None
+
+
     def getArtistsWithFreshCharts(self):
         """
         Retrieves artists with charts that haven't been analyzed yet.
@@ -410,10 +424,11 @@ class DatabaseHandler:
         chartCalcs = []
 
         query = ("SELECT CHART_CALCS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE ARTISTS.name = ? AND CHARTS.id = SONGS.definitive_chart_id", (artistName.upper(),))
-        rows = self._executeQuery(query)
+        rows = self._executeQuery(query, keepConnectionOpen=True)
 
         for row in rows:
             newChartCalc = ChartCalculations(databaseRow=row)
+            newChartCalc.chartData = self.getChartById(newChartCalc.chartId)
             chartCalcs.append(newChartCalc)
 
         return chartCalcs

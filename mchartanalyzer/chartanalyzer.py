@@ -57,7 +57,7 @@ class ChartAnalyzer:
         return rawDict
 
 
-    def _mergeMostCommonChords(self, chordDictMain, chordDict):
+    def _mergeCounterDictionary(self, chordDictMain, chordDict):
         # chordDictMain is considered the "trunk" that we're merging chordDict into.
         for chordSym in chordDict:
             if chordSym in chordDictMain:
@@ -218,6 +218,10 @@ class ChartAnalyzer:
         artistDefinitiveChartCalcs = self.dbHandler.getDefinitiveChartCalcsForArtist(artistData.name)
         artistAllCharts = self.dbHandler.getAllChartsForArtist(artistData.name)
 
+        allProgs = dict()
+        allSections = dict()
+        mostCommonKeys = dict()
+
         for chart in artistAllCharts:
             artistCalcs.numCharts += 1
 
@@ -228,13 +232,23 @@ class ChartAnalyzer:
             artistCalcs.numChords += chartCalc.numChords
             artistCalcs.numSections += chartCalc.numSections
 
-            if chartCalc.key in artistCalcs.mostCommonKeys:
-                # if the key is already in the dictionary, increment counter
-                artistCalcs.mostCommonKeys[chartCalc.key] = artistCalcs.mostCommonKeys[chartCalc.key] + 1
+            if chartCalc.key in mostCommonKeys:
+                mostCommonKeys[chartCalc.key] = mostCommonKeys[chartCalc.key] + 1
             else:
-                # if it's a new key, create a new dict entry
-                artistCalcs.mostCommonKeys[chartCalc.key] = 1
+                mostCommonKeys[chartCalc.key] = 1
 
+            if chartCalc.chartData.sections:
+                songStruct = ' '.join(chartCalc.chartData.sections)
+                if songStruct in allProgs:
+                    allSections[songStruct] = allSections[songStruct] + 1
+                else:
+                    allSections[songStruct] = 1
+
+            allProgs = self._mergeCounterDictionary(allProgs, self._getChordProgressions(chartCalc.chordsGeneral))
+
+        artistCalcs.mostCommonKeys = self._trimDictionary(mostCommonKeys, constants.MOST_COMMON_CHORDS_LIMIT)
+        artistCalcs.mostCommonChordProgressions = self._trimDictionary(allProgs, constants.MOST_COMMON_CHORDS_LIMIT)
+        artistCalcs.mostCommonSongStructures = self._trimDictionary(allSections, constants.MOST_COMMON_CHORDS_LIMIT)
         artistCalcs.numMinorKeys = artistCalcs.numSongs - artistCalcs.numMajorKeys
 
         return artistCalcs
@@ -261,15 +275,16 @@ class ChartAnalyzer:
         logString = "\n============================================================\n"
         logString += " artist summary: " + artistData.name + "\n"
         logString += "============================================================\n"
+        logString += " songs encountered: " + str(artistCalcs.numSongs) + "\n"
         logString += " total charts encountered: " + str(artistCalcs.numCharts) + "\n"
-        logString += " songs: " + str(artistCalcs.numSongs) + "\n"
         logString += " songs in major: " + str(artistCalcs.numMajorKeys) + "\n"
         logString += " songs in minor: " + str(artistCalcs.numMinorKeys) + "\n"
         logString += " chords encountered: " + str(artistCalcs.numChords) + "\n"
         logString += " sections encountered: " + str(artistCalcs.numSections) + "\n"
 
-        logString += " avg. chords per song: " + str(artistCalcs.numChords / artistCalcs.numSongs) + "\n"
-        logString += " avg. sections per song: " + str(artistCalcs.numSections / artistCalcs.numSongs) + "\n"
+        logString += "\n most common keys:\n"
+        for keySym in artistCalcs.mostCommonKeys:
+            logString += "    " + keySym + " - seen " + str(artistCalcs.mostCommonKeys[keySym]) + " times\n"
 
         logString += " most common chords (specific):\n"
         for chordSym in artistCalcs.mostCommonChordsSpecific:
@@ -278,6 +293,17 @@ class ChartAnalyzer:
         logString += " most common chords (generic):\n"
         for chordSym in artistCalcs.mostCommonChordsGeneric:
             logString += "    " + chordSym + " - seen " + str(artistCalcs.mostCommonChordsGeneric[chordSym]) + " times\n"
+
+        logString += " most common chord progressions:\n"
+        for progString in artistCalcs.mostCommonChordProgressions:
+            logString += "    " + progString + " - seen " + str(artistCalcs.mostCommonChordProgressions[progString]) + " times\n"
+
+        logString += " most common song structures:\n"
+        for structString in artistCalcs.mostCommonSongStructures:
+            logString += "    " + structString + " - seen " + str(artistCalcs.mostCommonSongStructures[structString]) + " times\n"
+
+        logString += "\n avg. chords per song: " + str(artistCalcs.numChords / artistCalcs.numSongs) + "\n"
+        logString += " avg. sections per song: " + str(artistCalcs.numSections / artistCalcs.numSongs) + "\n"
 
         logString += "============================================================\n"
 
@@ -304,8 +330,8 @@ class ChartAnalyzer:
                 mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
                 mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
 
-                totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
-                totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
+                totalMostCommonChordsSpec = self._mergeCounterDictionary(totalMostCommonChordsSpec, mcChordsSpec)
+                totalMostCommonChordsGen = self._mergeCounterDictionary(totalMostCommonChordsGen, mcChordsGen)
 
                 print("  - Analyzed " + songData.title)
 
