@@ -18,6 +18,7 @@ pPrinter = pprint.PrettyPrinter(indent=2, width=120)
 initializeDatabaseEnabled = False
 databasePurgeEnabled = False
 forceAnalysisEnabled = False
+testModeOverride = False
 
 print("\n===============================================================")
 print("        _____ _           _   _____         _                 ")
@@ -41,7 +42,11 @@ if len(sys.argv) > 0:
             print("--purge-database")
             print("    For local database use. Removes all the data stored in the database.\n")
             print("--force-analysis")
-            print("    For local database use. Removes all the data stored in the database.\n")
+            print("    Forces analysis of database contents.\n")
+            print("--test-mode")
+            print("    Runs mChartAnalyzer in test mode, overriding the configured mode.\n")
+            print("--normal-mode")
+            print("    Runs mChartAnalyzer in normal mode, overriding the configured mode.\n")
             print("")
             sys.exit(0)
 
@@ -56,6 +61,16 @@ if len(sys.argv) > 0:
         if(arg.lower() == "--initialize-database"):
             print("Database will be initialized.")
             initializeDatabaseEnabled = True
+
+        if(arg.lower() == "--test-mode"):
+            print("mChartAnalyzer will run in TEST MODE.")
+            testModeOverride = True
+            testModeEnabled = True
+
+        if(arg.lower() == "--normal-mode"):
+            print("mChartAnalyzer will run in NORMAL MODE.")
+            testModeOverride = True
+            testModeEnabled = False
 
 
 # Reading from config file
@@ -76,7 +91,9 @@ dbHandler = DatabaseHandler()
 mcScraper = ChartScraper()
 mcAnalyzer = ChartAnalyzer()
 
-testModeEnabled = yamlData["testModeEnabled"]
+if not testModeOverride:
+    testModeEnabled = yamlData["testModeEnabled"]
+
 mcScraper.testModeEnabled = testModeEnabled
 scrapeCooldownEnabled = yamlData["scrapeCooldownEnabled"]
 mcScraper.scrapeCooldownEnabled = scrapeCooldownEnabled

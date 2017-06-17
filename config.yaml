@@ -11,6 +11,7 @@ logEnabled: true
 
 # If true, the system will stop parsing after a few charts. (3 per artist, to be exact)
 # This should be set to "false" for normal operation.
+# When running the main script, this option can be overriden by the --test-mode or --normal-mode flags
 testModeEnabled: true
 
 # If false, the system will ignore the cooldown period after a URL is scraped.
