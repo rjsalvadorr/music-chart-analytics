@@ -119,6 +119,7 @@ pip-selfcheck.json
 log*.txt
 
 # etc
+**/mchartdatabase.db
 **.sqbpro
 **.db-journal
 

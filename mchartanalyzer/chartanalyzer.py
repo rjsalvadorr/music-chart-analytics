@@ -21,20 +21,30 @@ class ChartAnalyzer:
     def __init__(self):
         self.dbHandler = DatabaseHandler()
 
+    def _getChordProgressions(self, chordList):
+        """
+        Gets a series of four-chord progressions in the given chord list.
+        Returns a dictionary with chord progressions as keys, and counts as values.
+        """
+        rawDict = dict()
+        chordListLength = len(chordList)
 
-    def _getMostCommonChordProgressions(self, numChords, chartData):
-        return None
+        for idx, chordSym in enumerate(chordList):
+            if idx < chordListLength - constants.NUM_CHORDS_IN_PROG:
+                prog = ' '.join(chordList[idx:idx+constants.NUM_CHORDS_IN_PROG])
+                if prog in rawDict:
+                    rawDict[prog] = rawDict[prog] + 1
+                else:
+                    rawDict[prog] = 1
 
+        return rawDict
 
     def _getMostCommonChords(self, chordList):
         """
         Gets the most common chord symbols in the given chord list.
         Returns a dictionary with chord symbols as keys, and counts as values.
-        Output is limited to the five most common chords.
         """
         rawDict = dict()
-        returnDict = dict()
-
 
         for chordSym in chordList:
             if chordSym in rawDict:
@@ -47,17 +57,17 @@ class ChartAnalyzer:
         return rawDict
 
 
-    def _mergeMostCommonChords(self, dict1, dict2):
-        # dict1 is considered the "trunk" that we're merging dict2 into.
-        for chordSym in dict2:
-            if chordSym in dict1:
+    def _mergeMostCommonChords(self, chordDictMain, chordDict):
+        # chordDictMain is considered the "trunk" that we're merging chordDict into.
+        for chordSym in chordDict:
+            if chordSym in chordDictMain:
                 # if the chord is already in the dictionary, add both values together
-                dict1[chordSym] = dict1[chordSym] + dict2[chordSym]
+                chordDictMain[chordSym] = chordDictMain[chordSym] + chordDict[chordSym]
             else:
                 # if it's a new chord, create a new dict entry
-                dict1[chordSym] = dict2[chordSym]
+                chordDictMain[chordSym] = chordDict[chordSym]
 
-        return dict1
+        return chordDictMain
 
 
     def _trimDictionary(self, oldDict, limit):
@@ -90,7 +100,7 @@ class ChartAnalyzer:
         mKey = key.Key(m21Key)
         mRomanNumeral = roman.romanNumeralFromChord(mChord, mKey)
 
-        genericChordSymbol = mRomanNumeral.romanNumeral + " " + mChord.commonName
+        genericChordSymbol = mRomanNumeral.figure
 
         return genericChordSymbol.replace("-", "b")
 
@@ -217,6 +227,13 @@ class ChartAnalyzer:
                 artistCalcs.numMajorKeys += 1
             artistCalcs.numChords += chartCalc.numChords
             artistCalcs.numSections += chartCalc.numSections
+
+            if chartCalc.key in artistCalcs.mostCommonKeys:
+                # if the key is already in the dictionary, increment counter
+                artistCalcs.mostCommonKeys[chartCalc.key] = artistCalcs.mostCommonKeys[chartCalc.key] + 1
+            else:
+                # if it's a new key, create a new dict entry
+                artistCalcs.mostCommonKeys[chartCalc.key] = 1
 
         artistCalcs.numMinorKeys = artistCalcs.numSongs - artistCalcs.numMajorKeys
 
