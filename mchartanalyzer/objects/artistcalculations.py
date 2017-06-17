@@ -9,8 +9,8 @@ class ArtistCalculations(BaseDataObject):
         BaseDataObject.__init__(self)
 
         self.artistId = 0
-        self.numChords = 0 # TODO - remove
-        self.numSections = 0 # TODO - remove
+        self.numChords = 0 # TODO - remove?
+        self.numSections = 0 # TODO - remove?
         self.numSongs = 0
         self.numCharts = 0
         self.numMajorKeys = 0
@@ -23,15 +23,17 @@ class ArtistCalculations(BaseDataObject):
 
         if databaseRow:
             self.artistId = databaseRow[0]
-            self.numSongs = databaseRow[1]
-            self.numCharts = databaseRow[2]
-            self.numMajorKeys = databaseRow[3]
-            self.numMinorKeys = databaseRow[4]
-            self.mostCommonKeys = self._convertStringToDict(databaseRow[5])
-            self.mostCommonChordsSpecific = self._convertStringToDict(databaseRow[6])
-            self.mostCommonChordsGeneric = self._convertStringToDict(databaseRow[7])
-            self.mostCommonChordProgressions = self._convertStringToDict(databaseRow[8])
-            self.mostCommonSongStructures = self._convertStringToDict(databaseRow[9])
+            self.numChords = databaseRow[1]
+            self.numSections = databaseRow[2]
+            self.numSongs = databaseRow[3]
+            self.numCharts = databaseRow[4
+            self.numMajorKeys = databaseRow[5]
+            self.numMinorKeys = databaseRow[6]
+            self.mostCommonKeys = self._convertStringToDict(databaseRow[7])
+            self.mostCommonChordsSpecific = self._convertStringToDict(databaseRow[8])
+            self.mostCommonChordsGeneric = self._convertStringToDict(databaseRow[9])
+            self.mostCommonChordProgressions = self._convertStringToDict(databaseRow[10])
+            self.mostCommonSongStructures = self._convertStringToDict(databaseRow[11])
 
     def __str__(self):
         stringRep = "ArtistCalculations { id=" + str(self.id) + ", "

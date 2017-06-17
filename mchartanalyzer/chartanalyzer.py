@@ -290,7 +290,7 @@ class ChartAnalyzer:
                 totalMostCommonChordsSpec = self._mergeMostCommonChords(totalMostCommonChordsSpec, mcChordsSpec)
                 totalMostCommonChordsGen = self._mergeMostCommonChords(totalMostCommonChordsGen, mcChordsGen)
 
-                print("    Analyzed " + songData.title)
+                print("  - Analyzed " + songData.title)
 
             finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
             finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)
