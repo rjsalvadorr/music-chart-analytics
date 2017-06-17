@@ -5,7 +5,7 @@ class ArtistCalculations(BaseDataObject):
     Class encapsulating all the desired data about an artist/musician, after thorough analysis.
     """
 
-    def __init__(self):
+    def __init__(self, databaseRow=None):
         BaseDataObject.__init__(self)
 
         self.artistId = 0
@@ -21,6 +21,17 @@ class ArtistCalculations(BaseDataObject):
         self.mostCommonChordProgressions = {}
         self.mostCommonSongStructures = {}
 
+        if databaseRow:
+            self.artistId = databaseRow[0]
+            self.numSongs = databaseRow[1]
+            self.numCharts = databaseRow[2]
+            self.numMajorKeys = databaseRow[3]
+            self.numMinorKeys = databaseRow[4]
+            self.mostCommonKeys = self._convertStringToDict(databaseRow[5])
+            self.mostCommonChordsSpecific = self._convertStringToDict(databaseRow[6])
+            self.mostCommonChordsGeneric = self._convertStringToDict(databaseRow[7])
+            self.mostCommonChordProgressions = self._convertStringToDict(databaseRow[8])
+            self.mostCommonSongStructures = self._convertStringToDict(databaseRow[9])
 
     def __str__(self):
         stringRep = "ArtistCalculations { id=" + str(self.id) + ", "
