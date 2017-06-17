@@ -11,7 +11,7 @@ class ChartParser:
     Parses data from a chord chart. Looks for information like title, key, chords, and structure.
     """
 
-    sectionKeywords = ["intro", "verse", "prechorus", "pre-chorus", "pre chorus", "chorus", "bridge", "outro", "solo", "hook", "pre-hook", "coda", "middle 8"]
+    sectionKeywords = ["intro", "verse", "prechorus", "pre-chorus", "pre chorus", "chorus", "bridge", "outro", "solo", "hook", "pre-hook", "coda", "middle 8", "interlude"]
 
     chordSymbols = ["m", "M", "min", "maj", "dim"] # TRIADS
     chordSymbols.extend(["m7", "M7", "min7", "maj7", "dim7", "m7b5"]) # SEVENTHS
@@ -65,12 +65,12 @@ class ChartParser:
         """
         Returns true if the given text is probably a section marking, such as "Chorus" or "Verse".
         """
-        regexSections = r"[ \[]*("
+        regexSections = r"[ \[\{]*("
         for idx, sectionKeyword in enumerate(ChartParser.sectionKeywords):
             if idx != 0:
                 regexSections += r"|"
             regexSections += re.escape(sectionKeyword)
-        regexSections += r")[ 1-9]*[ \]]*"
+        regexSections += r")[ 1-9:]*[ \]\}]*"
 
         finalPattern = re.compile(regexSections, re.IGNORECASE)
 
