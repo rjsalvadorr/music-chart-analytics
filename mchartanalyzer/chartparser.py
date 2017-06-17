@@ -117,6 +117,7 @@ class ChartParser:
             formmatedKeyword = keywordToken.upper()
             formmatedKeyword = formmatedKeyword.replace("[", "")
             formmatedKeyword = formmatedKeyword.replace("]", "")
+            formmatedKeyword = formmatedKeyword.replace(":", "")
             formmatedKeyword = formmatedKeyword.replace(" ", "")
 
             sections.append(formmatedKeyword)

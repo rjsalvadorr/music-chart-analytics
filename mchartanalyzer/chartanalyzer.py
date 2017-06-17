@@ -208,9 +208,6 @@ class ChartAnalyzer:
         chartCalcs.numChords = len(chartData.chordsSpecific)
         chartCalcs.numSections = len(chartData.sections)
 
-        if chartCalcs.numSections is 1:
-            print(str(chartData))
-
         return chartCalcs
 
 
