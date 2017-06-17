@@ -95,12 +95,16 @@ class ChartAnalyzer:
         For example: ?????
         """
         formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
-
         mChord = harmony.ChordSymbol(formattedChordSymbol)
         mKey = key.Key(m21Key)
         mRomanNumeral = roman.romanNumeralFromChord(mChord, mKey)
 
-        genericChordSymbol = mRomanNumeral.figure
+        regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
+        rootlessChordSymbol = re.sub(regexRoot, '', chordSymbol)
+        if rootlessChordSymbol == 'm':
+            rootlessChordSymbol = ''
+
+        genericChordSymbol = mRomanNumeral.romanNumeral + rootlessChordSymbol
 
         return genericChordSymbol.replace("-", "b")
 
