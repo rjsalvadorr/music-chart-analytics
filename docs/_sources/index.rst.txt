@@ -6,9 +6,11 @@
 Welcome to mChartAnalytics's documentation!
 ===========================================
 
+Core Classes
+============
+
 .. toctree::
   :maxdepth: 2
-  :caption: Contents:
 
   chartscraper
   chartparser
@@ -18,6 +20,19 @@ Welcome to mChartAnalytics's documentation!
   scrapestrategy
   ultimateguitarstrategy
 
+
+Data Objects
+============
+
+.. toctree::
+  :maxdepth: 2
+
+  data_objects/basedataobject
+  data_objects/chartdata
+  data_objects/chartcalculations
+  data_objects/artistdata
+  data_objects/artistcalculations
+  data_objects/songdata
 
 
 Indices and tables
