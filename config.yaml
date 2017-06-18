@@ -2,8 +2,7 @@
 
 # Artists whose songs will be analyzed
 artists:
-  - Marvin Gaye
-  - System of a Down
+  - James Brown
 
 # If true, log files will be written for each run of the program
 # The logs will be located in the "mchartanalyzer-output" directory
