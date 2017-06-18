@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to mChartAnalytics’s documentation! &#8212; mChartAnalytics  documentation</title>
+    <title>ScrapeStrategy &#8212; mChartAnalytics  documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,7 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ChartScraper" href="chartscraper.html" /> 
+    <link rel="next" title="UltimateGuitarStrategy" href="ultimateguitarstrategy.html" />
+    <link rel="prev" title="Logger" href="logger.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,26 +37,26 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="chartscraper.html" title="ChartScraper"
+          <a href="ultimateguitarstrategy.html" title="UltimateGuitarStrategy"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">mChartAnalytics  documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="logger.html" title="Logger"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to mChartAnalytics’s documentation!</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
-
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="logger.html"
+                        title="previous chapter">Logger</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="chartscraper.html"
-                        title="next chapter">ChartScraper</a></p>
+  <p class="topless"><a href="ultimateguitarstrategy.html"
+                        title="next chapter">UltimateGuitarStrategy</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
+      <li><a href="_sources/scrapestrategy.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -77,28 +78,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-mchartanalytics-s-documentation">
-<h1>Welcome to mChartAnalytics’s documentation!<a class="headerlink" href="#welcome-to-mchartanalytics-s-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="chartscraper.html">ChartScraper</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chartparser.html">ChartParser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chartanalyzer.html">ChartAnalyzer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="databasehandler.html">DatabaseHandler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scrapestrategy.html">ScrapeStrategy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ultimateguitarstrategy.html">UltimateGuitarStrategy</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
-</ul>
+  <div class="section" id="scrapestrategy">
+<h1>ScrapeStrategy<a class="headerlink" href="#scrapestrategy" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mchartanalyzer.scrapestrategy.ScrapeStrategy">
+<em class="property">class </em><code class="descclassname">mchartanalyzer.scrapestrategy.</code><code class="descname">ScrapeStrategy</code><a class="reference internal" href="_modules/mchartanalyzer/scrapestrategy.html#ScrapeStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.scrapestrategy.ScrapeStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class, representing a strategy for navigating a particular website.
+One concrete subclass should be implemented for each website we’re interested in.</p>
+</dd></dl>
+
 </div>
 
 
@@ -114,9 +102,12 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="chartscraper.html" title="ChartScraper"
+          <a href="ultimateguitarstrategy.html" title="UltimateGuitarStrategy"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">mChartAnalytics  documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="logger.html" title="Logger"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
