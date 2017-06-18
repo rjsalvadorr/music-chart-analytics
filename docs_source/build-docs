@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SOURCEDIR='.'
+BUILDDIR='../docs'
+
+sphinx-build -b html $SOURCEDIR $BUILDDIR

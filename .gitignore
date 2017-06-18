@@ -125,3 +125,7 @@ log*.txt
 
 # intelliJ
 .idea/**
+
+# sphinx documentation
+docs/.doctrees
+docs/.buildinfo
