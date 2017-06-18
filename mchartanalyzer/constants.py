@@ -3,6 +3,7 @@ import os
 MOST_COMMON_CHORDS_LIMIT = 5
 TEST_MODE_SONG_LIMIT = 5
 URL_SCRAPE_COOLDOWN_DAYS = 30
+NUM_CHORDS_IN_PROG = 4
 
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__))
 PROJECT_DIR = os.path.dirname(MODULE_DIR)

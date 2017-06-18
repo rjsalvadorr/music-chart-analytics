@@ -12,8 +12,11 @@ class ChartCalculations(BaseDataObject):
         self.key = ""
         self.keyAnalysisCertainty = ""
         self.chordsGeneral = []
-        self.numChords = 0
-        self.numSections = 0
+        self.numChords = 0 # TODO - remove?
+        self.numSections = 0 # TODO - remove?
+
+        # When returning a ChartCalculations object from the database, this can be initialized.
+        self.chartData = None
 
         if databaseRow:
             self.id = databaseRow[0]
