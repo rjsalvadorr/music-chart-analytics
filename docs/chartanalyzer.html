@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ChartAnalyzer &#8212; mChartAnalytics  documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DatabaseHandler" href="databasehandler.html" />
+    <link rel="prev" title="ChartParser" href="chartparser.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="databasehandler.html" title="DatabaseHandler"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="chartparser.html" title="ChartParser"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="chartparser.html"
+                        title="previous chapter">ChartParser</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="databasehandler.html"
+                        title="next chapter">DatabaseHandler</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/chartanalyzer.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="chartanalyzer">
+<h1>ChartAnalyzer<a class="headerlink" href="#chartanalyzer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer">
+<em class="property">class </em><code class="descclassname">mchartanalyzer.chartanalyzer.</code><code class="descname">ChartAnalyzer</code><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes the charts, and calculates the desired data for display.</p>
+<dl class="attribute">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeArtist">
+<code class="descname">_analyzeArtist</code><span class="sig-paren">(</span><em>artistData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._analyzeArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes an artist. Returns an ArtistCalculations object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeCharts">
+<code class="descname">_analyzeCharts</code><span class="sig-paren">(</span><em>artistDataList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._analyzeCharts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeCharts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform analysis on song charts associated to certain artists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeKey">
+<code class="descname">_analyzeKey</code><span class="sig-paren">(</span><em>chordList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._analyzeKey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines the song’s key by analyzing the chords in the current song.
+Returns a tuple with the analyzed key and key certainty.
+For example, (“G major”, 0.977538)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordListToGeneral">
+<code class="descname">_convertChordListToGeneral</code><span class="sig-paren">(</span><em>chordList</em>, <em>keyString</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._convertChordListToGeneral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordListToGeneral" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a given key and chord symbol list, return a list of chord symbols in roman numeral notation.
+For example: ?????</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordSymbolToGeneral">
+<code class="descname">_convertChordSymbolToGeneral</code><span class="sig-paren">(</span><em>chordSymbol</em>, <em>m21Key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._convertChordSymbolToGeneral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordSymbolToGeneral" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a given key and chord symbol, return a chord symbol in roman numeral notation.
+For example: ?????</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._convertKeyTextToMusic21">
+<code class="descname">_convertKeyTextToMusic21</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._convertKeyTextToMusic21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertKeyTextToMusic21" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a regular key string to a music21 key string.
+Music21 key strings use a lowercase tonic for minor keys, and use “-” as a flat accidental instead of “b”.
+For example, this method would convert “Bb Minor” to “b- minor”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._convertMusic21KeyToText">
+<code class="descname">_convertMusic21KeyToText</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._convertMusic21KeyToText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertMusic21KeyToText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a music21 key string to a regular one.
+Music21 key strings use a lowercase tonic for minor keys, and use “-” as a flat accidental instead of “b”.
+For example, this method would convert “b- minor” to “Bb Minor”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._convertToMusic21ChordSymbol">
+<code class="descname">_convertToMusic21ChordSymbol</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._convertToMusic21ChordSymbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertToMusic21ChordSymbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts regular chord symbols into ones that music21 understands.
+The main difference: the flat accidental is “-” on music21, not “b”.
+For example, this method would convert “Bbm7” to “B-m7”</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._getBasicChartCalculations">
+<code class="descname">_getBasicChartCalculations</code><span class="sig-paren">(</span><em>chartData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._getBasicChartCalculations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._getBasicChartCalculations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes a chart. Returns an ChartCalculations object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._getChordProgressions">
+<code class="descname">_getChordProgressions</code><span class="sig-paren">(</span><em>chordList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._getChordProgressions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._getChordProgressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a series of four-chord progressions in the given chord list.
+Returns a dictionary with chord progressions as keys, and counts as values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer._getMostCommonChords">
+<code class="descname">_getMostCommonChords</code><span class="sig-paren">(</span><em>chordList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer._getMostCommonChords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer._getMostCommonChords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the most common chord symbols in the given chord list.
+Returns a dictionary with chord symbols as keys, and counts as values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeAllCharts">
+<code class="descname">analyzeAllCharts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer.analyzeAllCharts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeAllCharts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform analysis on all artists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeFreshCharts">
+<code class="descname">analyzeFreshCharts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/chartanalyzer.html#ChartAnalyzer.analyzeFreshCharts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeFreshCharts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform analysis on artists with fresh data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="databasehandler.html" title="DatabaseHandler"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="chartparser.html" title="ChartParser"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, RJ Salvador.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

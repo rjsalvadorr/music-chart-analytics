@@ -1,0 +1,453 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mchartanalyzer.chartanalyzer &#8212; mChartAnalytics  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mchartanalyzer.chartanalyzer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">music21</span> <span class="k">import</span> <span class="n">harmony</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="k">import</span> <span class="n">converter</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="k">import</span> <span class="n">key</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="k">import</span> <span class="n">roman</span>
+
+<span class="kn">from</span> <span class="nn">.objects.artistcalculations</span> <span class="k">import</span> <span class="n">ArtistCalculations</span>
+<span class="kn">from</span> <span class="nn">.objects.chartcalculations</span> <span class="k">import</span> <span class="n">ChartCalculations</span>
+<span class="kn">from</span> <span class="nn">.databasehandler</span> <span class="k">import</span> <span class="n">DatabaseHandler</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">.logger</span> <span class="k">import</span> <span class="n">Logger</span>
+
+<div class="viewcode-block" id="ChartAnalyzer"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">ChartAnalyzer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyzes the charts, and calculates the desired data for display.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span> <span class="o">=</span> <span class="n">DatabaseHandler</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ChartAnalyzer._getChordProgressions"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._getChordProgressions">[docs]</a>    <span class="k">def</span> <span class="nf">_getChordProgressions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a series of four-chord progressions in the given chord list.</span>
+<span class="sd">        Returns a dictionary with chord progressions as keys, and counts as values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rawDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">chordListLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chordList</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chordList</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">chordListLength</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">NUM_CHORDS_IN_PROG</span><span class="p">:</span>
+                <span class="n">prog</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chordList</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span><span class="o">+</span><span class="n">constants</span><span class="o">.</span><span class="n">NUM_CHORDS_IN_PROG</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">rawDict</span><span class="p">:</span>
+                    <span class="n">rawDict</span><span class="p">[</span><span class="n">prog</span><span class="p">]</span> <span class="o">=</span> <span class="n">rawDict</span><span class="p">[</span><span class="n">prog</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rawDict</span><span class="p">[</span><span class="n">prog</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">rawDict</span></div>
+
+<div class="viewcode-block" id="ChartAnalyzer._getMostCommonChords"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._getMostCommonChords">[docs]</a>    <span class="k">def</span> <span class="nf">_getMostCommonChords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the most common chord symbols in the given chord list.</span>
+<span class="sd">        Returns a dictionary with chord symbols as keys, and counts as values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rawDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">chordList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">rawDict</span><span class="p">:</span>
+                <span class="c1"># if the chord is already in the dictionary, increment counter</span>
+                <span class="n">rawDict</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">=</span> <span class="n">rawDict</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># if it&#39;s a new chord, create a new dict entry</span>
+                <span class="n">rawDict</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">rawDict</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_mergeCounterDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordDictMain</span><span class="p">,</span> <span class="n">chordDict</span><span class="p">):</span>
+        <span class="c1"># chordDictMain is considered the &quot;trunk&quot; that we&#39;re merging chordDict into.</span>
+        <span class="k">for</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">chordDict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">chordDictMain</span><span class="p">:</span>
+                <span class="c1"># if the chord is already in the dictionary, add both values together</span>
+                <span class="n">chordDictMain</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">=</span> <span class="n">chordDictMain</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">+</span> <span class="n">chordDict</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># if it&#39;s a new chord, create a new dict entry</span>
+                <span class="n">chordDictMain</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span> <span class="o">=</span> <span class="n">chordDict</span><span class="p">[</span><span class="n">chordSym</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">chordDictMain</span>
+
+
+    <span class="k">def</span> <span class="nf">_trimDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldDict</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+        <span class="n">newDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ctr</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">dKey</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">oldDict</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">oldDict</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">newDict</span><span class="p">[</span><span class="n">dKey</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldDict</span><span class="p">[</span><span class="n">dKey</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ctr</span> <span class="o">&gt;=</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">newDict</span>
+
+
+    <span class="k">def</span> <span class="nf">_getNumKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartData</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="n">ChartAnalyzer</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._convertChordSymbolToGeneral"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordSymbolToGeneral">[docs]</a>    <span class="k">def</span> <span class="nf">_convertChordSymbolToGeneral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordSymbol</span><span class="p">,</span> <span class="n">m21Key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From a given key and chord symbol, return a chord symbol in roman numeral notation.</span>
+<span class="sd">        For example: ?????</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convertToMusic21ChordSymbol</span><span class="p">(</span><span class="n">chordSymbol</span><span class="p">)</span>
+        <span class="n">mChord</span> <span class="o">=</span> <span class="n">harmony</span><span class="o">.</span><span class="n">ChordSymbol</span><span class="p">(</span><span class="n">formattedChordSymbol</span><span class="p">)</span>
+        <span class="n">mKey</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">Key</span><span class="p">(</span><span class="n">m21Key</span><span class="p">)</span>
+        <span class="n">mRomanNumeral</span> <span class="o">=</span> <span class="n">roman</span><span class="o">.</span><span class="n">romanNumeralFromChord</span><span class="p">(</span><span class="n">mChord</span><span class="p">,</span> <span class="n">mKey</span><span class="p">)</span>
+
+        <span class="n">regexRoot</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[CDEFGAB](#{1,2}|b{1,2})?&quot;</span>
+        <span class="n">rootlessChordSymbol</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">regexRoot</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">chordSymbol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rootlessChordSymbol</span> <span class="o">==</span> <span class="s1">&#39;m&#39;</span><span class="p">:</span>
+            <span class="n">rootlessChordSymbol</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">genericChordSymbol</span> <span class="o">=</span> <span class="n">mRomanNumeral</span><span class="o">.</span><span class="n">romanNumeral</span> <span class="o">+</span> <span class="n">rootlessChordSymbol</span>
+
+        <span class="k">return</span> <span class="n">genericChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._convertChordListToGeneral"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertChordListToGeneral">[docs]</a>    <span class="k">def</span> <span class="nf">_convertChordListToGeneral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordList</span><span class="p">,</span> <span class="n">keyString</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From a given key and chord symbol list, return a list of chord symbols in roman numeral notation.</span>
+<span class="sd">        For example: ?????</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">genericChordList</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">chordList</span><span class="p">:</span>
+            <span class="n">formattedKeyString</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convertKeyTextToMusic21</span><span class="p">(</span><span class="n">keyString</span><span class="p">)</span>
+            <span class="n">genericChordList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_convertChordSymbolToGeneral</span><span class="p">(</span><span class="n">chordSym</span><span class="p">,</span> <span class="n">formattedKeyString</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">genericChordList</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._convertToMusic21ChordSymbol"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertToMusic21ChordSymbol">[docs]</a>    <span class="k">def</span> <span class="nf">_convertToMusic21ChordSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts regular chord symbols into ones that music21 understands.</span>
+<span class="sd">        The main difference: the flat accidental is &quot;-&quot; on music21, not &quot;b&quot;.</span>
+<span class="sd">        For example, this method would convert &quot;Bbm7&quot; to &quot;B-m7&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="c1"># Specific replacements below were added after certain music21 errors.</span>
+        <span class="c1"># TODO - find a better way to avoid these issues!</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">formattedChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-5&quot;</span><span class="p">,</span> <span class="s2">&quot;b5&quot;</span><span class="p">)</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">formattedChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-9&quot;</span><span class="p">,</span> <span class="s2">&quot;b9&quot;</span><span class="p">)</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">formattedChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;maj&quot;</span><span class="p">,</span> <span class="s2">&quot;Maj&quot;</span><span class="p">)</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">formattedChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Maj7&quot;</span><span class="p">,</span> <span class="s2">&quot;M7&quot;</span><span class="p">)</span>
+        <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="n">formattedChordSymbol</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;7sus4&quot;</span><span class="p">,</span> <span class="s2">&quot;sus4&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">formattedChordSymbol</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._convertKeyTextToMusic21"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertKeyTextToMusic21">[docs]</a>    <span class="k">def</span> <span class="nf">_convertKeyTextToMusic21</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a regular key string to a music21 key string.</span>
+<span class="sd">        Music21 key strings use a lowercase tonic for minor keys, and use &quot;-&quot; as a flat accidental instead of &quot;b&quot;.</span>
+<span class="sd">        For example, this method would convert &quot;Bb Minor&quot; to &quot;b- minor&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">textParts</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">fText</span> <span class="o">=</span> <span class="n">textParts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">textParts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;MINOR&quot;</span><span class="p">:</span>
+            <span class="n">fText</span> <span class="o">=</span> <span class="n">fText</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">fText</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._convertMusic21KeyToText"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._convertMusic21KeyToText">[docs]</a>    <span class="k">def</span> <span class="nf">_convertMusic21KeyToText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a music21 key string to a regular one.</span>
+<span class="sd">        Music21 key strings use a lowercase tonic for minor keys, and use &quot;-&quot; as a flat accidental instead of &quot;b&quot;.</span>
+<span class="sd">        For example, this method would convert &quot;b- minor&quot; to &quot;Bb Minor&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fText</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fText</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._analyzeKey"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeKey">[docs]</a>    <span class="k">def</span> <span class="nf">_analyzeKey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines the song&#39;s key by analyzing the chords in the current song.</span>
+<span class="sd">        Returns a tuple with the analyzed key and key certainty.</span>
+<span class="sd">        For example, (&quot;G major&quot;, 0.977538)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the pitches used in the current song&#39;s chords</span>
+        <span class="c1"># And assemble those pitches into a large tinynotation string</span>
+        <span class="n">tinyNotationString</span> <span class="o">=</span> <span class="s2">&quot;tinyNotation: 4/4 &quot;</span>
+        <span class="k">for</span> <span class="n">chordSymbol</span> <span class="ow">in</span> <span class="n">chordList</span><span class="p">:</span>
+            <span class="n">formattedChordSymbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convertToMusic21ChordSymbol</span><span class="p">(</span><span class="n">chordSymbol</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">harmony</span><span class="o">.</span><span class="n">ChordSymbol</span><span class="p">(</span><span class="n">formattedChordSymbol</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">rawPitch</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">pitches</span><span class="p">:</span>
+                    <span class="n">tnPitch</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rawPitch</span><span class="p">)</span>
+                    <span class="n">tnPitch</span> <span class="o">=</span> <span class="n">tnPitch</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Removes the octave number from the pitch string</span>
+                    <span class="n">tinyNotationString</span> <span class="o">+=</span> <span class="n">tnPitch</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chord parsing failed due to &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="n">littlePiece</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">tinyNotationString</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">littlePiece</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_convertMusic21KeyToText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)),</span> <span class="nb">round</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">tonalCertainty</span><span class="p">(),</span> <span class="mi">6</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._getBasicChartCalculations"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._getBasicChartCalculations">[docs]</a>    <span class="k">def</span> <span class="nf">_getBasicChartCalculations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes a chart. Returns an ChartCalculations object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartCalcs</span> <span class="o">=</span> <span class="n">ChartCalculations</span><span class="p">()</span>
+
+        <span class="n">analyzedKey</span><span class="p">,</span> <span class="n">analyzedKeyCertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyzeKey</span><span class="p">(</span><span class="n">chartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">)</span>
+        <span class="n">chartCalcs</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">analyzedKey</span>
+        <span class="n">chartCalcs</span><span class="o">.</span><span class="n">keyAnalysisCertainty</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">analyzedKeyCertainty</span><span class="p">)</span>
+        <span class="n">chartCalcs</span><span class="o">.</span><span class="n">chordsGeneral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convertChordListToGeneral</span><span class="p">(</span><span class="n">chartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">,</span> <span class="n">analyzedKey</span><span class="p">)</span>
+        <span class="n">chartCalcs</span><span class="o">.</span><span class="n">numChords</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">)</span>
+        <span class="n">chartCalcs</span><span class="o">.</span><span class="n">numSections</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chartData</span><span class="o">.</span><span class="n">sections</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chartCalcs</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._analyzeArtist"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeArtist">[docs]</a>    <span class="k">def</span> <span class="nf">_analyzeArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes an artist. Returns an ArtistCalculations object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">artistCalcs</span> <span class="o">=</span> <span class="n">ArtistCalculations</span><span class="p">()</span>
+        <span class="n">artistDefinitiveChartCalcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getDefinitiveChartCalcsForArtist</span><span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">artistAllCharts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getAllChartsForArtist</span><span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">allProgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">allSections</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">mostCommonKeys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">chart</span> <span class="ow">in</span> <span class="n">artistAllCharts</span><span class="p">:</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numCharts</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">chartCalc</span> <span class="ow">in</span> <span class="n">artistDefinitiveChartCalcs</span><span class="p">:</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSongs</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">chartCalc</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;major&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numMajorKeys</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numChords</span> <span class="o">+=</span> <span class="n">chartCalc</span><span class="o">.</span><span class="n">numChords</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSections</span> <span class="o">+=</span> <span class="n">chartCalc</span><span class="o">.</span><span class="n">numSections</span>
+
+            <span class="k">if</span> <span class="n">chartCalc</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">mostCommonKeys</span><span class="p">:</span>
+                <span class="n">mostCommonKeys</span><span class="p">[</span><span class="n">chartCalc</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">mostCommonKeys</span><span class="p">[</span><span class="n">chartCalc</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mostCommonKeys</span><span class="p">[</span><span class="n">chartCalc</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">chartCalc</span><span class="o">.</span><span class="n">chartData</span><span class="o">.</span><span class="n">sections</span><span class="p">:</span>
+                <span class="n">songStruct</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chartCalc</span><span class="o">.</span><span class="n">chartData</span><span class="o">.</span><span class="n">sections</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">songStruct</span> <span class="ow">in</span> <span class="n">allProgs</span><span class="p">:</span>
+                    <span class="n">allSections</span><span class="p">[</span><span class="n">songStruct</span><span class="p">]</span> <span class="o">=</span> <span class="n">allSections</span><span class="p">[</span><span class="n">songStruct</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">allSections</span><span class="p">[</span><span class="n">songStruct</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">allProgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergeCounterDictionary</span><span class="p">(</span><span class="n">allProgs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getChordProgressions</span><span class="p">(</span><span class="n">chartCalc</span><span class="o">.</span><span class="n">chordsGeneral</span><span class="p">))</span>
+
+        <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonKeys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trimDictionary</span><span class="p">(</span><span class="n">mostCommonKeys</span><span class="p">,</span> <span class="n">constants</span><span class="o">.</span><span class="n">MOST_COMMON_CHORDS_LIMIT</span><span class="p">)</span>
+        <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordProgressions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trimDictionary</span><span class="p">(</span><span class="n">allProgs</span><span class="p">,</span> <span class="n">constants</span><span class="o">.</span><span class="n">MOST_COMMON_CHORDS_LIMIT</span><span class="p">)</span>
+        <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonSongStructures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trimDictionary</span><span class="p">(</span><span class="n">allSections</span><span class="p">,</span> <span class="n">constants</span><span class="o">.</span><span class="n">MOST_COMMON_CHORDS_LIMIT</span><span class="p">)</span>
+        <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numMinorKeys</span> <span class="o">=</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSongs</span> <span class="o">-</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numMajorKeys</span>
+
+        <span class="k">return</span> <span class="n">artistCalcs</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_dumpChartCalculationsToLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">,</span> <span class="n">songData</span><span class="p">,</span> <span class="n">chartData</span><span class="p">,</span> <span class="n">chartCalcs</span><span class="p">):</span>
+        <span class="n">logString</span> <span class="o">=</span> <span class="s2">&quot; source: &quot;</span> <span class="o">+</span> <span class="n">chartData</span><span class="o">.</span><span class="n">source</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; artist: &quot;</span> <span class="o">+</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; title: &quot;</span> <span class="o">+</span> <span class="n">songData</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; sections: &quot;</span> <span class="o">+</span> <span class="n">chartData</span><span class="o">.</span><span class="n">getSectionListString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; original chords: &quot;</span> <span class="o">+</span> <span class="n">chartData</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; computed key: &quot;</span> <span class="o">+</span> <span class="n">chartCalcs</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; computed key certainty: &quot;</span> <span class="o">+</span> <span class="n">chartCalcs</span><span class="o">.</span><span class="n">keyAnalysisCertainty</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; computed chords: &quot;</span> <span class="o">+</span> <span class="n">chartCalcs</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; number of chords: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numChords</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; number of sections: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numSections</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">========================================</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">logString</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_dumpArtistCalculationsToLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">,</span> <span class="n">artistCalcs</span><span class="p">):</span>
+        <span class="n">logString</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">============================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; artist summary: &quot;</span> <span class="o">+</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;============================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; songs encountered: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSongs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; total charts encountered: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numCharts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; songs in major: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numMajorKeys</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; songs in minor: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numMinorKeys</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; chords encountered: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numChords</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; sections encountered: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSections</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> most common keys:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">keySym</span> <span class="ow">in</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonKeys</span><span class="p">:</span>
+            <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">keySym</span> <span class="o">+</span> <span class="s2">&quot; - seen &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonKeys</span><span class="p">[</span><span class="n">keySym</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; times</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; most common chords (specific):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsSpecific</span><span class="p">:</span>
+            <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">chordSym</span> <span class="o">+</span> <span class="s2">&quot; - seen &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsSpecific</span><span class="p">[</span><span class="n">chordSym</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; times</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; most common chords (generic):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">chordSym</span> <span class="ow">in</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsGeneric</span><span class="p">:</span>
+            <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">chordSym</span> <span class="o">+</span> <span class="s2">&quot; - seen &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsGeneric</span><span class="p">[</span><span class="n">chordSym</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; times</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; most common chord progressions:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">progString</span> <span class="ow">in</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordProgressions</span><span class="p">:</span>
+            <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">progString</span> <span class="o">+</span> <span class="s2">&quot; - seen &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordProgressions</span><span class="p">[</span><span class="n">progString</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; times</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; most common song structures:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">structString</span> <span class="ow">in</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonSongStructures</span><span class="p">:</span>
+            <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">structString</span> <span class="o">+</span> <span class="s2">&quot; - seen &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonSongStructures</span><span class="p">[</span><span class="n">structString</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; times</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> avg. chords per song: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numChords</span> <span class="o">/</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSongs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot; avg. sections per song: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSections</span> <span class="o">/</span> <span class="n">artistCalcs</span><span class="o">.</span><span class="n">numSongs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">logString</span> <span class="o">+=</span> <span class="s2">&quot;============================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">logString</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ChartAnalyzer._analyzeCharts"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer._analyzeCharts">[docs]</a>    <span class="k">def</span> <span class="nf">_analyzeCharts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistDataList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform analysis on song charts associated to certain artists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">artistData</span> <span class="ow">in</span> <span class="n">artistDataList</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Analyzing data for &quot;</span> <span class="o">+</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+            <span class="n">freshCharts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getAllChartsForArtist</span><span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">totalMostCommonChordsSpec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">totalMostCommonChordsGen</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">freshChartData</span> <span class="ow">in</span> <span class="n">freshCharts</span><span class="p">:</span>
+                <span class="n">songData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getSongById</span><span class="p">(</span><span class="n">freshChartData</span><span class="o">.</span><span class="n">songId</span><span class="p">)</span>
+                <span class="n">chartCalcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getBasicChartCalculations</span><span class="p">(</span><span class="n">freshChartData</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">saveChartCalculationData</span><span class="p">(</span><span class="n">freshChartData</span><span class="p">,</span> <span class="n">chartCalcs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dumpChartCalculationsToLog</span><span class="p">(</span><span class="n">artistData</span><span class="p">,</span> <span class="n">songData</span><span class="p">,</span> <span class="n">freshChartData</span><span class="p">,</span> <span class="n">chartCalcs</span><span class="p">)</span>
+
+                <span class="n">mcChordsSpec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getMostCommonChords</span><span class="p">(</span><span class="n">freshChartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">)</span>
+                <span class="n">mcChordsGen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getMostCommonChords</span><span class="p">(</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">chordsGeneral</span><span class="p">)</span>
+
+                <span class="n">totalMostCommonChordsSpec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergeCounterDictionary</span><span class="p">(</span><span class="n">totalMostCommonChordsSpec</span><span class="p">,</span> <span class="n">mcChordsSpec</span><span class="p">)</span>
+                <span class="n">totalMostCommonChordsGen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergeCounterDictionary</span><span class="p">(</span><span class="n">totalMostCommonChordsGen</span><span class="p">,</span> <span class="n">mcChordsGen</span><span class="p">)</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Analyzed &quot;</span> <span class="o">+</span> <span class="n">songData</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+
+            <span class="n">finalDictGen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trimDictionary</span><span class="p">(</span><span class="n">totalMostCommonChordsGen</span><span class="p">,</span> <span class="n">constants</span><span class="o">.</span><span class="n">MOST_COMMON_CHORDS_LIMIT</span><span class="p">)</span>
+            <span class="n">finalDictSpec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trimDictionary</span><span class="p">(</span><span class="n">totalMostCommonChordsSpec</span><span class="p">,</span> <span class="n">constants</span><span class="o">.</span><span class="n">MOST_COMMON_CHORDS_LIMIT</span><span class="p">)</span>
+
+            <span class="n">artistCalcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyzeArtist</span><span class="p">(</span><span class="n">artistData</span><span class="p">)</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsSpecific</span> <span class="o">=</span> <span class="n">finalDictSpec</span>
+            <span class="n">artistCalcs</span><span class="o">.</span><span class="n">mostCommonChordsGeneric</span> <span class="o">=</span> <span class="n">finalDictGen</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dumpArtistCalculationsToLog</span><span class="p">(</span><span class="n">artistData</span><span class="p">,</span> <span class="n">artistCalcs</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Data analyzed and persisted!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer.analyzeFreshCharts"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeFreshCharts">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeFreshCharts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform analysis on artists with fresh data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">freshArtists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getArtistsWithFreshCharts</span><span class="p">()</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freshArtists</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No fresh data! No analysis will be done.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analyzeCharts</span><span class="p">(</span><span class="n">freshArtists</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartAnalyzer.analyzeAllCharts"><a class="viewcode-back" href="../../chartanalyzer.html#mchartanalyzer.chartanalyzer.ChartAnalyzer.analyzeAllCharts">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeAllCharts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform analysis on all artists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">allArtists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getAllArtists</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analyzeCharts</span><span class="p">(</span><span class="n">allArtists</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, RJ Salvador.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

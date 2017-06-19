@@ -1,6 +1,5 @@
-# music-chart-analytics
+# mChartAnalytics
 
-**THIS PROJECT IS STILL UNDER DEVELOPMENT**  
 Analyzes online chord charts for common traits and patterns.
 
 ## Project Goals
@@ -40,6 +39,7 @@ This project uses Python 3.
 - requests
 - music21
 - PyYAML
+- Sphinx
 
 ## Contact
 

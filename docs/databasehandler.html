@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DatabaseHandler &#8212; mChartAnalytics  documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Logger" href="logger.html" />
+    <link rel="prev" title="ChartAnalyzer" href="chartanalyzer.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="logger.html" title="Logger"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="chartanalyzer.html" title="ChartAnalyzer"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="chartanalyzer.html"
+                        title="previous chapter">ChartAnalyzer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="logger.html"
+                        title="next chapter">Logger</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/databasehandler.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="databasehandler">
+<h1>DatabaseHandler<a class="headerlink" href="#databasehandler" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler">
+<em class="property">class </em><code class="descclassname">mchartanalyzer.databasehandler.</code><code class="descname">DatabaseHandler</code><span class="sig-paren">(</span><em>testMode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class responsible for handling database operations.</p>
+<dl class="attribute">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler._executeOperation">
+<code class="descname">_executeOperation</code><span class="sig-paren">(</span><em>statement</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler._executeOperation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler._executeOperation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a database operation, and doesn’t return a value.
+Intended for insert/update/delete operations.
+:param query:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler._executeQuery">
+<code class="descname">_executeQuery</code><span class="sig-paren">(</span><em>query</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler._executeQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler._executeQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a query, and returns any retrieved rows.
+For queries that return no rows, this function will return an empty list.
+Intended for select statements.
+:param query:
+:return: rows</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getAllArtists">
+<code class="descname">getAllArtists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getAllArtists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getAllArtists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves artists.
+Returns an empty list if there are no such artists</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getAllChartsForArtist">
+<code class="descname">getAllChartsForArtist</code><span class="sig-paren">(</span><em>artistName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getAllChartsForArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getAllChartsForArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given artist, retrieves all their charts.
+If no charts are found, this returns an empty list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getArtistByName">
+<code class="descname">getArtistByName</code><span class="sig-paren">(</span><em>artistName</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getArtistByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getArtistByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves an artist with the given name.
+Returns “None” if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getArtistsWithFreshCharts">
+<code class="descname">getArtistsWithFreshCharts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getArtistsWithFreshCharts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getArtistsWithFreshCharts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves artists with charts that haven’t been analyzed yet.
+Returns an empty list if there are no such artists</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getChartById">
+<code class="descname">getChartById</code><span class="sig-paren">(</span><em>chartId</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getChartById"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getChartById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a chart with the given source URL.
+Returns “None” if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getChartByUrl">
+<code class="descname">getChartByUrl</code><span class="sig-paren">(</span><em>sourceUrl</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getChartByUrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getChartByUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a chart with the given source URL.
+Returns “None” if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getChartsForSong">
+<code class="descname">getChartsForSong</code><span class="sig-paren">(</span><em>artistData</em>, <em>songData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getChartsForSong"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getChartsForSong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all charts for a given song.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartCalcsForArtist">
+<code class="descname">getDefinitiveChartCalcsForArtist</code><span class="sig-paren">(</span><em>artistName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getDefinitiveChartCalcsForArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartCalcsForArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given artist, retrieves their “definitive” chart calculations.
+If no charts are found, this returns an empty list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartsForArtist">
+<code class="descname">getDefinitiveChartsForArtist</code><span class="sig-paren">(</span><em>artistName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getDefinitiveChartsForArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartsForArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given artist, retrieves their “definitive” charts.
+If no charts are found, this returns an empty list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getFreshChartsForArtist">
+<code class="descname">getFreshChartsForArtist</code><span class="sig-paren">(</span><em>artistName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getFreshChartsForArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getFreshChartsForArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given artist, retrieves charts that haven’t been analyzed yet.
+Returns an empty list if there are no new charts.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getSongById">
+<code class="descname">getSongById</code><span class="sig-paren">(</span><em>songId</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getSongById"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getSongById" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a song with the given ID.
+Returns “None” if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getSongByTitleAndArtistName">
+<code class="descname">getSongByTitleAndArtistName</code><span class="sig-paren">(</span><em>title</em>, <em>artistName</em>, <em>keepConnectionOpen=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getSongByTitleAndArtistName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getSongByTitleAndArtistName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a song with the given title.
+Returns “None” if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.getSongsByArtist">
+<code class="descname">getSongsByArtist</code><span class="sig-paren">(</span><em>artistData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.getSongsByArtist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.getSongsByArtist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all songs by the given artist.
+Returns an empty list if a record isn’t found.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.initializeDatabase">
+<code class="descname">initializeDatabase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.initializeDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.initializeDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes database.
+Creates database file if it doesn’t exist.
+If a database already exists, this function will delete it and recreate it!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.purgeDatabase">
+<code class="descname">purgeDatabase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.purgeDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.purgeDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all data from the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.saveArtistCalculationData">
+<code class="descname">saveArtistCalculationData</code><span class="sig-paren">(</span><em>chartData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.saveArtistCalculationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.saveArtistCalculationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves artist calculations to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.saveArtistData">
+<code class="descname">saveArtistData</code><span class="sig-paren">(</span><em>artistData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.saveArtistData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.saveArtistData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves artist data to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.saveChartCalculationData">
+<code class="descname">saveChartCalculationData</code><span class="sig-paren">(</span><em>chartData</em>, <em>chartCalcs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.saveChartCalculationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.saveChartCalculationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves chart calculations to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.saveChartData">
+<code class="descname">saveChartData</code><span class="sig-paren">(</span><em>artistData</em>, <em>songData</em>, <em>chartData</em>, <em>isDefinitiveChart</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.saveChartData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.saveChartData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves chart data to the database.
+If a chart with the same URL exists, the existing record is updated with the newer chords and sections.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mchartanalyzer.databasehandler.DatabaseHandler.saveSongData">
+<code class="descname">saveSongData</code><span class="sig-paren">(</span><em>artistData</em>, <em>songData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mchartanalyzer/databasehandler.html#DatabaseHandler.saveSongData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mchartanalyzer.databasehandler.DatabaseHandler.saveSongData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves song data to the database.
+If a song with the same name exists in the database, nothing happens.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="logger.html" title="Logger"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="chartanalyzer.html" title="ChartAnalyzer"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mChartAnalytics  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, RJ Salvador.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>
