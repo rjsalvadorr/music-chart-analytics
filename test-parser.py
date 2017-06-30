@@ -3,10 +3,10 @@ import sys
 import os
 import traceback
 
-from mchartanalyzer.logger import Logger
+from mchartanalyzer.filewriter import FileWriter
 from mchartanalyzer.chartparser import ChartParser
 
-logger = Logger(testMode=True)
+filewriter = FileWriter(testMode=True)
 parser = ChartParser()
 
 filenames = []
@@ -54,8 +54,8 @@ for idx, filename in enumerate(filenames):
         parser.songTitle = "Placeholder Title (" + str(idx + 1) + ")"
         chartData = parser.parseChart(chartLines)
 
-        logger.log(str(chartData))
-        logger.log("----------\n")
+        filewriter.log(str(chartData))
+        filewriter.log("----------\n")
 
     except IOError as exc:
         print("ERROR! Unable to copy file. " + repr(exc))

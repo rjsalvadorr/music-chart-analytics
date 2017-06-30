@@ -115,8 +115,9 @@ share/**
 # pip on windows
 pip-selfcheck.json
 
-# log files
+# log and data output files
 log*.txt
+mChartAnalytics*.yaml
 
 # etc
 **/mchartdatabase.db
