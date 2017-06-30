@@ -63,12 +63,10 @@ if len(sys.argv) > 0:
             initializeDatabaseEnabled = True
 
         if(arg.lower() == "--test-mode"):
-            print("mChartAnalyzer will run in TEST MODE.")
             testModeOverride = True
             testModeEnabled = True
 
         if(arg.lower() == "--normal-mode"):
-            print("mChartAnalyzer will run in NORMAL MODE.")
             testModeOverride = True
             testModeEnabled = False
 
@@ -93,6 +91,11 @@ mcAnalyzer = ChartAnalyzer()
 
 if not testModeOverride:
     testModeEnabled = yamlData["testModeEnabled"]
+
+if testModeEnabled:
+    print("mChartAnalyzer will run in TEST MODE.")
+else:
+    print("mChartAnalyzer will run in NORMAL MODE.")
 
 mcScraper.testModeEnabled = testModeEnabled
 scrapeCooldownEnabled = yamlData["scrapeCooldownEnabled"]

@@ -22,6 +22,9 @@ class ArtistCalculations(BaseDataObject):
         self.mostCommonChordProgressions = {}
         self.mostCommonSongStructures = {}
 
+        # When returning a ArtistCalculations object from the database, this can be initialized.
+        self.artistData = None
+
         if databaseRow:
             self.artistId = databaseRow[0]
             self.numChords = databaseRow[1]

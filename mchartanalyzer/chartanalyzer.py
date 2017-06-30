@@ -9,14 +9,14 @@ from .objects.artistcalculations import ArtistCalculations
 from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 from . import constants
-from .logger import Logger
+from .filewriter import FileWriter
 
 class ChartAnalyzer:
     """
     Analyzes the charts, and calculates the desired data for display.
     """
 
-    logger = Logger()
+    filewriter = FileWriter()
 
     def __init__(self):
         self.dbHandler = DatabaseHandler()
@@ -86,7 +86,7 @@ class ChartAnalyzer:
         return None
 
     def _log(self, text):
-        ChartAnalyzer.logger.log(text)
+        ChartAnalyzer.filewriter.log(text)
 
 
     def _convertChordSymbolToGeneral(self, chordSymbol, m21Key):
@@ -238,7 +238,7 @@ class ChartAnalyzer:
             else:
                 mostCommonKeys[chartCalc.key] = 1
 
-            if chartCalc.chartData.sections:
+            if chartCalc.chartData:
                 songStruct = ' '.join(chartCalc.chartData.sections)
                 if songStruct in allProgs:
                     allSections[songStruct] = allSections[songStruct] + 1
@@ -344,6 +344,9 @@ class ChartAnalyzer:
             artistCalcs.mostCommonChordsGeneric = finalDictGen
 
             self._dumpArtistCalculationsToLog(artistData, artistCalcs)
+
+            artistCalcs.artistData = artistData
+            ChartAnalyzer.filewriter.writeArtistCalculations(artistCalcs)
 
         print("\nData analyzed and persisted!")
 

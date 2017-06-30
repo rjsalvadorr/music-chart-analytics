@@ -3,12 +3,13 @@ import shutil
 import traceback
 from datetime import datetime
 
+import yaml
+
 from . import constants
 
-class Logger:
+class FileWriter:
 
-    def __init__(self, testMode=None):
-
+    def __init__(self, testMode=None, yamlMode=None):
         self.testMode = True if testMode else False
 
         # Create output directory if it doesn't exist
@@ -19,7 +20,6 @@ class Logger:
                 raise
 
         self.newFile()
-
 
     def newFile(self):
         """
@@ -36,7 +36,6 @@ class Logger:
         self.log("LOG STARTED AT " + self.startTime.strftime(constants.DATETIME_FORMAT))
         self.log("==================================\n")
 
-
     def log(self, text):
         try:
             with open(self.logPath, 'a') as outFile:
@@ -46,4 +45,22 @@ class Logger:
             print("ERROR! Unable to copy file. " + repr(exc))
         except Exception as exc:
             print("UNEXPECTED ERROR: " + repr(exc))
+            print(traceback.format_exc())
+
+    def _formatArtistName(self, artistName):
+        formattedName = artistName.lower().replace(' ', '-')
+        return formattedName
+
+    def writeArtistCalculations(self, artistCalcs):
+        artistNameFormatted = self._formatArtistName(artistCalcs.artistData.name)
+        timestamp =  datetime.now().strftime("%Y%m%d-%H%M%S")
+        calcsFilename = "mChartAnalytics-" + artistNameFormatted + "-" + timestamp + ".yaml"
+        calcsFilePath = os.path.join(constants.DATA_OUTPUT_DIR, calcsFilename)
+
+        try:
+            stream = open(calcsFilePath, 'w')
+            yaml.dump(artistCalcs, stream)
+            print("Data written to\n" + calcsFilePath + "\n")
+        except Exception as exc:
+            print("Error encountered while writing to YAML file: " + repr(exc))
             print(traceback.format_exc())
