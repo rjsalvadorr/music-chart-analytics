@@ -19,9 +19,13 @@ class DatabaseHandler:
         self.dbConnection = None
         self.dbOpened = False
 
+        dbExists = os.path.isfile(constants.DATABASE_FILE_PATH)
+        if not dbExists:
+            print("Local database doesn't exist!")
+            self.initializeDatabase(preserveDatabaseFile=True)
+
     def _connect(self):
         if not self.dbOpened:
-            # This also creates a database if it doesn't exist!
             self.dbConnection = sqlite3.connect(constants.DATABASE_FILE_PATH)
             self.dbOpened = True
         return self.dbConnection.cursor()
@@ -428,7 +432,7 @@ class DatabaseHandler:
 
         for row in rows:
             newChartCalc = ChartCalculations(databaseRow=row)
-            newChartCalc.chartData = self.getChartById(newChartCalc.chartId)
+            self.getChartById(newChartCalc.chartId)
             chartCalcs.append(newChartCalc)
 
         return chartCalcs
@@ -448,21 +452,20 @@ class DatabaseHandler:
 
         return chartRecords
 
-
-
-    def initializeDatabase(self):
+    def initializeDatabase(self, preserveDatabaseFile=None):
         """
         Initializes database.
         Creates database file if it doesn't exist.
         If a database already exists, this function will delete it and recreate it!
         """
 
-        try:
-            # delete database if it exists.
-            os.remove(constants.DATABASE_FILE_PATH)
-            print("Database file deleted!")
-        except OSError as exc:
-            print(repr(exc))
+        if not preserveDatabaseFile:
+            try:
+                # delete database if it exists.
+                os.remove(constants.DATABASE_FILE_PATH)
+                print("Database file deleted!")
+            except OSError as exc:
+                print(repr(exc))
 
         try:
 

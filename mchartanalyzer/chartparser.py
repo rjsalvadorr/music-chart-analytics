@@ -166,7 +166,7 @@ class ChartParser:
 
         self._resetSongData()
 
-        print("Parsed data for " + chartData.title)
+        print("  Parsed data for " + chartData.title)
 
         newSongData = SongData()
         newSongData.title = chartData.title

@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mchartanalyzer.chartparser &#8212; mChartAnalytics  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mchartanalyzer.chartparser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">.databasehandler</span> <span class="k">import</span> <span class="n">DatabaseHandler</span>
+<span class="kn">from</span> <span class="nn">.objects.chartdata</span> <span class="k">import</span> <span class="n">ChartData</span>
+<span class="kn">from</span> <span class="nn">.objects.songdata</span> <span class="k">import</span> <span class="n">SongData</span>
+<span class="kn">from</span> <span class="nn">.objects.artistdata</span> <span class="k">import</span> <span class="n">ArtistData</span>
+
+
+<div class="viewcode-block" id="ChartParser"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser">[docs]</a><span class="k">class</span> <span class="nc">ChartParser</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses data from a chord chart. Looks for information like title, key, chords, and structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sectionKeywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;intro&quot;</span><span class="p">,</span> <span class="s2">&quot;verse&quot;</span><span class="p">,</span> <span class="s2">&quot;prechorus&quot;</span><span class="p">,</span> <span class="s2">&quot;pre-chorus&quot;</span><span class="p">,</span> <span class="s2">&quot;pre chorus&quot;</span><span class="p">,</span> <span class="s2">&quot;chorus&quot;</span><span class="p">,</span> <span class="s2">&quot;bridge&quot;</span><span class="p">,</span> <span class="s2">&quot;outro&quot;</span><span class="p">,</span> <span class="s2">&quot;solo&quot;</span><span class="p">,</span> <span class="s2">&quot;hook&quot;</span><span class="p">,</span> <span class="s2">&quot;pre-hook&quot;</span><span class="p">,</span> <span class="s2">&quot;coda&quot;</span><span class="p">,</span> <span class="s2">&quot;middle 8&quot;</span><span class="p">,</span> <span class="s2">&quot;interlude&quot;</span><span class="p">]</span>
+
+    <span class="n">chordSymbols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;maj&quot;</span><span class="p">,</span> <span class="s2">&quot;dim&quot;</span><span class="p">]</span> <span class="c1"># TRIADS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;m7&quot;</span><span class="p">,</span> <span class="s2">&quot;M7&quot;</span><span class="p">,</span> <span class="s2">&quot;min7&quot;</span><span class="p">,</span> <span class="s2">&quot;maj7&quot;</span><span class="p">,</span> <span class="s2">&quot;dim7&quot;</span><span class="p">,</span> <span class="s2">&quot;m7b5&quot;</span><span class="p">])</span> <span class="c1"># SEVENTHS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;aug&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;7#5&quot;</span><span class="p">,</span> <span class="s2">&quot;M7+5&quot;</span><span class="p">,</span> <span class="s2">&quot;M7+&quot;</span><span class="p">,</span> <span class="s2">&quot;m7+&quot;</span><span class="p">,</span> <span class="s2">&quot;7+&quot;</span><span class="p">])</span> <span class="c1"># AUGMENTED</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;sus2&quot;</span><span class="p">,</span> <span class="s2">&quot;sus4&quot;</span><span class="p">,</span> <span class="s2">&quot;7sus4&quot;</span><span class="p">,</span> <span class="s2">&quot;11&quot;</span><span class="p">,</span> <span class="s2">&quot;sus4b9&quot;</span><span class="p">,</span> <span class="s2">&quot;susb9&quot;</span><span class="p">])</span> <span class="c1"># SUSPENDED</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;m6&quot;</span><span class="p">,</span> <span class="s2">&quot;M6&quot;</span><span class="p">,</span> <span class="s2">&quot;maj6&quot;</span><span class="p">,</span> <span class="s2">&quot;6/7&quot;</span><span class="p">,</span> <span class="s2">&quot;67&quot;</span><span class="p">,</span> <span class="s2">&quot;6/9&quot;</span><span class="p">,</span>  <span class="s2">&quot;69&quot;</span><span class="p">])</span> <span class="c1"># SIXTHS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="s2">&quot;add9&quot;</span><span class="p">,</span> <span class="s2">&quot;m9&quot;</span><span class="p">,</span> <span class="s2">&quot;maj9&quot;</span><span class="p">,</span> <span class="s2">&quot;M9&quot;</span><span class="p">,</span> <span class="s2">&quot;7b9&quot;</span><span class="p">,</span> <span class="s2">&quot;7#9&quot;</span><span class="p">])</span> <span class="c1"># NINTHS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;11&quot;</span><span class="p">,</span> <span class="s2">&quot;add11&quot;</span><span class="p">,</span> <span class="s2">&quot;7#11&quot;</span><span class="p">,</span> <span class="s2">&quot;m11&quot;</span><span class="p">])</span> <span class="c1"># ELEVENTHS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;13&quot;</span><span class="p">,</span> <span class="s2">&quot;add13&quot;</span><span class="p">,</span> <span class="s2">&quot;M13&quot;</span><span class="p">,</span> <span class="s2">&quot;m13&quot;</span><span class="p">,</span> <span class="s2">&quot;maj13&quot;</span><span class="p">])</span> <span class="c1"># THIRTEENTHS</span>
+    <span class="n">chordSymbols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;7b9&quot;</span><span class="p">,</span> <span class="s2">&quot;7#9&quot;</span><span class="p">,</span> <span class="s2">&quot;67&quot;</span><span class="p">,</span> <span class="s2">&quot;6/7&quot;</span><span class="p">,</span> <span class="s2">&quot;add2&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">])</span> <span class="c1"># ALTERATIONS</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span> <span class="o">=</span> <span class="n">DatabaseHandler</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artistData</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetSongData</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">_resetSongData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chordList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sectionList</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="ChartParser._isChordSymbol"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._isChordSymbol">[docs]</a>    <span class="k">def</span> <span class="nf">_isChordSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns true if the given text is a chord symbol.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We can&#39;t use word boundaries (/b) since # is not a word character!</span>
+        <span class="n">regexRoot</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[CDEFGAB](#{1,2}|b{1,2})?&quot;</span>
+        <span class="n">regexChords</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">chordSymbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ChartParser</span><span class="o">.</span><span class="n">chordSymbols</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">regexChords</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;|&quot;</span>
+            <span class="n">regexChords</span> <span class="o">+=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">chordSymbol</span><span class="p">)</span>
+        <span class="n">regexChords</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;)&quot;</span>
+
+        <span class="n">finalPattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regexRoot</span> <span class="o">+</span> <span class="n">regexChords</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;?(\/&quot;</span> <span class="o">+</span> <span class="n">regexRoot</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)?&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">finalPattern</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartParser._removeSlashChordBass"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._removeSlashChordBass">[docs]</a>    <span class="k">def</span> <span class="nf">_removeSlashChordBass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chordSymbol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the bass note from slash chord symbols. For example, this function would take &quot;Gm7/Bb&quot; and return &quot;Gm7&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rePattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\/[CDEFGAB](#{1,2}|b{1,2})?$&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rePattern</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">chordSymbol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartParser._isSectionSymbol"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._isSectionSymbol">[docs]</a>    <span class="k">def</span> <span class="nf">_isSectionSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns true if the given text is probably a section marking, such as &quot;Chorus&quot; or &quot;Verse&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regexSections</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[ \[\{]*(&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sectionKeyword</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ChartParser</span><span class="o">.</span><span class="n">sectionKeywords</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">regexSections</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;|&quot;</span>
+            <span class="n">regexSections</span> <span class="o">+=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">sectionKeyword</span><span class="p">)</span>
+        <span class="n">regexSections</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;)[ 1-9:]*[ \]\}]*&quot;</span>
+
+        <span class="n">finalPattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regexSections</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">finalPattern</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartParser._parseChords"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._parseChords">[docs]</a>    <span class="k">def</span> <span class="nf">_parseChords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartText</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses the chord chart for chord symbols, such as &quot;Gmaj7&quot; or &quot;F#m7b5&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">chartText</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isChordSymbol</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+                <span class="n">formattedToken</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_removeSlashChordBass</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># if the chords list is empty, add the chordSymbol</span>
+                    <span class="n">chords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formattedToken</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">formattedToken</span> <span class="o">!=</span> <span class="n">chords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="c1"># add the chord symbol only if it&#39;s different from the previous one.</span>
+                        <span class="n">chords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formattedToken</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chords</span></div>
+
+
+<div class="viewcode-block" id="ChartParser._parseSections"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._parseSections">[docs]</a>    <span class="k">def</span> <span class="nf">_parseSections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">textLine</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses the chord chart for section markings, such as &quot;Chorus&quot; or &quot;Verse&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">keywordExists</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">keywordToken</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">textLine</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isSectionSymbol</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+                <span class="n">keywordExists</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">keywordToken</span> <span class="o">=</span> <span class="n">token</span>
+
+        <span class="k">if</span> <span class="n">keywordExists</span><span class="p">:</span>
+            <span class="n">formmatedKeyword</span> <span class="o">=</span> <span class="n">keywordToken</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">formmatedKeyword</span> <span class="o">=</span> <span class="n">formmatedKeyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">formmatedKeyword</span> <span class="o">=</span> <span class="n">formmatedKeyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">formmatedKeyword</span> <span class="o">=</span> <span class="n">formmatedKeyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">formmatedKeyword</span> <span class="o">=</span> <span class="n">formmatedKeyword</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="n">sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formmatedKeyword</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sections</span></div>
+
+
+<div class="viewcode-block" id="ChartParser._checkIfChartIsDefinitive"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser._checkIfChartIsDefinitive">[docs]</a>    <span class="k">def</span> <span class="nf">_checkIfChartIsDefinitive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentChartData</span><span class="p">,</span> <span class="n">otherCharts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks multiple charts for this song to determine the &quot;definitive&quot; version.</span>
+<span class="sd">        Returns true if the current chart is more detailed, meaning it has more sections OR has more chord symbols</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">isDefinitive</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherCharts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">otherChartData</span> <span class="ow">in</span> <span class="n">otherCharts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">currentChartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherChartData</span><span class="o">.</span><span class="n">chordsSpecific</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">currentChartData</span><span class="o">.</span><span class="n">sections</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherChartData</span><span class="o">.</span><span class="n">sections</span><span class="p">)):</span>
+                    <span class="c1"># currentChartData is more detailed, and is more definitive!</span>
+                    <span class="n">isDefinitive</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If there are no other charts, this one is the definitive!</span>
+            <span class="n">isDefinitive</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">isDefinitive</span></div>
+
+
+<div class="viewcode-block" id="ChartParser.parseChart"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser.parseChart">[docs]</a>    <span class="k">def</span> <span class="nf">parseChart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">songTitle</span><span class="p">,</span> <span class="n">chartSourceUrl</span><span class="p">,</span> <span class="n">chartContent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Core function of the Parser.</span>
+<span class="sd">        Calls a series of internal parsing methods to extract data from a chord chart.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">()</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">chartContent</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+
+        <span class="n">chartData</span><span class="o">.</span><span class="n">artist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span> <span class="c1"># TODO - check if this is still needed</span>
+        <span class="n">chartData</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">songTitle</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="c1"># TODO - check if this is still needed</span>
+        <span class="n">chartData</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">chartSourceUrl</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chordList</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parseChords</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sectionList</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parseSections</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+        <span class="n">chartData</span><span class="o">.</span><span class="n">chordsSpecific</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chordList</span>
+        <span class="n">chartData</span><span class="o">.</span><span class="n">sections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sectionList</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetSongData</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parsed data for &quot;</span> <span class="o">+</span> <span class="n">chartData</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="n">newSongData</span> <span class="o">=</span> <span class="n">SongData</span><span class="p">()</span>
+        <span class="n">newSongData</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">chartData</span><span class="o">.</span><span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">saveSongData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artistData</span><span class="p">,</span> <span class="n">newSongData</span><span class="p">)</span>
+
+        <span class="c1"># Check other charts for this song.</span>
+        <span class="c1"># If this chart is more detailed (has more sections and has more chord symbols),</span>
+        <span class="c1"># This current chart becomes the &quot;definitive&quot; chart for that song.</span>
+        <span class="n">otherCharts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">getChartsForSong</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artistData</span><span class="p">,</span> <span class="n">newSongData</span><span class="p">)</span>
+        <span class="n">isDefinitiveChart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkIfChartIsDefinitive</span><span class="p">(</span><span class="n">chartData</span><span class="p">,</span> <span class="n">otherCharts</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">saveChartData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artistData</span><span class="p">,</span> <span class="n">newSongData</span><span class="p">,</span> <span class="n">chartData</span><span class="p">,</span> <span class="n">isDefinitiveChart</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChartParser.setArtistData"><a class="viewcode-back" href="../../chartparser.html#mchartanalyzer.chartparser.ChartParser.setArtistData">[docs]</a>    <span class="k">def</span> <span class="nf">setArtistData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">artistSourceUrls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the current artist info for the parser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">freshArtistData</span> <span class="o">=</span> <span class="n">ArtistData</span><span class="p">()</span>
+        <span class="n">freshArtistData</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">freshArtistData</span><span class="o">.</span><span class="n">sourceNames</span> <span class="o">=</span> <span class="n">sources</span>
+        <span class="n">freshArtistData</span><span class="o">.</span><span class="n">sourceUrls</span> <span class="o">=</span> <span class="n">artistSourceUrls</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">artistData</span> <span class="o">=</span> <span class="n">freshArtistData</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving artist data to database...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbHandler</span><span class="o">.</span><span class="n">saveArtistData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artistData</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, RJ Salvador.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

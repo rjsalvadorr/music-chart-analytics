@@ -1,0 +1,594 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mchartanalyzer.databasehandler &#8212; mChartAnalytics  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mchartanalyzer.databasehandler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">.objects.artistdata</span> <span class="k">import</span> <span class="n">ArtistData</span>
+<span class="kn">from</span> <span class="nn">.objects.songdata</span> <span class="k">import</span> <span class="n">SongData</span>
+<span class="kn">from</span> <span class="nn">.objects.chartdata</span> <span class="k">import</span> <span class="n">ChartData</span>
+<span class="kn">from</span> <span class="nn">.objects.artistcalculations</span> <span class="k">import</span> <span class="n">ArtistCalculations</span>
+<span class="kn">from</span> <span class="nn">.objects.chartcalculations</span> <span class="k">import</span> <span class="n">ChartCalculations</span>
+
+<div class="viewcode-block" id="DatabaseHandler"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler">[docs]</a><span class="k">class</span> <span class="nc">DatabaseHandler</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class responsible for handling database operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testMode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span><span class="p">:</span>
+            <span class="c1"># This also creates a database if it doesn&#39;t exist!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATABASE_FILE_PATH</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_commitAndClose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbConnection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbOpened</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="DatabaseHandler._executeOperation"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler._executeOperation">[docs]</a>    <span class="k">def</span> <span class="nf">_executeOperation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes a database operation, and doesn&#39;t return a value.</span>
+<span class="sd">        Intended for insert/update/delete operations.</span>
+<span class="sd">        :param query:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="c1"># print(&quot;  &quot; + repr(statement))</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keepConnectionOpen</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_commit</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler._executeQuery"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler._executeQuery">[docs]</a>    <span class="k">def</span> <span class="nf">_executeQuery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes a query, and returns any retrieved rows.</span>
+<span class="sd">        For queries that return no rows, this function will return an empty list.</span>
+<span class="sd">        Intended for select statements.</span>
+<span class="sd">        :param query:</span>
+<span class="sd">        :return: rows</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="c1"># print(&quot;  &quot; + repr(query))</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">query</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rows</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keepConnectionOpen</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_commit</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.saveArtistData"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.saveArtistData">[docs]</a>    <span class="k">def</span> <span class="nf">saveArtistData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves artist data to the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">insertStmt</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO ARTISTS(&#39;name&#39;,&#39;source_names&#39;,&#39;source_urls&#39;,&#39;update_time&#39;) VALUES (</span><span class="se">\&#39;</span><span class="si">{artistName}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{sourceNames}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{sourceUrls}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2">)&quot;</span>
+        <span class="n">updateStmt</span> <span class="o">=</span> <span class="s2">&quot;UPDATE ARTISTS SET &#39;source_names&#39; = </span><span class="se">\&#39;</span><span class="si">{sourceNames}</span><span class="se">\&#39;</span><span class="s2">, &#39;source_urls&#39; = </span><span class="se">\&#39;</span><span class="si">{sourceUrls}</span><span class="se">\&#39;</span><span class="s2">, &#39;update_time&#39; = </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2"> WHERE name=</span><span class="se">\&#39;</span><span class="si">{artistName}</span><span class="se">\&#39;</span><span class="s2">&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="n">existingArtist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getArtistByName</span><span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">timestampStr</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">existingArtist</span><span class="p">:</span>
+                <span class="c1"># Artist with this name already exists. Update it.</span>
+                <span class="n">finalQuery</span> <span class="o">=</span> <span class="n">updateStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">artistName</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sourceNames</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">getSourceNamesAsString</span><span class="p">(),</span> <span class="n">sourceUrls</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">getSourceUrlsAsString</span><span class="p">(),</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">)</span>
+                <span class="c1"># print(&quot;Running query: &quot; + finalQuery)</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">finalQuery</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Artist does not exist yet. Insert new record.</span>
+                <span class="n">finalQuery</span> <span class="o">=</span> <span class="n">insertStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">artistName</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sourceNames</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">getSourceNamesAsString</span><span class="p">(),</span> <span class="n">sourceUrls</span><span class="o">=</span><span class="n">artistData</span><span class="o">.</span><span class="n">getSourceUrlsAsString</span><span class="p">(),</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">)</span>
+                <span class="c1"># print(&quot;Running query: &quot; + finalQuery)</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">finalQuery</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.saveSongData"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.saveSongData">[docs]</a>    <span class="k">def</span> <span class="nf">saveSongData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">,</span> <span class="n">songData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves song data to the database.</span>
+<span class="sd">        If a song with the same name exists in the database, nothing happens.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">insertStmt</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO SONGS(artist_id, title, definitive_chart_id, update_time) VALUES (</span><span class="si">{artistId}</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{songTitle}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="si">{definitiveChartId}</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2">)&quot;</span>
+
+        <span class="n">existingArtist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getArtistByName</span><span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">existingSong</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSongByTitleAndArtistName</span><span class="p">(</span><span class="n">songData</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">timestampStr</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+        <span class="n">defChartId</span> <span class="o">=</span> <span class="n">songData</span><span class="o">.</span><span class="n">definitiveChartId</span> <span class="k">if</span> <span class="n">songData</span><span class="o">.</span><span class="n">definitiveChartId</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;NULL&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">existingSong</span><span class="p">:</span>
+            <span class="c1"># Song does not exist yet. Insert new record.</span>
+            <span class="n">finalQuery</span> <span class="o">=</span> <span class="n">insertStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">artistId</span><span class="o">=</span><span class="n">existingArtist</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">songTitle</span><span class="o">=</span><span class="n">songData</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">definitiveChartId</span><span class="o">=</span><span class="n">defChartId</span><span class="p">,</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_executeOperation</span><span class="p">(</span><span class="n">finalQuery</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.saveChartData"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.saveChartData">[docs]</a>    <span class="k">def</span> <span class="nf">saveChartData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">,</span> <span class="n">songData</span><span class="p">,</span> <span class="n">chartData</span><span class="p">,</span> <span class="n">isDefinitiveChart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves chart data to the database.</span>
+<span class="sd">        If a chart with the same URL exists, the existing record is updated with the newer chords and sections.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">insertStmt</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO CHARTS(&#39;song_id&#39;,&#39;source_url&#39;,&#39;chords_specific&#39;,&#39;sections&#39;,&#39;is_new&#39;,&#39;update_time&#39;) VALUES (</span><span class="si">{songId}</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{url}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{chordList}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{sectionList}</span><span class="se">\&#39;</span><span class="s2">, 1, </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2">)&quot;</span>
+
+        <span class="n">updateStmt</span> <span class="o">=</span> <span class="s2">&quot;UPDATE CHARTS SET &#39;chords_specific&#39; = </span><span class="se">\&#39;</span><span class="si">{chordList}</span><span class="se">\&#39;</span><span class="s2">, &#39;sections&#39; = </span><span class="se">\&#39;</span><span class="si">{sectionList}</span><span class="se">\&#39;</span><span class="s2">, &#39;is_new&#39; = 1, &#39;update_time&#39; = </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2"> WHERE source_url=</span><span class="se">\&#39;</span><span class="si">{url}</span><span class="se">\&#39;</span><span class="s2">&quot;</span>
+
+        <span class="n">updateSongDefinitive</span> <span class="o">=</span> <span class="s2">&quot;UPDATE SONGS SET definitive_chart_id = (SELECT id FROM CHARTS WHERE source_url = </span><span class="se">\&#39;</span><span class="si">{sourceUrl}</span><span class="se">\&#39;</span><span class="s2">) WHERE id = </span><span class="si">{songId}</span><span class="s2">&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="n">existingChart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getChartByUrl</span><span class="p">(</span><span class="n">chartData</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">existingSong</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSongByTitleAndArtistName</span><span class="p">(</span><span class="n">songData</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">timestampStr</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">existingChart</span><span class="p">:</span>
+                <span class="c1"># Chart from this source already exists. Update it.</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">updateStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">chordList</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">(),</span> <span class="n">sectionList</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">getSectionListString</span><span class="p">(),</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Chart does not exist yet. Insert new record.</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insertStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">songId</span><span class="o">=</span><span class="n">existingSong</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">chordList</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">(),</span> <span class="n">sectionList</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">getSectionListString</span><span class="p">(),</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">isDefinitiveChart</span><span class="p">:</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">updateSongDefinitive</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sourceUrl</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">songId</span><span class="o">=</span><span class="n">existingSong</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.saveChartCalculationData"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.saveChartCalculationData">[docs]</a>    <span class="k">def</span> <span class="nf">saveChartCalculationData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartData</span><span class="p">,</span> <span class="n">chartCalcs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves chart calculations to the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">insertCalcsStmt</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO CHART_CALCS(&#39;chart_id&#39;, &#39;key&#39;, &#39;key_certainty&#39;, &#39;chords_general&#39;, &#39;num_chords&#39;, &#39;num_sections&#39;, &#39;update_time&#39;) VALUES (</span><span class="si">{chartId}</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{key}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{keyCertainty}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{chordsGeneral}</span><span class="se">\&#39;</span><span class="s2">, </span><span class="si">{numChords}</span><span class="s2">, </span><span class="si">{numSections}</span><span class="s2">, </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2">)&quot;</span>
+
+        <span class="n">updateCalcsStmt</span> <span class="o">=</span> <span class="s2">&quot;UPDATE CHART_CALCS SET &#39;key&#39; = </span><span class="se">\&#39;</span><span class="si">{key}</span><span class="se">\&#39;</span><span class="s2">, &#39;key_certainty&#39; = </span><span class="se">\&#39;</span><span class="si">{keyCertainty}</span><span class="se">\&#39;</span><span class="s2">, &#39;chords_general&#39; = </span><span class="se">\&#39;</span><span class="si">{chordsGeneral}</span><span class="se">\&#39;</span><span class="s2">, &#39;num_chords&#39; = </span><span class="si">{numChords}</span><span class="s2">, &#39;num_sections&#39; = </span><span class="si">{numSections}</span><span class="s2">, &#39;update_time&#39; = </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2"> WHERE chart_id=</span><span class="si">{chartId}</span><span class="s2">&quot;</span>
+
+        <span class="n">updateChartStmt</span> <span class="o">=</span> <span class="s2">&quot;UPDATE CHARTS SET is_new = 0, update_time = </span><span class="se">\&#39;</span><span class="si">{updateTime}</span><span class="se">\&#39;</span><span class="s2"> WHERE id=</span><span class="si">{chartId}</span><span class="s2">&quot;</span>
+
+        <span class="n">selectCalcsStmt</span> <span class="o">=</span> <span class="s2">&quot;SELECT * from CHART_CALCS WHERE chart_id = </span><span class="si">{chartId}</span><span class="s2">&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">selectCalcsStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chartId</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+            <span class="n">existingChartCalc</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="n">timestampStr</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATETIME_FORMAT</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">existingChartCalc</span><span class="p">:</span>
+                <span class="c1"># Chart from this source already exists. Update it.</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">updateCalcsStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chartId</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">keyCertainty</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">keyAnalysisCertainty</span><span class="p">,</span> <span class="n">chordsGeneral</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">(),</span> <span class="n">numChords</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numChords</span><span class="p">,</span> <span class="n">numSections</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numSections</span><span class="p">,</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Chart does not exist yet. Insert new record.</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insertCalcsStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chartId</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">keyCertainty</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">keyAnalysisCertainty</span><span class="p">,</span> <span class="n">chordsGeneral</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">getChordListString</span><span class="p">(),</span> <span class="n">numChords</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numChords</span><span class="p">,</span> <span class="n">numSections</span><span class="o">=</span><span class="n">chartCalcs</span><span class="o">.</span><span class="n">numSections</span><span class="p">,</span> <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">))</span>
+
+            <span class="c1"># Update the chart, toggle &quot;is_new&quot; to 0</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">updateChartStmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chartId</span><span class="o">=</span><span class="n">chartData</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>  <span class="n">updateTime</span><span class="o">=</span><span class="n">timestampStr</span><span class="p">))</span>
+
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.saveArtistCalculationData"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.saveArtistCalculationData">[docs]</a>    <span class="k">def</span> <span class="nf">saveArtistCalculationData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves artist calculations to the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="c1"># ...</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getArtistByName"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getArtistByName">[docs]</a>    <span class="k">def</span> <span class="nf">getArtistByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistName</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves an artist with the given name.</span>
+<span class="sd">        Returns &quot;None&quot; if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT * FROM ARTISTS WHERE name = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistName</span><span class="p">,))</span>
+        <span class="n">artistRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">artistRows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newArtistData</span> <span class="o">=</span> <span class="n">ArtistData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">artistRows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">newArtistData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getSongByTitleAndArtistName"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getSongByTitleAndArtistName">[docs]</a>    <span class="k">def</span> <span class="nf">getSongByTitleAndArtistName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">artistName</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a song with the given title.</span>
+<span class="sd">        Returns &quot;None&quot; if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT SONGS.* FROM SONGS INNER JOIN ARTISTS ON SONGS.artist_id = ARTISTS.id WHERE SONGS.title = ? AND ARTISTS.name = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">artistName</span><span class="p">))</span>
+
+        <span class="n">songRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">songRows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newSongData</span> <span class="o">=</span> <span class="n">SongData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">songRows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># print(&quot;getSongByTitleAndArtistName(&quot; + title + &quot;, &quot; + artistName + &quot;) = &quot; + str(newSongData))</span>
+            <span class="k">return</span> <span class="n">newSongData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getSongById"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getSongById">[docs]</a>    <span class="k">def</span> <span class="nf">getSongById</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">songId</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a song with the given ID.</span>
+<span class="sd">        Returns &quot;None&quot; if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT * FROM SONGS WHERE id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">songId</span><span class="p">,))</span>
+        <span class="n">songRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">songRows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newSongData</span> <span class="o">=</span> <span class="n">SongData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">songRows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">newSongData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getSongsByArtist"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getSongsByArtist">[docs]</a>    <span class="k">def</span> <span class="nf">getSongsByArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all songs by the given artist.</span>
+<span class="sd">        Returns an empty list if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">songRecords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT SONGS.*, CHART_CALCS.key FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ? GROUP BY SONGS.id&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistData</span><span class="o">.</span><span class="n">id</span><span class="p">,))</span>
+        <span class="n">songRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">songRows</span><span class="p">:</span>
+            <span class="n">newSongData</span> <span class="o">=</span> <span class="n">SongData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">songRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newSongData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">songRecords</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getChartsForSong"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getChartsForSong">[docs]</a>    <span class="k">def</span> <span class="nf">getChartsForSong</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistData</span><span class="p">,</span> <span class="n">songData</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all charts for a given song.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartRecords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+            <span class="n">existingSong</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSongByTitleAndArtistName</span><span class="p">(</span><span class="n">songData</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">artistData</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT CHARTS.* FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.song_id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">existingSong</span><span class="o">.</span><span class="n">id</span><span class="p">,))</span>
+
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+                <span class="n">chartRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newChartData</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">chartRecords</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getChartByUrl"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getChartByUrl">[docs]</a>    <span class="k">def</span> <span class="nf">getChartByUrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sourceUrl</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a chart with the given source URL.</span>
+<span class="sd">        Returns &quot;None&quot; if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT * FROM CHARTS WHERE source_url = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">sourceUrl</span><span class="p">,))</span>
+        <span class="n">chartRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chartRows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">chartRows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">newChartData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.getChartById"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getChartById">[docs]</a>    <span class="k">def</span> <span class="nf">getChartById</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chartId</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a chart with the given source URL.</span>
+<span class="sd">        Returns &quot;None&quot; if a record isn&#39;t found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT * FROM CHARTS WHERE id = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">chartId</span><span class="p">,))</span>
+        <span class="n">chartRows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chartRows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">chartRows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">newChartData</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.getArtistsWithFreshCharts"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getArtistsWithFreshCharts">[docs]</a>    <span class="k">def</span> <span class="nf">getArtistsWithFreshCharts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves artists with charts that haven&#39;t been analyzed yet.</span>
+<span class="sd">        Returns an empty list if there are no such artists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">artistRecords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="s2">&quot;SELECT ARTISTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 GROUP BY ARTISTS.name&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newArtistData</span> <span class="o">=</span> <span class="n">ArtistData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">artistRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newArtistData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">artistRecords</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.getAllArtists"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getAllArtists">[docs]</a>    <span class="k">def</span> <span class="nf">getAllArtists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves artists.</span>
+<span class="sd">        Returns an empty list if there are no such artists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">artistRecords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM ARTISTS&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newArtistData</span> <span class="o">=</span> <span class="n">ArtistData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">artistRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newArtistData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">artistRecords</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.getFreshChartsForArtist"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getFreshChartsForArtist">[docs]</a>    <span class="k">def</span> <span class="nf">getFreshChartsForArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a given artist, retrieves charts that haven&#39;t been analyzed yet.</span>
+<span class="sd">        Returns an empty list if there are no new charts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartRecords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE CHARTS.is_new != 0 AND ARTISTS.name = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistName</span><span class="o">.</span><span class="n">upper</span><span class="p">(),))</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">chartRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newChartData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chartRecords</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getDefinitiveChartsForArtist"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartsForArtist">[docs]</a>    <span class="k">def</span> <span class="nf">getDefinitiveChartsForArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a given artist, retrieves their &quot;definitive&quot; charts.</span>
+<span class="sd">        If no charts are found, this returns an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartRecords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ? AND CHARTS.id = SONGS.definitive_chart_id&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistName</span><span class="o">.</span><span class="n">upper</span><span class="p">(),))</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">chartRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newChartData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chartRecords</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getDefinitiveChartCalcsForArtist"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getDefinitiveChartCalcsForArtist">[docs]</a>    <span class="k">def</span> <span class="nf">getDefinitiveChartCalcsForArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a given artist, retrieves their &quot;definitive&quot; chart calculations.</span>
+<span class="sd">        If no charts are found, this returns an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartCalcs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT CHART_CALCS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE ARTISTS.name = ? AND CHARTS.id = SONGS.definitive_chart_id&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistName</span><span class="o">.</span><span class="n">upper</span><span class="p">(),))</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">keepConnectionOpen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newChartCalc</span> <span class="o">=</span> <span class="n">ChartCalculations</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">newChartCalc</span><span class="o">.</span><span class="n">chartData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getChartById</span><span class="p">(</span><span class="n">newChartCalc</span><span class="o">.</span><span class="n">chartId</span><span class="p">)</span>
+            <span class="n">chartCalcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newChartCalc</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chartCalcs</span></div>
+
+<div class="viewcode-block" id="DatabaseHandler.getAllChartsForArtist"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.getAllChartsForArtist">[docs]</a>    <span class="k">def</span> <span class="nf">getAllChartsForArtist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artistName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a given artist, retrieves all their charts.</span>
+<span class="sd">        If no charts are found, this returns an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chartRecords</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT CHARTS.* FROM ARTISTS INNER JOIN SONGS ON ARTISTS.id = SONGS.artist_id INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE ARTISTS.name = ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">artistName</span><span class="o">.</span><span class="n">upper</span><span class="p">(),))</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_executeQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">newChartData</span> <span class="o">=</span> <span class="n">ChartData</span><span class="p">(</span><span class="n">databaseRow</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">chartRecords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newChartData</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chartRecords</span></div>
+
+
+
+<div class="viewcode-block" id="DatabaseHandler.initializeDatabase"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.initializeDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">initializeDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes database.</span>
+<span class="sd">        Creates database file if it doesn&#39;t exist.</span>
+<span class="sd">        If a database already exists, this function will delete it and recreate it!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># delete database if it exists.</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">DATABASE_FILE_PATH</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Database file deleted!&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initializing Database!&quot;</span><span class="p">)</span>
+
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE ARTISTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT UNIQUE, `source_names` TEXT, `source_urls` TEXT, `update_time` TEXT )&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE `SONGS` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `definitive_chart_id` INTEGER, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id), FOREIGN KEY(`definitive_chart_id`) REFERENCES CHARTS(id) )&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )&quot;</span><span class="p">)</span>
+
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE </span><span class="se">\&quot;</span><span class="s2">ARTIST_CALCS</span><span class="se">\&quot;</span><span class="s2"> ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `num_sections` INTEGER, `num_songs` INTEGER, `num_charts` INTEGER, `num_major` INTEGER, `num_minor` INTEGER, `common_keys` TEXT, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `common_progs` TEXT, `common_structs` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE </span><span class="se">\&quot;</span><span class="s2">CHART_CALCS</span><span class="se">\&quot;</span><span class="s2"> ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `num_chords` INTEGER, `num_sections` INTEGER, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )&quot;</span><span class="p">)</span>
+
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE `ARTISTS_DUPL_ASC` ( `id` INTEGER, `primary_artist_id` INTEGER, `duplicate_artist_id` INTEGER, PRIMARY KEY(`id`) )&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE `SONGS_DUPL_ASC` ( `id` INTEGER, `primary_song_id` INTEGER, `duplicate_song_id` INTEGER, PRIMARY KEY(`id`) )&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseHandler.purgeDatabase"><a class="viewcode-back" href="../../databasehandler.html#mchartanalyzer.databasehandler.DatabaseHandler.purgeDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">purgeDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes all data from the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PURGING ALL DATA FROM THE DATABASE!&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM ARTISTS&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM ARTIST_CALCS&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM CHARTS&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM CHART_CALCS&quot;</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM SONGS&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commitAndClose</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mChartAnalytics  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, RJ Salvador.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>
