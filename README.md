@@ -20,6 +20,7 @@ The parser will read through all those charts and identify key features of the s
 
 - Structure/Form: Verses, choruses, etc. We're interested in the number of sections, and their order.
 - Chords: The parser identifies the chords used in the song. Again, we're interested in the number of chords, their order, and number per section.
+- Key: If a key is specified on the chart, this will be parsed out too.
 
 ### Analyzer
 
