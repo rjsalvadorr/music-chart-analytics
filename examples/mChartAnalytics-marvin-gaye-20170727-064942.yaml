@@ -1,0 +1,26 @@
+!!python/object:mchartanalyzer.objects.artistcalculations.ArtistCalculations
+artistData: !!python/object:mchartanalyzer.objects.artistdata.ArtistData
+  delim1: ;
+  delim2: ','
+  id: 7
+  name: MARVIN GAYE
+  sourceNames: [Ultimate Guitar]
+  sourceUrls: ['https://www.ultimate-guitar.com/tabs/marvin_gaye_chords_tabs.htm']
+  updateTime: 2017-07-27-06:48:32
+artistId: 0
+delim1: ;
+delim2: ','
+id: 0
+mostCommonChordProgressions: {I V vi IV: 19, IV I V I: 19, IV I V vi: 19, V vi IV I: 24,
+  vi IV I V: 21}
+mostCommonChordsGeneric: {I: 584, IV: 343, V: 307, i: 183, vi: 151}
+mostCommonChordsSpecific: {A: 176, C: 234, D: 173, F: 166, G: 289}
+mostCommonKeys: {Bb Major: 4, C Major: 7, D Major: 4, E Major: 4, G Major: 4}
+mostCommonSongStructures: {}
+numCharts: 59
+numChords: 2472
+numMajorKeys: 32
+numMinorKeys: 10
+numSections: 205
+numSongs: 42
+updateTime: ''

@@ -1,0 +1,26 @@
+!!python/object:mchartanalyzer.objects.artistcalculations.ArtistCalculations
+artistData: !!python/object:mchartanalyzer.objects.artistdata.ArtistData
+  delim1: ;
+  delim2: ','
+  id: 8
+  name: CURTIS MAYFIELD
+  sourceNames: [Ultimate Guitar]
+  sourceUrls: ['https://www.ultimate-guitar.com/tabs/curtis_mayfield_chords_tabs.htm']
+  updateTime: 2017-07-27-06:48:34
+artistId: 0
+delim1: ;
+delim2: ','
+id: 0
+mostCommonChordProgressions: {bbVI bbV bbII bbVI: 9, i v ivm7 iiisus4: 25, iiisus4 i v ivm7: 19,
+  ivm7 iiisus4 i v: 19, v ivm7 iiisus4 i: 25}
+mostCommonChordsGeneric: {I: 125, V: 79, im7: 52, ivm7: 59, v: 57}
+mostCommonChordsSpecific: {Bm: 66, C: 49, D: 64, Em7: 44, G: 49}
+mostCommonKeys: {Ab Major: 1, B Major: 2, B Minor: 1, F# Major: 1, F# Minor: 1}
+mostCommonSongStructures: {}
+numCharts: 14
+numChords: 644
+numMajorKeys: 6
+numMinorKeys: 5
+numSections: 21
+numSongs: 11
+updateTime: ''

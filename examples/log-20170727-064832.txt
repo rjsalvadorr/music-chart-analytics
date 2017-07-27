@@ -1,0 +1,1107 @@
+LOG STARTED AT 2017-07-27-06:48:32
+==================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/abraham_martin_and_john_crd.htm
+ artist: MARVIN GAYE
+ title: ABRAHAM MARTIN AND JOHN
+ sections: 
+ original chords: Bb Dm Eb Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Eb Dm Cm Eb Bb Bb Dm Fm Bb Ab Bb Dm Eb Dm Cm F Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Dm D Gm Cm F Bb Bb Bb Dm D Gm Cm F Bb
+
+ computed key: Bb Major
+ computed key certainty: 1.328701
+ computed chords: I iii IV I I iii IV I I ii V vi iii IV I ii V I I iii IV I I ii V vi iii IV I ii V I I I iii IV I I ii V vi iii IV I ii V I IV iii ii IV I I iii v I bVII I iii IV iii ii V I iii IV I I ii V vi iii IV I ii V I I iii III vi ii V I I I iii III vi ii V I
+ number of chords: 92
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/abraham_martin_john_crd.htm
+ artist: MARVIN GAYE
+ title: ABRAHAM MARTIN JOHN
+ sections: INTRO VERSE VERSE INTERLUDE VERSE INTERLUDE VERSE OUTRO
+ original chords: G Bm C G G Bm C G G Am D Em Bm C G Am D G G Bm C G G Am D Em Bm C G Am D G G G Bm C G G Am D Em Bm C G Am D G C Bm Am C G G Bm Dm G F G Bm C Am D G Bm C G G Am D Em Bm C G Am D G Bm Em D Am D G G Bm G Bm C Am D Em Dm F
+
+ computed key: G Major
+ computed key certainty: 1.361413
+ computed chords: I iii IV I I iii IV I I ii V vi iii IV I ii V I I iii IV I I ii V vi iii IV I ii V I I I iii IV I I ii V vi iii IV I ii V I IV iii ii IV I I iii v I bVII I iii IV ii V I iii IV I I ii V vi iii IV I ii V I iii vi V ii V I I iii I iii IV ii V vi v bVII
+ number of chords: 92
+ number of sections: 8
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/after_the_dance_crd.htm
+ artist: MARVIN GAYE
+ title: AFTER THE DANCE
+ sections: INTRO CHORUS VERSE CHORUS VERSE CHORUS BRIDGE CHORUS
+ original chords: C# C# C# C# Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 G#m G# C#m C# F#m G#m G# G# G#m C#m C# F#m G#m G# C#m C# F#m G#m G#m7 C#m C# F#m G#m G#m7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 G#m G# C#m C# F#m G#m G# G# C#m C# F#m G#m G# C#m C# F#m G#m G# C#m C# F#m G#m G# Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 C# C# C# C# Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7 Bm7 Am7 Bm7 Emaj7
+
+ computed key: E Major
+ computed key certainty: 0.928857
+ computed chords: VI VI VI VI ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 iii III vi VI ii iii III III iii vi VI ii iii III vi VI ii iii iiim7 vi VI ii iii iiim7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 iii III vi VI ii iii III III vi VI ii iii III vi VI ii iii III vi VI ii iii III ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 VI VI VI VI ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7 vm7 ivm7 vm7 Imaj7
+ number of chords: 130
+ number of sections: 8
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/aint_no_mountain_high_enough_crd.htm
+ artist: MARVIN GAYE
+ title: AINT NO MOUNTAIN HIGH ENOUGH
+ sections: VERSE CHORUS VERSE CHORUS BRIDGE VERSE CHORUS
+ original chords: Am F G Am F G Am F G Am G Am7 Am G Am7 Am G Am7 D F Am F G Am F G Am G Am7 Am G Am7 Am G Am7 F G A6 G Bbm C# Bbm C# Bbm C# Bbm C# Bbm G# Bbm7 Bbm G# Bbm7 Bbm G# Bbm7 Cm7 F# Bbm G# Bbm7 Bbm G# Bbm7 Bbm G# Bbm7 Bbm G# Bbm7 Bbm G# Bbm7
+
+ computed key: F Major
+ computed key certainty: 0.98304
+ computed chords: iii I II iii I II iii I II iii II iiim7 iii II iiim7 iii II iiim7 VI I iii I II iii I II iii II iiim7 iii II iiim7 iii II iiim7 I II #i6 II iv #V iv #V iv #V iv #V iv #II ivm7 iv #II ivm7 iv #II ivm7 vm7 #I iv #II ivm7 iv #II ivm7 iv #II ivm7 iv #II ivm7 iv #II ivm7
+ number of chords: 73
+ number of sections: 7
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/aint_no_mountain_high_enough_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: AINT NO MOUNTAIN HIGH ENOUGH
+ sections: INTRO VERSE CHORUS VERSE CHORUS INTERLUDE VERSE CHORUS CHORUS
+ original chords: Bm7 G#m7b5 Gmaj7 F#m7 Em9 D G E Bm7 Bm7 G#m7b5 Gmaj7 F#m7 Em9 D G E Bm7 Bm7 G#m7b5 Gmaj7 F#m7 Em9 D G E Bm7 Bm7 G#m7b5 Gmaj7 Em7 F#m7 Gmaj7 Em9 F#m7 Bm7 Gmaj7 Em9 F#m7 Bm7 Gmaj7 Em9 F#m7 Bm7 E D G Bm7 G#m7b5 Gmaj7 F#m7 Em9 D G E Bm7 G#m7b5 Gmaj7 F#m7 Em9 F#m7 Gmaj7 Em9 F#m7 Bm7 Gmaj7 Em9 F#m7 Bm7 Gmaj7 Em9 F#m7 Bm7 E D G A A F# Gmaj7 A Bm A Bm A Bm Cm A# Fm D# Fm7b5 Cm7 Am7b5 G#maj7 Gm7 Fm9 D# G# F Cm7 Am7b5 G#maj7 Fm9 Gm7 G#maj7 Fm9 Gm7 Cm7 G#maj7 Fm9 Gm7 Cm7 G#maj7 Fm9 Gm7 Cm7 F C#9 A#m7 G#maj7 Gm7 Cm7 G#maj7 Gm7 Cm7 G#maj7 Gm7 Cm7 Bm7 G#m7b5 Gmaj7 F#m7 Em9 D G E Bm7 E A F# Bm Cm A# Fm D# Fm7b5 Cm7 Am7b5 G#maj7 Gm7 Fm9 G# F Cm7 F C#9 A#m7
+
+ computed key: G Major
+ computed key certainty: 1.025081
+ computed chords: iiim7 #im7b5 Imaj7 viim7 vim9 V I VI iiim7 iiim7 #im7b5 Imaj7 viim7 vim9 V I VI iiim7 iiim7 #im7b5 Imaj7 viim7 vim9 V I VI iiim7 iiim7 #im7b5 Imaj7 vim7 viim7 Imaj7 vim9 viim7 iiim7 Imaj7 vim9 viim7 iiim7 Imaj7 vim9 viim7 iiim7 VI V I iiim7 #im7b5 Imaj7 viim7 vim9 V I VI iiim7 #im7b5 Imaj7 viim7 vim9 viim7 Imaj7 vim9 viim7 iiim7 Imaj7 vim9 viim7 iiim7 Imaj7 vim9 viim7 iiim7 VI V I II II VII Imaj7 II iii II iii II iii iv #II bvii #V bviim7b5 ivm7 iim7b5 #Imaj7 im7 bviim9 #V #I bVII ivm7 iim7b5 #Imaj7 bviim9 im7 #Imaj7 bviim9 im7 ivm7 #Imaj7 bviim9 im7 ivm7 #Imaj7 bviim9 im7 ivm7 bVII #IV9 #iim7 #Imaj7 im7 ivm7 #Imaj7 im7 ivm7 #Imaj7 im7 ivm7 iiim7 #im7b5 Imaj7 viim7 vim9 V I VI iiim7 VI II VII iii iv #II bvii #V bviim7b5 ivm7 iim7b5 #Imaj7 im7 bviim9 #I bVII ivm7 bVII #IV9 #iim7
+ number of chords: 157
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/aint_nothing_like_the_real_thing_crd.htm
+ artist: MARVIN GAYE
+ title: AINT NOTHING LIKE THE REAL THING
+ sections: 
+ original chords: D A Em D Em D Em7 D9 D Em7 D G F# Bm Am7 G D D Em7 D G F# Bm Am7 G D D Em7 D G F# Bm Am7 G D D Em7 D G F# Bm Am7 G D F#m F# Bm D Bm7 D E9 G A G A G A G A D A Em D Em D Em7
+
+ computed key: D Major
+ computed key certainty: 1.165097
+ computed chords: I V ii I ii I iim7 I9 I iim7 I IV III vi vm7 IV I I iim7 I IV III vi vm7 IV I I iim7 I IV III vi vm7 IV I I iim7 I IV III vi vm7 IV I iii III vi I vim7 I II9 IV V IV V IV V IV V I V ii I ii I iim7
+ number of chords: 66
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/can_i_get_a_witness_crd.htm
+ artist: MARVIN GAYE
+ title: CAN I GET A WITNESS
+ sections: INTRO CHORUS CHORUS OUTRO
+ original chords: A Eb Ab Eb Ab Eb Ab Eb Ab Eb Ab Eb Bb Ab Eb Eb Eb Ab Eb Bb Ab Eb Bb Bb Eb Eb Ab Eb Bb Ab Eb Eb Eb Eb Ab Eb Ab Eb Eb Bb Ab Eb Eb Eb A
+
+ computed key: Eb Major
+ computed key certainty: 1.257189
+ computed chords: #IV I IV I IV I IV I IV I IV I V IV I I I IV I V IV I V V I I IV I V IV I I I I IV I IV I I V IV I I I #IV
+ number of chords: 45
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/chained_crd.htm
+ artist: MARVIN GAYE
+ title: CHAINED
+ sections: INTRO
+ original chords: G C G C G Bb6 Gm C G C G C G Bb6 Gm C G C G G G C G C G Bb6 Gm Gm C G C G C G C A C Am Am D A D A A D A D A D
+
+ computed key: C Major
+ computed key certainty: 0.87068
+ computed chords: V I V I V v6 v I V I V I V v6 v I V I V V V I V I V v6 v v I V I V I V I VI I vi vi II VI II VI VI II VI II VI II
+ number of chords: 49
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/come_get_to_this_acoustic_crd.htm
+ artist: MARVIN GAYE
+ title: COME GET TO THIS ACOUSTIC
+ sections: INTRO VERSE BRIDGE VERSE BRIDGE VERSE OUTRO
+ original chords: Cmaj7 Dmin7 Emin7 Fmaj7 Emin7 Dmin7 Cmaj7 Bmin7 Amin7 Dmin7 F Cmaj7 Bmin7 Amin7 Dmin7 F Cmaj7 Bmin7 Amin7 Dmin7 F Fmaj7 Em Am7 Fmaj7 Dmin7 F Cmaj7 Bmin7 Amin7 Dmin7 F Cmaj7 Bmin7 Amin7 Dmin7 F Fmaj7 Em Am7 Fmaj7 Dmin7 F Cmaj7 Bmin7 Amin7 Dmin7 F Cmaj7 Dmin7 Emin7 Fmaj7 Emin7 Dmin7 Cmaj7 Cmaj7 Bmin7 Amin7 Dmin7 Cmaj7
+
+ computed key: F Major
+ computed key certainty: 1.071774
+ computed chords: Vmaj7 vimin7 viimin7 Imaj7 viimin7 vimin7 Vmaj7 #ivmin7 iiimin7 vimin7 I Vmaj7 #ivmin7 iiimin7 vimin7 I Vmaj7 #ivmin7 iiimin7 vimin7 I Imaj7 vii iiim7 Imaj7 vimin7 I Vmaj7 #ivmin7 iiimin7 vimin7 I Vmaj7 #ivmin7 iiimin7 vimin7 I Imaj7 vii iiim7 Imaj7 vimin7 I Vmaj7 #ivmin7 iiimin7 vimin7 I Vmaj7 vimin7 viimin7 Imaj7 viimin7 vimin7 Vmaj7 Vmaj7 #ivmin7 iiimin7 vimin7 Vmaj7
+ number of chords: 60
+ number of sections: 7
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/distant_lover_live_crd.htm
+ artist: MARVIN GAYE
+ title: DISTANT LOVER
+ sections: INTRO VERSE VERSE BRIDGE VERSE SOLO VERSE
+ original chords: Gm Em A#m Dm Gm Em A#m Dm Gm Am Gm Am A#m B E C#m F#m B E C#m F#m B E Am Am B B E C#m F#m B E Am B E E C#m F#m B E A F#m B E
+
+ computed key: E Major
+ computed key certainty: 1.231059
+ computed chords: biii i #iv bvii biii i #iv bvii biii iv biii iv #iv V I vi ii V I vi ii V I iv iv V V I vi ii V I iv V I I vi ii V I IV ii V I
+ number of chords: 44
+ number of sections: 7
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/flyin_high_in_the_friendly_sky_crd.htm
+ artist: MARVIN GAYE
+ title: FLYIN HIGH IN THE FRIENDLY SKY
+ sections: INTRO VERSE CHORUS VERSE CHORUS CODA
+ original chords: Gm9 Gm9 Gm9 Dm9 Gm9 Am9 Cm9 Gm9 C7sus4 Fmaj7 Bbmaj7 Am9 Gm9 Gm9 Dm9 Gm9 Am9 Cm9 Gm9 C7sus4 Fmaj7 Bbmaj7 Am9 Gm9 Gm9 Gm9 Dm9 Am9 Cm9 C7sus4 Fmaj7 Bbmaj7
+
+ computed key: F Major
+ computed key certainty: 0.914694
+ computed chords: iim9 iim9 iim9 vim9 iim9 iiim9 vm9 iim9 i7sus4 Imaj7 IVmaj7 iiim9 iim9 iim9 vim9 iim9 iiim9 vm9 iim9 i7sus4 Imaj7 IVmaj7 iiim9 iim9 iim9 iim9 vim9 iiim9 vm9 i7sus4 Imaj7 IVmaj7
+ number of chords: 32
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/god_is_love_crd.htm
+ artist: MARVIN GAYE
+ title: GOD IS LOVE
+ sections: INTRO VERSE VERSE VERSE VERSE
+ original chords: Asus4 Dmaj7 Am7 D Gmaj7 Gmaj7 Bm F#m Em9 Asus4 Gmaj7 G6 Asus4 Dmaj7 Asus4 Dmaj7 Asus4 Am7 D Gmaj7 Em7 Asus4 Dmaj7 Asus4 Dmaj7 Asus4 Am7 D Gmaj7 Em7 Asus4 Dmaj7 Bm F#m Em9 Asus4 Bm D Gmaj7 Bm F#m Em9 Asus4 G6 Asus4 Dmaj7 Asus4 Am7 D Gmaj7 Em7 Asus4 Dmaj7 Asus4 Dmaj7 Asus4 Dmaj7 Asus4 Dmaj7 Asus4 Dmaj7
+
+ computed key: D Major
+ computed key certainty: 1.072599
+ computed chords: isus4 Imaj7 vm7 I IVmaj7 IVmaj7 vi iii iim9 isus4 IVmaj7 ii6 isus4 Imaj7 isus4 Imaj7 isus4 vm7 I IVmaj7 iim7 isus4 Imaj7 isus4 Imaj7 isus4 vm7 I IVmaj7 iim7 isus4 Imaj7 vi iii iim9 isus4 vi I IVmaj7 vi iii iim9 isus4 ii6 isus4 Imaj7 isus4 vm7 I IVmaj7 iim7 isus4 Imaj7 isus4 Imaj7 isus4 Imaj7 isus4 Imaj7 isus4 Imaj7
+ number of chords: 61
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/got_to_give_it_up_crd.htm
+ artist: MARVIN GAYE
+ title: GOT TO GIVE IT UP
+ sections: 
+ original chords: A A D E A B D E A B A D E A B D E A B A A
+
+ computed key: A Major
+ computed key certainty: 1.257778
+ computed chords: I I IV V I II IV V I II I IV V I II IV V I II I I
+ number of chords: 21
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/hitch_hike_crd.htm
+ artist: MARVIN GAYE
+ title: HITCH HIKE
+ sections: INTRO BRIDGE CHORUS OUTRO
+ original chords: G Ebm Gb Ab Db Ab Db Gb Db Ebm Gb Ab Db Ab Db Gb Db Ebm Gb Ab Db Ab Db Gb Ab Db Ab Bbm Eb Ab Db Gb Db Ebm Gb Ab Db Gb Db Gb Ab Gb Db A
+
+ computed key: C# Major
+ computed key certainty: 1.223367
+ computed chords: bV bbiii bbV bbVI bbII bbVI bbII bbV bbII bbiii bbV bbVI bbII bbVI bbII bbV bbII bbiii bbV bbVI bbII bbVI bbII bbV bbVI bbII bbVI bbvii bbIII bbVI bbII bbV bbII bbiii bbV bbVI bbII bbV bbII bbV bbVI bbV bbII bVI
+ number of chords: 44
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/how_sweet_it_is_crd.htm
+ artist: MARVIN GAYE
+ title: HOW SWEET IT IS
+ sections: CHORUS VERSE BRIDGE CHORUS VERSE BRIDGE CHORUS INTERLUDE BRIDGE CHORUS
+ original chords: F Dm7 C F Dm7 C C Am C Am C C C C F Dm7 C F Dm7 C C Am C C C C F Dm7 C F Dm7 C C C C C C F Dm7 C F Dm7 C F Dm7 C Am
+
+ computed key: C Major
+ computed key certainty: 0.967059
+ computed chords: IV iim7 I IV iim7 I I vi I vi I I I I IV iim7 I IV iim7 I I vi I I I I IV iim7 I IV iim7 I I I I I I IV iim7 I IV iim7 I IV iim7 I vi
+ number of chords: 47
+ number of sections: 10
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/i_heard_it_through_the_grapevine_crd.htm
+ artist: MARVIN GAYE
+ title: I HEARD IT THROUGH THE GRAPEVINE
+ sections: VERSE CHORUS VERSE CHORUS VERSE CHORUS
+ original chords: Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Bb Ab Ebm Ebsus4 Ebm Bb Ab Cm Ab Ebm Ab Ebm Bb Ebm Bb Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Bb Ab Ebm Ebsus4 Ebm Bb Ab Cm Ab Ebm Ab Ebm Bb Ebm Bb Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Bb Ab Ebm Ebsus4 Ebm Bb Ab Cm Ab Ebm Ab Ebm Bb Ebm Bb Ebm Ebsus4 Ebm Ebm Ebsus4 Ebm Ebsus4 Ebm
+
+ computed key: Eb Minor
+ computed key certainty: 1.309229
+ computed chords: i ivsus4 i i ivsus4 i V IV i ivsus4 i V IV #vi IV i IV i V i V i ivsus4 i i ivsus4 i i ivsus4 i V IV i ivsus4 i V IV #vi IV i IV i V i V i ivsus4 i i ivsus4 i ivsus4 i i ivsus4 i V IV i ivsus4 i V IV #vi IV i IV i V i V i ivsus4 i i ivsus4 i ivsus4 i
+ number of chords: 79
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/i_heard_it_through_the_grapevine_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: I HEARD IT THROUGH THE GRAPEVINE
+ sections: CHORUS VERSE CHORUS CHORUS
+ original chords: Bm A E Bm A E B#m E Bm E Bm E A E Bm E A E Bm A E Bm E A E
+
+ computed key: E Major
+ computed key certainty: 1.161422
+ computed chords: v IV I v IV I #v I v I v I IV I v I IV I v IV I v I IV I
+ number of chords: 25
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/i_heard_it_through_the_grapevine_ver3_crd.htm
+ artist: MARVIN GAYE
+ title: I HEARD IT THROUGH THE GRAPEVINE
+ sections: INTRO VERSE BRIDGE CHORUS VERSE BRIDGE CHORUS INTERLUDE VERSE BRIDGE CHORUS CODA
+ original chords: Dm G Dm Dm G Dm A Dm G Dm A Bm Dm Dm G Dm Dm G Dm G Dm G Dm A Dm G Dm A Bm Dm Dm G Dm Dm G Dm G Dm G Dm Dm A Dm A Bm Dm Dm G Dm Dm Dm G Dm G Dm G Dm Dm G A Bm G
+
+ computed key: D Minor
+ computed key certainty: 1.033614
+ computed chords: i IV i i IV i V i IV i V #vi i i IV i i IV i IV i IV i V i IV i V #vi i i IV i i IV i IV i IV i i V i V #vi i i IV i i i IV i IV i IV i i IV V #vi IV
+ number of chords: 62
+ number of sections: 12
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/i_want_you_crd.htm
+ artist: MARVIN GAYE
+ title: I WANT YOU
+ sections: CHORUS VERSE CHORUS
+ original chords: C#m G#m7 C#m G#m7 C#m F#m B E G# C#M F#m B G# C#m F#m B G#
+
+ computed key: C# Minor
+ computed key certainty: 1.231302
+ computed chords: i vm7 i vm7 i iv bVII III V IM iv bVII V i iv bVII V
+ number of chords: 17
+ number of sections: 3
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/if_i_should_die_tonight_crd.htm
+ artist: MARVIN GAYE
+ title: IF I SHOULD DIE TONIGHT
+ sections: 
+ original chords: GM7 A6 G GM7 A6 G A6 GM7 A6 GM7 A6 GM7 A6 G A6 GM7 A6 G A6
+
+ computed key: B Minor
+ computed key certainty: 0.899976
+ computed chords: bVIM7 v6 bVI bVIM7 v6 bVI v6 bVIM7 v6 bVIM7 v6 bVIM7 v6 bVI v6 bVIM7 v6 bVI v6
+ number of chords: 19
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/ill_be_doggone_crd.htm
+ artist: MARVIN GAYE
+ title: ILL BE DOGGONE
+ sections: INTRO VERSE VERSE BRIDGE
+ original chords: A A A A D F#m B E A A A A A A D F#m B E A A A A F#m B F#m B F#m B F#m B E A A A E F#m B E A A A
+
+ computed key: A Major
+ computed key certainty: 1.118044
+ computed chords: I I I I IV vi II V I I I I I I IV vi II V I I I I vi II vi II vi II vi II V I I I V vi II V I I I
+ number of chords: 41
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/inner_city_blues_crd.htm
+ artist: MARVIN GAYE
+ title: INNER CITY BLUES
+ sections: INTRO VERSE CHORUS VERSE CHORUS VERSE VERSE INTERLUDE OUTRO
+ original chords: Ebm Ebm Ab Ab Ebm Ebm Ab Ebm Ebm Ab Ebm Ab Ebm Dbm G G# Db Bbm Db Bbm Dbm
+
+ computed key: Eb Minor
+ computed key certainty: 0.955183
+ computed chords: i i IV IV i i IV i i IV i IV i bvii #III ##III bVII v bVII v bvii
+ number of chords: 21
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/it_takes_two_crd.htm
+ artist: MARVIN GAYE
+ title: IT TAKES TWO
+ sections: CHORUS VERSE CHORUS VERSE CHORUS
+ original chords: A D A D A A D A
+
+ computed key: A Major
+ computed key certainty: 0.972647
+ computed chords: I IV I IV I I IV I
+ number of chords: 8
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: VERSE CHORUS VERSE BRIDGE CHORUS
+ original chords: Eb Cm7 Ab Eb Cm7 Ab Ab Eb Cm7 Ab Bb Ab Bb
+
+ computed key: Ab Major
+ computed key certainty: 0.843466
+ computed chords: V iiim7 I V iiim7 I I V iiim7 I II I II
+ number of chords: 13
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: VERSE CHORUS VERSE BRIDGE CHORUS VERSE CHORUS VERSE BRIDGE CHORUS
+ original chords: Eb Cm7 Ab D F#m Cm7 G E A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m G A D F#m A D F#m A D F#m A E A D F#m G A D F#m G A D F#m G A D F#m G A A G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G C G G C
+
+ computed key: D Major
+ computed key certainty: 0.892608
+ computed chords: bII bviim7 bV I iii bviim7 IV II V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii IV V I iii V I iii V I iii V II V I iii IV V I iii IV V I iii IV V I iii IV V V IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV bVII IV IV bVII
+ number of chords: 144
+ number of sections: 10
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_ver3_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: VERSE CHORUS VERSE VERSE BRIDGE CHORUS BRIDGE CODA
+ original chords: C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F F C Em7 F F C Em7 F F C Em7 F F Dm C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F F Dm C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F C Em7 F Dm
+
+ computed key: C Major
+ computed key certainty: 1.276375
+ computed chords: I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV IV I iiim7 IV IV I iiim7 IV IV I iiim7 IV IV ii I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV IV ii I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV I iiim7 IV ii
+ number of chords: 110
+ number of sections: 8
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_ver4_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: 
+ original chords: D Bm7 G D Bm7 G G D Bm7 G A Ab A
+
+ computed key: D Major
+ computed key certainty: 0.874952
+ computed chords: I vim7 IV I vim7 IV IV I vim7 IV V bV V
+ number of chords: 13
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_ver5_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: INTRO VERSE CHORUS VERSE BRIDGE VERSE
+ original chords: D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# G# A# Cm G# A# G# A# Cm G# A# G# A# Cm G# A# G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A# D# Cm G# A#
+
+ computed key: Eb Major
+ computed key certainty: 0.881844
+ computed chords: #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #III ##IV vi #III ##IV #III ##IV vi #III ##IV #III ##IV vi #III ##IV #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV #VII vi #III ##IV
+ number of chords: 159
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lets_get_it_on_ver6_crd.htm
+ artist: MARVIN GAYE
+ title: LETS GET IT ON
+ sections: VERSE CHORUS VERSE VERSE BRIDGE CHORUS
+ original chords: B G D A E B E C#m A Am B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E Am B C#m A E Am B C#m A E Am B C#m A E Am B C#m A E Am B C#m A E B C#m A E B C#m A E B C#m A E B C#m A E
+
+ computed key: E Major
+ computed key certainty: 0.962843
+ computed chords: V bIII bVII IV I V I vi IV iv V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I iv V vi IV I iv V vi IV I iv V vi IV I iv V vi IV I iv V vi IV I V vi IV I V vi IV I V vi IV I V vi IV I
+ number of chords: 115
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/little_darling_i_need_you_crd.htm
+ artist: MARVIN GAYE
+ title: LITTLE DARLING I NEED YOU
+ sections: INTRO CHORUS VERSE CHORUS VERSE SOLO VERSE CHORUS
+ original chords: G G C E F G C E F G C E F G C E F G G G C E F G C E F G C E F G C E F G G G C C E F G C E F G C E F G C E F G C E F G G G C E F G C E
+
+ computed key: C Major
+ computed key certainty: 0.890426
+ computed chords: V V I III IV V I III IV V I III IV V I III IV V V V I III IV V I III IV V I III IV V I III IV V V V I I III IV V I III IV V I III IV V I III IV V I III IV V V V I III IV V I III
+ number of chords: 67
+ number of sections: 8
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/lucky_lucky_me_crd.htm
+ artist: MARVIN GAYE
+ title: LUCKY LUCKY ME
+ sections: 
+ original chords: Bb Ab Bb F Bb Ab Bb Ab Bb Ab Bb Ab Eb Db Eb Db Bb Ab Bb Ab F Eb F Eb Bb F Bb Ab Bb F Bb Ab Bb Ab Bb Ab Bb Ab Eb Db Eb Db Bb Ab Bb Ab F Eb F Eb Bb F Bb G A Bb C Bb C Bb C Bb C Bb F Eb F Eb C Bb C Bb G F G F C G C Bb
+
+ computed key: Bb Major
+ computed key certainty: 1.299381
+ computed chords: I bVII I V I bVII I bVII I bVII I bVII IV bIII IV bIII I bVII I bVII V IV V IV I V I bVII I V I bVII I bVII I bVII I bVII IV bIII IV bIII I bVII I bVII V IV V IV I V I VI VII I II I II I II I II I V IV V IV II I II I VI V VI V II VI II I
+ number of chords: 80
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/mercy_mercy_me_crd.htm
+ artist: MARVIN GAYE
+ title: MERCY MERCY ME
+ sections: 
+ original chords: Cm7 C#m7 Emaj7 C#m7 F#m7 Amaj7 Amaj7 Emaj7 Emaj7 C#m7 F#m7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Amaj7 Emaj7 Emaj7 C#m7 F#m7 F#m7 Amaj7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Fmaj7 Dm7 Gm7 Bbmaj7 F#maj7 D#m7 G#m7 Bmaj7 F#maj7 D#m7 G#m7
+
+ computed key: A Major
+ computed key certainty: 1.302276
+ computed chords: biiim7 iiim7 Vmaj7 iiim7 vim7 Imaj7 Imaj7 Vmaj7 Vmaj7 iiim7 vim7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 Imaj7 Vmaj7 Vmaj7 iiim7 vim7 vim7 Imaj7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 bVImaj7 ivm7 bviim7 bIImaj7 VImaj7 #ivm7 viim7 IImaj7 VImaj7 #ivm7 viim7
+ number of chords: 39
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/mercy_mercy_me_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: MERCY MERCY ME
+ sections: INTRO VERSE VERSE VERSE VERSE OUTRO
+ original chords: Emaj7 Cm7 C#m7 F#m Amaj7 Bbm9 Cm7 C#m7 Emaj7 C#m7 F#m Amaj7 Emaj7 C#m7 F#m Amaj7 Emaj7 C#m7 F#m Amaj7 Emaj7 C#m7 F#m Amaj7 Emaj7 C#m7 F#m Amaj7 Fmaj7 Dm7 Gm Bbmaj7 Bbm9
+
+ computed key: A Major
+ computed key certainty: 1.224492
+ computed chords: Vmaj7 biiim7 iiim7 vi Imaj7 biim9 biiim7 iiim7 Vmaj7 iiim7 vi Imaj7 Vmaj7 iiim7 vi Imaj7 Vmaj7 iiim7 vi Imaj7 Vmaj7 iiim7 vi Imaj7 Vmaj7 iiim7 vi Imaj7 bVImaj7 ivm7 bvii bIImaj7 biim9
+ number of chords: 33
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/mercy_mercy_me_ver3_crd.htm
+ artist: MARVIN GAYE
+ title: MERCY MERCY ME
+ sections: INTRO VERSE VERSE VERSE3 VERSE VERSE VERSE CODA CODA
+ original chords: F# Dmaj7 Bm7 Em7 G Ebmaj7 Cm7 Fm7 Ab Abm9 F# G Dmaj7 Bm7 Em7 Em7 G Dmaj7 Dmaj7 Bm7 Em7 G Dmaj7 Bm7 Em7 G Dmaj7 Dmaj7 Bm7 Em7 G Dmaj7 Dmaj7 Bm7 Em7 G Ebmaj7 Cm7 Fm7 Ab Abm9 Abm9 Abm9
+
+ computed key: G Major
+ computed key certainty: 1.32506
+ computed chords: VII Vmaj7 iiim7 vim7 I bVImaj7 ivm7 bviim7 bII biim9 VII I Vmaj7 iiim7 vim7 vim7 I Vmaj7 Vmaj7 iiim7 vim7 I Vmaj7 iiim7 vim7 I Vmaj7 Vmaj7 iiim7 vim7 I Vmaj7 Vmaj7 iiim7 vim7 I bVImaj7 ivm7 bviim7 bII biim9 biim9 biim9
+ number of chords: 43
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/mercy_mercy_me_ver4_crd.htm
+ artist: MARVIN GAYE
+ title: MERCY MERCY ME
+ sections: 
+ original chords: Abmaj7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Emaj7 C#m7 F#m7 Amaj7 Fm Ab Gm Gsus4 Cm
+
+ computed key: A Major
+ computed key certainty: 1.141589
+ computed chords: bImaj7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 Vmaj7 iiim7 vim7 Imaj7 bvi bI bvii biiisus4 biii
+ number of chords: 23
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/only_a_lonely_man_would_know_crd.htm
+ artist: MARVIN GAYE
+ title: ONLY A LONELY MAN WOULD KNOW
+ sections: INTRO VERSE CHORUS
+ original chords: A Ebsus4 Ebm Ebsus4 Eb5 Dbsus4 Dbm Ebm Db B Bb Abm Ebm Db B Bb Abm Ebm Db B Bb Abm Db B Bb Abm Db B Bb B B Db Eb Bb B B Ebsus4 Ebsus4
+
+ computed key: Eb Minor
+ computed key certainty: 1.059568
+ computed chords: #IV ivsus4 i ivsus4 #I5 iiisus4 bvii i bVII #V V iv i bVII #V V iv i bVII #V V iv bVII #V V iv bVII #V V #V #V bVII I V #V #V ivsus4 ivsus4
+ number of chords: 38
+ number of sections: 3
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/pride_and_joy_crd.htm
+ artist: MARVIN GAYE
+ title: PRIDE AND JOY
+ sections: VERSE CHORUS VERSE OUTRO
+ original chords: G#m D B E B E B E B D B G#m D B E B D B E B C#m E C#m B E B B G#m D B E B E
+
+ computed key: B Major
+ computed key certainty: 0.789661
+ computed chords: vi bIII I IV I IV I IV I bIII I vi bIII I IV I bIII I IV I ii IV ii I IV I I vi bIII I IV I IV
+ number of chords: 33
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/save_the_children_crd.htm
+ artist: MARVIN GAYE
+ title: SAVE THE CHILDREN
+ sections: INTRO VERSE VERSE CHORUS BRIDGE CODA
+ original chords: Am9 E7b9 Dm7 E7b9 Dm7 G7b9 Em9 Dm13 Em9 Dm13 Cm7 Bbmaj7 Am9 E7b9 Dm13 G7b9 Em9 Dm13 Em9 Dm13 Cm7 Bbmaj7 Am9 E7b9 Dm13 G7b9 Em9 Amaj7 A7b9 Dm9 G13 Cmaj7 Am7 Dm9 G13 Cmaj7 Am7 Dm9 G13 Dm7 Fmaj7 Am9 E7b9 Am9 E7b9 Am9 E7b9 Dm9 G7b9 Em7 Dm7 Em7 Dm7 Am9 E7b9 Dm7 G7b9 Em9 Dm13 Cm7 Bbmaj7 Amaj7 A7b9 Dm9 G13 Cmaj7 Am7 Fmaj7 Em7
+
+ computed key: C Major
+ computed key certainty: 0.976423
+ computed chords: vim9 III7b9 iim7 III7b9 iim7 V7b9 iiim9 iim13 iiim9 iim13 im7 bVIImaj7 vim9 III7b9 iim13 V7b9 iiim9 iim13 iiim9 iim13 im7 bVIImaj7 vim9 III7b9 iim13 V7b9 iiim9 VImaj7 VI7b9 iim9 V13 Imaj7 vim7 iim9 V13 Imaj7 vim7 iim9 V13 iim7 IVmaj7 vim9 III7b9 vim9 III7b9 vim9 III7b9 iim9 V7b9 iiim7 iim7 iiim7 iim7 vim9 III7b9 iim7 V7b9 iiim9 iim13 im7 bVIImaj7 VImaj7 VI7b9 iim9 V13 Imaj7 vim7 IVmaj7 iiim7
+ number of chords: 69
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/sexual_healing_crd.htm
+ artist: MARVIN GAYE
+ title: SEXUAL HEALING
+ sections: 
+ original chords: A
+
+ computed key: A Major
+ computed key certainty: 1.486782
+ computed chords: I
+ number of chords: 1
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/sexual_healing_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: SEXUAL HEALING
+ sections: INTRO VERSE VERSE VERSE
+ original chords: D Bm G D A Bm G D D Bm G D A Bm G D D Bm G D A Bm G D A Bm G D A Bm G D A Bm G D A Bm G D A Bm G D A Bm G A Bm C# D F# Bm G A Bm C# D F# Bm G A Bm C# D F# Bm G A Bm C# D F# Bm G A Bm C#
+
+ computed key: B Minor
+ computed key certainty: 0.967362
+ computed chords: III i bVI III bVII i bVI III III i bVI III bVII i bVI III III i bVI III bVII i bVI III bVII i bVI III bVII i bVI III bVII i bVI III bVII i bVI III bVII i bVI III bVII i bVI bVII i II III V i bVI bVII i II III V i bVI bVII i II III V i bVI bVII i II III V i bVI bVII i II
+ number of chords: 78
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/stubborn_kind_of_fellow_crd.htm
+ artist: MARVIN GAYE
+ title: STUBBORN KIND OF FELLOW
+ sections: INTRO VERSE BRIDGE PRE-CHORUS CHORUS VERSE VERSE BRIDGE PRE-CHORUS CHORUS
+ original chords: A#+ Dm G C A#+ Dm G C G C Am C F Dm G C Am F G C A#+ Dm G C A#+ Dm G C A#+ Dm G C G C Am C F G C Am C F Dm G C Am F G C A#+ Dm G C A#+ Dm G C Am F
+
+ computed key: C Major
+ computed key certainty: 1.203709
+ computed chords: #VI+ ii V I #VI+ ii V I V I vi I IV ii V I vi IV V I #VI+ ii V I #VI+ ii V I #VI+ ii V I V I vi I IV V I vi I IV ii V I vi IV V I #VI+ ii V I #VI+ ii V I vi IV
+ number of chords: 59
+ number of sections: 10
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/stubborn_kind_of_fellow_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: STUBBORN KIND OF FELLOW
+ sections: INTRO VERSE BRIDGE CHORUS INTERLUDE VERSE VERSE BRIDGE CHORUS CODA
+ original chords: A7#5 Dm7 C A7#5 Dm7 C C Am C F Dm G C Am Dm F C A7#5 Dm7 C A7#5 Dm7 C Dm7 C C Am C F G C Am C F Dm G C Am Dm F C A7#5 Dm7 C A7#5 Dm7 C A7#5 A7#5 Dm7 C Am F Dm G F
+
+ computed key: F Major
+ computed key certainty: 0.907544
+ computed chords: III7#5 vim7 V III7#5 vim7 V V iii V I vi II V iii vi I V III7#5 vim7 V III7#5 vim7 V vim7 V V iii V I II V iii V I vi II V iii vi I V III7#5 vim7 V III7#5 vim7 V III7#5 III7#5 vim7 V iii I vi II I
+ number of chords: 56
+ number of sections: 10
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/sunny_crd.htm
+ artist: MARVIN GAYE
+ title: SUNNY
+ sections: INTRO
+ original chords: Fm G# C# Gm C Fm G# C# Gm C Fm G# C# Gm C Fm G# C# F# Gm C Fm Fm G# C# Gm C Fm G# C# Gm C Fm G# C# F# Gm C Fm F#m A D G#m C# F#m A D G#m C# A F#m A D G G#m C# F#m Gm A# Eb Am D Gm A# Eb Am D Gm A# Eb G# Am D Gm G#m B E A#m Eb G#m B E A#m Eb G#m B E A A#m Eb G#m C# Eb G#m C# Eb
+
+ computed key: F Minor
+ computed key certainty: 0.847228
+ computed chords: i #II #V ii V i #II #V ii V i #II #V ii V i #II #V #I ii V i i #II #V ii V i #II #V ii V i #II #V #I ii V i #i #III VI #ii #V #i #III VI #ii #V #III #i #III VI II #ii #V #i ii ##III bVII #iii VI ii ##III bVII #iii VI ii ##III bVII #II #iii VI ii #ii #IV VII ##iii bVII #ii #IV VII ##iii bVII #ii #IV VII #III ##iii bVII #ii #V bVII #ii #V bVII
+ number of chords: 96
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/sweeter_as_the_days_go_by_crd.htm
+ artist: MARVIN GAYE
+ title: SWEETER AS THE DAYS GO BY
+ sections: INTRO VERSE VERSE SOLO VERSE
+ original chords: A D G D A D G D A D A D A D A D G D D Dmaj7 G Gm D G D G D A D A D G D A D A D A D A D G D D Dmaj7 G Gm D G D G D A D G D A D G D A D G D A D G D A D A D A D A D G D D Dmaj7 G Gm D G D G D G D G D
+
+ computed key: D Major
+ computed key certainty: 1.472076
+ computed chords: V I IV I V I IV I V I V I V I V I IV I I Imaj7 IV iv I IV I IV I V I V I IV I V I V I V I V I IV I I Imaj7 IV iv I IV I IV I V I IV I V I IV I V I IV I V I IV I V I V I V I V I IV I I Imaj7 IV iv I IV I IV I IV I IV I
+ number of chords: 91
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/thats_the_way_love_is_crd.htm
+ artist: MARVIN GAYE
+ title: THATS THE WAY LOVE IS
+ sections: CHORUS
+ original chords: Dm Asus4 Dm D A Dm A Dm D D G D G G Dm Dm D Dm A Dm D Dm D Dm A Dm D Dm
+
+ computed key: D Minor
+ computed key certainty: 0.778893
+ computed chords: i isus4 i I V i V i I I IV I IV IV i i I i V i I i I i V i I i
+ number of chords: 28
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/the_onion_song_crd.htm
+ artist: MARVIN GAYE
+ title: THE ONION SONG
+ sections: CHORUS VERSE BRIDGE CHORUS VERSE BRIDGE CHORUS CODA OUTRO
+ original chords: G C Am G Em Am D Gmaj7 C Am Bm7 Em Am F C G F C G F C G F C G C Cdim Em G Em F D G C Am G Em Am D Gmaj7 C Am Bm7 Em Am F C G F C G F C G F C G C Cdim Em G Em F D D# G# C# C#m G# Fm A#m D# G#maj7 C# A#m Cm Fm A#m Cm Fm A#m Cm Fm A#m F# C# G# C# G# G C Am Em D Gmaj7 Bm7 F Cdim D# G# C# Fm A#m Cm F#
+
+ computed key: C Major
+ computed key certainty: 1.341991
+ computed chords: V I vi V iii vi II Vmaj7 I vi viim7 iii vi IV I V IV I V IV I V IV I V I idim iii V iii IV II V I vi V iii vi II Vmaj7 I vi viim7 iii vi IV I V IV I V IV I V IV I V I idim iii V iii IV II #II #V #I #i #V iv #vi #II #Vmaj7 #I #vi i iv #vi i iv #vi i iv #vi #IV #I #V #I #V V I vi iii II Vmaj7 viim7 IV idim #II #V #I iv #vi i #IV
+ number of chords: 105
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/too_busy_thinking_about_my_baby_crd.htm
+ artist: MARVIN GAYE
+ title: TOO BUSY THINKING ABOUT MY BABY
+ sections: INTRO VERSE CHORUS VERSE CHORUS INTERLUDE VERSE CHORUS CODA
+ original chords: C Dm C Dm C Dm C Dm C Dm C Dm Em Fmaj7 Em Fmaj7 Em Fmaj7 F Dm7 C C F Dm7 C C Dm C Dm C Dm C Dm Em Fmaj7 Em Fmaj7 Em Fmaj7 F Dm7 C C F Dm7 C C F Dm7 C C C Dm C Dm C Dm C Dm Em Fmaj7 Em Fmaj7 Em Fmaj7 F Dm7 C C F Dm7 C C F Dm7 C C Dm C Dm C Dm C Dm C Dm Em Fmaj7 F Dm7
+
+ computed key: C Major
+ computed key certainty: 0.922265
+ computed chords: I ii I ii I ii I ii I ii I ii iii IVmaj7 iii IVmaj7 iii IVmaj7 IV iim7 I I IV iim7 I I ii I ii I ii I ii iii IVmaj7 iii IVmaj7 iii IVmaj7 IV iim7 I I IV iim7 I I IV iim7 I I I ii I ii I ii I ii iii IVmaj7 iii IVmaj7 iii IVmaj7 IV iim7 I I IV iim7 I I IV iim7 I I ii I ii I ii I ii I ii iii IVmaj7 IV iim7
+ number of chords: 90
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/try_it_baby_crd.htm
+ artist: MARVIN GAYE
+ title: TRY IT BABY
+ sections: INTRO CHORUS CHORUS INTERLUDE OUTRO
+ original chords: F F Bb Eb Bb Fm F Bbm Bb Eb Bb Bbm Bb Bbm Eb Fm F Bb Eb Bb F F Bb Eb Ebm Eb Bb F F Bb Bbm Bb Eb Bb Bbm Bb Bbm Eb Fm F Bb Eb Bb F Bb Bbm Ebm Eb Bb Fm F F Bb Bbm Eb Ebm Bb Fm F Bb Eb Eb Bbm Bb Bbm Bb Eb F Bbm Eb Bbm Bb Bbm Bb A
+
+ computed key: Bb Major
+ computed key certainty: 1.185374
+ computed chords: V V I IV I v V i I IV I i I i IV v V I IV I V V I IV iv IV I V V I i I IV I i I i IV v V I IV I V I i iv IV I v V V I i IV iv I v V I IV IV i I i I IV V i IV i I i I VII
+ number of chords: 75
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_goin_on_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOIN ON
+ sections: CHORUS CHORUS
+ original chords: Amaj7 F#m7 Amaj7 F#m7 Bm7 Bm7 Bm7 Bm7 Amaj7 F#m7 Amaj7 F#m7 Dm7
+
+ computed key: D Major
+ computed key certainty: 0.969337
+ computed chords: Vmaj7 iiim7 Vmaj7 iiim7 vim7 vim7 vim7 vim7 Vmaj7 iiim7 Vmaj7 iiim7 im7
+ number of chords: 13
+ number of sections: 2
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOING ON
+ sections: VERSE CHORUS VERSE CHORUS
+ original chords: E C#m E C#m A A E C#m E C#m A
+
+ computed key: C# Minor
+ computed key certainty: 0.731902
+ computed chords: III i III i bVI bVI III i III i bVI
+ number of chords: 11
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver2_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOING ON
+ sections: VERSE VERSE CHORUS INTERLUDE VERSE CHORUS INTERLUDE OUTRO
+ original chords: Bm7 Em7 A13 Gbm9
+
+ computed key: D Major
+ computed key certainty: 0.910409
+ computed chords: vim7 iim7 V13 bivm9
+ number of chords: 4
+ number of sections: 8
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver3_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOING ON
+ sections: VERSE CHORUS VERSE CHORUS BRIDGE VERSE CHORUS BRIDGE OUTRO
+ original chords: Emaj7 C#m7 F#m11 Am Emaj7 C#m7 Emaj7 C#m7 F#m11 Emaj7 C#m7 Emaj7 C#m7 F#m11 F#m11 F#m11 F#m11 Emaj7 C#m7 Am Emaj7 C#m7 Emaj7 C#m7 F#m11 F#m11 F#m11 F#m11 Emaj7 C#m7 Emaj7 Am
+
+ computed key: E Major
+ computed key certainty: 1.142296
+ computed chords: Imaj7 vim7 iim11 iv Imaj7 vim7 Imaj7 vim7 iim11 Imaj7 vim7 Imaj7 vim7 iim11 iim11 iim11 iim11 Imaj7 vim7 iv Imaj7 vim7 Imaj7 vim7 iim11 iim11 iim11 iim11 Imaj7 vim7 Imaj7 iv
+ number of chords: 32
+ number of sections: 9
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver4_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOING ON
+ sections: VERSE VERSE CHORUS VERSE CHORUS
+ original chords: Emaj7 C#m Emaj7 C#m F#m Emaj7 C#m Emaj7 C#m F#m F#m F#m F#m Emaj7 C#m Emaj7 C#m Cmaj7 Emaj7 C#m Emaj7 C#m F#m F#m F#m F#m Emaj7 C#m Emaj7 C#m
+
+ computed key: A Major
+ computed key certainty: 0.88104
+ computed chords: Vmaj7 iii Vmaj7 iii vi Vmaj7 iii Vmaj7 iii vi vi vi vi Vmaj7 iii Vmaj7 iii bIIImaj7 Vmaj7 iii Vmaj7 iii vi vi vi vi Vmaj7 iii Vmaj7 iii
+ number of chords: 30
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_going_on_ver5_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS GOING ON
+ sections: INTRO VERSE CHORUS VERSE CHORUS
+ original chords: Emaj7 C#m7 F#m7 A B13 Am7 Bm7 Emaj7 C#m7 Emaj7 C#m7 F#m7 A B13 Emaj7 C#m7 Emaj7 C#m7 F#m7 A B13 F#m7 B F#m7 B F#m7 B Emaj7 C#m7 Am7 Bm7 Emaj7 C#m7 Emaj7 C#m7 F#m7 B B13 F#m7 B F#m7 B F#m7 B Emaj7 C#m7 Emaj7 Am7 Bm7 F#m7
+
+ computed key: E Major
+ computed key certainty: 0.902462
+ computed chords: Imaj7 vim7 iim7 IV V13 ivm7 vm7 Imaj7 vim7 Imaj7 vim7 iim7 IV V13 Imaj7 vim7 Imaj7 vim7 iim7 IV V13 iim7 V iim7 V iim7 V Imaj7 vim7 ivm7 vm7 Imaj7 vim7 Imaj7 vim7 iim7 V V13 iim7 V iim7 V iim7 V Imaj7 vim7 Imaj7 ivm7 vm7 iim7
+ number of chords: 50
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/whats_happening_brother_crd.htm
+ artist: MARVIN GAYE
+ title: WHATS HAPPENING BROTHER
+ sections: INTRO
+ original chords: C Fm E Abm Eb Fm7 Ab Bb C#dim7 Eb Fm7 Bb Abmaj7 Ab Abm Gm7 Cm7 Abmaj7 Abmaj7 Abmaj7 Ab Abm Gm7 Cm7 Abmaj7 Abmaj7 Abmaj7
+
+ computed key: Ab Major
+ computed key certainty: 1.228009
+ computed chords: III vi #V i V vim7 I II #iiidim7 V vim7 II Imaj7 I i viim7 iiim7 Imaj7 Imaj7 Imaj7 I i viim7 iiim7 Imaj7 Imaj7 Imaj7
+ number of chords: 27
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/you_crd.htm
+ artist: MARVIN GAYE
+ title: YOU
+ sections: VERSE VERSE BRIDGE VERSE OUTRO
+ original chords: Dm Gm Fm Dm Dm Gm Fm Dm Dm Bb Dm Bb Dm Bb Dm Bb Gm Am Dm Dm Gm F Dm Dm Gm Fm Dm Dm Bb Dm Bb Dm Bb Dm Bb Gm Am Dm Dm Gm F Dm Dm Bb Dm Bb Dm Bb Dm Bb Gm Am Dm Dm Gm F Dm Dm
+
+ computed key: D Minor
+ computed key certainty: 0.856855
+ computed chords: i iv iii i i iv iii i i bVI i bVI i bVI i bVI iv v i i iv III i i iv iii i i bVI i bVI i bVI i bVI iv v i i iv III i i bVI i bVI i bVI i bVI iv v i i iv III i i
+ number of chords: 58
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/you_sure_love_to_ball_crd.htm
+ artist: MARVIN GAYE
+ title: YOU SURE LOVE TO BALL
+ sections: INTRO
+ original chords: Cm7 Cmaj7 Cm7 Cmaj7 Cmaj7 Am7 Bb Fmaj7 Em7 Dm7 Cm7 Cmaj7 Cm7 Cmaj7 Cmaj7 Am7 Bb Fmaj7 Em7 Dm7 Cm7 Cmaj7 Cm7 Cmaj7 Ebmaj7 F Fm7 Em7 A13 A9 Dm7 Cm7 Cmaj7
+
+ computed key: G Minor
+ computed key certainty: 0.711112
+ computed chords: ivm7 IVmaj7 ivm7 IVmaj7 IVmaj7 iim7 III bVIImaj7 #vim7 vm7 ivm7 IVmaj7 ivm7 IVmaj7 IVmaj7 iim7 III bVIImaj7 #vim7 vm7 ivm7 IVmaj7 ivm7 IVmaj7 bVImaj7 bVII bviim7 #vim7 II13 II9 vm7 ivm7 IVmaj7
+ number of chords: 33
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/youre_a_wonderful_one_crd.htm
+ artist: MARVIN GAYE
+ title: YOURE A WONDERFUL ONE
+ sections: INTRO BRIDGE OUTRO
+ original chords: Bb Eb Bb Bb F Gm Db Eb Gm Bb F Eb Bb F Bb Bbm Bb Db Bb Eb Bb F Eb Bb F Bb Bb Eb Bb F Eb Bb F Bb Eb Bb F Eb Bb F Bb Bb A
+
+ computed key: Bb Major
+ computed key certainty: 1.446534
+ computed chords: I IV I I V vi bIII IV vi I V IV I V I i I bIII I IV I V IV I V I I IV I V IV I V I IV I V IV I V I I VII
+ number of chords: 43
+ number of sections: 3
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/m/marvin_gaye/youre_all_i_need_to_get_by_crd.htm
+ artist: MARVIN GAYE
+ title: YOURE ALL I NEED TO GET BY
+ sections: CHORUS VERSE CHORUS VERSE BRIDGE CODA
+ original chords: G6 Cm6 G6 G6 Cm G G Cm G G Gmaj7 Am7 G Cm G C G C G C6 G Cm G C G Cm G G Cm G G Cm G G Cm G G Gmaj7 Am7 G Cm G C G C G C6 G Cm G C Cm G C Cm G Cm G Cm D9 G G6 G6 Cm6 Cm G Gmaj7 Am7 G C C6 Cm D9
+
+ computed key: G Major
+ computed key certainty: 0.931437
+ computed chords: vi6 iim6 vi6 vi6 iv I I iv I I Imaj7 iim7 I iv I IV I IV I ii6 I iv I IV I iv I I iv I I iv I I iv I I Imaj7 iim7 I iv I IV I IV I ii6 I iv I IV iv I IV iv I iv I iv V9 I vi6 vi6 iim6 iv I Imaj7 iim7 I IV ii6 iv V9
+ number of chords: 73
+ number of sections: 6
+
+========================================
+
+
+============================================================
+ artist summary: MARVIN GAYE
+============================================================
+ songs encountered: 42
+ total charts encountered: 59
+ songs in major: 32
+ songs in minor: 10
+ chords encountered: 2472
+ sections encountered: 205
+
+ most common keys:
+    C Major - seen 7 times
+    Bb Major - seen 4 times
+    G Major - seen 4 times
+    E Major - seen 4 times
+    D Major - seen 4 times
+ most common chords (specific):
+    G - seen 289 times
+    C - seen 234 times
+    A - seen 176 times
+    D - seen 173 times
+    F - seen 166 times
+ most common chords (generic):
+    I - seen 584 times
+    IV - seen 343 times
+    V - seen 307 times
+    i - seen 183 times
+    vi - seen 151 times
+ most common chord progressions:
+    V vi IV I - seen 24 times
+    vi IV I V - seen 21 times
+    IV I V I - seen 19 times
+    IV I V vi - seen 19 times
+    I V vi IV - seen 19 times
+ most common song structures:
+
+ avg. chords per song: 58.857142857142854
+ avg. sections per song: 4.880952380952381
+============================================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/blue_monday_people_crd.htm
+ artist: CURTIS MAYFIELD
+ title: BLUE MONDAY PEOPLE
+ sections: INTRO
+ original chords: F# F# F# F# F# F# Abm7 F# Abm7 F# Abm7 F# Abm7 F# Bb Ebm F# B Bm Abm B B Abm B F# Ebm F# F# Bb
+
+ computed key: F# Major
+ computed key certainty: 1.109922
+ computed chords: I I I I I I bbiiim7 I bbiiim7 I bbiiim7 I bbiiim7 I bIV bbvii I IV iv bbiii IV IV bbiii IV I bbvii I I bIV
+ number of chords: 29
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/eddie_you_should_know_better_crd.htm
+ artist: CURTIS MAYFIELD
+ title: EDDIE YOU SHOULD KNOW BETTER
+ sections: INTRO
+ original chords: F#m7 Bm7 F#m7 Bm7 Dmaj7 C#m7 Bm7 F#m9 F#m9 F#m9 F#m9
+
+ computed key: F# Minor
+ computed key certainty: 1.079928
+ computed chords: im7 ivm7 im7 ivm7 bVImaj7 vm7 ivm7 im9 im9 im9 im9
+ number of chords: 11
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/here_but_im_gone_crd.htm
+ artist: CURTIS MAYFIELD
+ title: HERE BUT IM GONE
+ sections: CHORUS VERSE CHORUS VERSE CHORUS VERSE CHORUS
+ original chords: Eb B9 B9 B
+
+ computed key: B Major
+ computed key certainty: 1.227585
+ computed chords: bIV I9 I9 I
+ number of chords: 4
+ number of sections: 7
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/keep_on_keeping_on_crd.htm
+ artist: CURTIS MAYFIELD
+ title: KEEP ON KEEPING ON
+ sections: 
+ original chords: Ab Fm Db Bbm Ab Ab Cm Fm Eb11 Gb Db Bbm Eb Ab Cm Fm Eb11 Gb Db Bbm Eb Db Ab Abmaj7 Db Ab Gb Db Bbm7 Bbm7 Cm7 Eb13 Bbm7 Cm7 Eb13 Db Ab Ab Cm Fm Eb11 Gb Db Bbm Eb Ab Cm Fm Eb11 Gb Db Bbm Eb Db Ab Abmaj7 Db Ab Gb Db Bbm7 Bbm7 Cm7 Eb13 Bbm7 Cm7 Eb13 Db Ab Ab
+
+ computed key: Ab Major
+ computed key certainty: 0.959926
+ computed chords: I vi IV ii I I iii vi V11 bVII IV ii V I iii vi V11 bVII IV ii V IV I Imaj7 IV I bVII IV iim7 iim7 iiim7 V13 iim7 iiim7 V13 IV I I iii vi V11 bVII IV ii V I iii vi V11 bVII IV ii V IV I Imaj7 IV I bVII IV iim7 iim7 iiim7 V13 iim7 iiim7 V13 IV I I
+ number of chords: 70
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/move_on_up_crd.htm
+ artist: CURTIS MAYFIELD
+ title: MOVE ON UP
+ sections: CHORUS VERSE CHORUS VERSE OUTRO
+ original chords: Em A Bm F#m A F#m Em Bm Em F#m Em A Bm F#m Em A Bm F#m Em A Bm F#m Em A Bm F#m Em A Bm F#m Em A Bm F#m Em F#m Em Em A Bm F#m Em A Bm Em A Bm F#m Em A Bm F#m Em
+
+ computed key: A Major
+ computed key certainty: 0.852336
+ computed chords: v I ii vi I vi v ii v vi v I ii vi v I ii vi v I ii vi v I ii vi v I ii vi v I ii vi v vi v v I ii vi v I ii v I ii vi v I ii vi v
+ number of chords: 53
+ number of sections: 5
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/move_on_up_ver2_crd.htm
+ artist: CURTIS MAYFIELD
+ title: MOVE ON UP
+ sections: INTRO VERSE VERSE VERSE VERSE VERSE
+ original chords: F#m Asus4 Em7 Bm F#m Em7 Asus4 Bm Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm F#m Em7 Asus4 Bm Bm F#m Em7 Asus4 Bm Em7 Asus4 Bm
+
+ computed key: B Minor
+ computed key certainty: 0.88858
+ computed chords: v iiisus4 ivm7 i v ivm7 iiisus4 i i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i v ivm7 iiisus4 i i v ivm7 iiisus4 i ivm7 iiisus4 i
+ number of chords: 112
+ number of sections: 6
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/people_get_ready_crd.htm
+ artist: CURTIS MAYFIELD
+ title: PEOPLE GET READY
+ sections: 
+ original chords: D A G D D A Em7 D D G D A A Em7 G D D Em7 G D D A G D D A Em7 D D G D A A Em7 G D D A Em7 D Eb A G D G Em7 A D D Em7 G D D Em7 G A Em7 G A D D Em7 G A D D Em7 G D D Em7 G A D A Em7 G D D A Em7 D
+
+ computed key: D Major
+ computed key certainty: 1.210159
+ computed chords: I V IV I I V iim7 I I IV I V V iim7 IV I I iim7 IV I I V IV I I V iim7 I I IV I V V iim7 IV I I V iim7 I bII V IV I IV iim7 V I I iim7 IV I I iim7 IV V iim7 IV V I I iim7 IV V I I iim7 IV I I iim7 IV V I V iim7 IV I I V iim7 I
+ number of chords: 82
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/people_get_ready_ver2_crd.htm
+ artist: CURTIS MAYFIELD
+ title: PEOPLE GET READY
+ sections: VERSE VERSE VERSE VERSE
+ original chords: D Bm G D D Bm G D Bm G D Bm G D Bm G D D Bm G D D Bm G D Bm G D Bm G D Bm G D D Bm G D D Bm G D Bm G D Bm G D Bm G D D Bm G D Bm G D Bm G D Bm G D Bm G D D C Bm Am G F
+
+ computed key: G Major
+ computed key certainty: 0.745872
+ computed chords: V iii I V V iii I V iii I V iii I V iii I V V iii I V V iii I V iii I V iii I V iii I V V iii I V V iii I V iii I V iii I V iii I V V iii I V iii I V iii I V iii I V iii I V V IV iii ii I bVII
+ number of chords: 73
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/people_get_ready_ver3_crd.htm
+ artist: CURTIS MAYFIELD
+ title: PEOPLE GET READY
+ sections: VERSE CHORUS VERSE CHORUS
+ original chords: C Am F C C Am F C C Am F C Em7 Dm7 F C C Am F C C Am F C C Am F C C Am F C Em7 Dm7 F C C Am F C C# A#m F C C# A#m F# C# C# A#m F# C# C# A#m F# C# Fm7 D#m7 F# C C# A#m F# C# C# A#m F# C# C# A#m F# C# Fm7 D#m7 F# C#
+
+ computed key: F Major
+ computed key certainty: 0.755479
+ computed chords: V iii I V V iii I V V iii I V viim7 vim7 I V V iii I V V iii I V V iii I V V iii I V viim7 vim7 I V V iii I V #V #iii I V #V #iii #I #V #V #iii #I #V #V #iii #I #V im7 #vim7 #I V #V #iii #I #V #V #iii #I #V #V #iii #I #V im7 #vim7 #I #V
+ number of chords: 76
+ number of sections: 4
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/ps_i_love_you_crd.htm
+ artist: CURTIS MAYFIELD
+ title: PS I LOVE YOU
+ sections: INTRO
+ original chords: C C Em Dm G C Em Dm F Am C F Dm F Am C G G C Em Dm G C Em Dm F Am C F Dm F Am C G C Em Dm F C Em Dm G Am C F Dm F Am C G C Em Dm G C Em Dm G C Em Dm G C Em Dm F C
+
+ computed key: C Major
+ computed key certainty: 1.176967
+ computed chords: I I iii ii V I iii ii IV vi I IV ii IV vi I V V I iii ii V I iii ii IV vi I IV ii IV vi I V I iii ii IV I iii ii V vi I IV ii IV vi I V I iii ii V I iii ii V I iii ii V I iii ii IV I
+ number of chords: 67
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/the_makings_of_you_crd.htm
+ artist: CURTIS MAYFIELD
+ title: THE MAKINGS OF YOU
+ sections: 
+ original chords: Am7 Dm Gm7 Bbmaj7 Am7 Gm7 Am7 Dm Cm7 Bbmaj7 Gm7 Am7 Dm Gm7 Bbmaj7 Am7 Gm7 Am7 Dm Cm7 Bbm7 Gm7 C9 Am7 Dm Gm7 Am7 Dm Gm7 Am7 Gm7 Am7 Dm Cm7 Bbmaj7 Gm7 Am7 Dm Gm7 Am7 Gm7 Am7 Dm Cm7 Bbmaj Gm7 C9 Am7 Dm Gm7
+
+ computed key: G Minor
+ computed key certainty: 0.916599
+ computed chords: iim7 v im7 IIImaj7 iim7 im7 iim7 v ivm7 IIImaj7 im7 iim7 v im7 IIImaj7 iim7 im7 iim7 v ivm7 iiim7 im7 IV9 iim7 v im7 iim7 v im7 iim7 im7 iim7 v ivm7 IIImaj7 im7 iim7 v im7 iim7 im7 iim7 v ivm7 IIImaj im7 IV9 iim7 v im7
+ number of chords: 50
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/to_be_invisible_crd.htm
+ artist: CURTIS MAYFIELD
+ title: TO BE INVISIBLE
+ sections: INTRO
+ original chords: C D F C Dm Em Am F F C A C Dm Em Am F F G Am Dm C Dm Em Am F F C Dm Em Am F G Am Dm C Am D F C D F C Dm Em Am F F C A
+
+ computed key: A Minor
+ computed key certainty: 0.909938
+ computed chords: III IV bVI III iv v i bVI bVI III I III iv v i bVI bVI bVII i iv III iv v i bVI bVI III iv v i bVI bVII i iv III i IV bVI III IV bVI III iv v i bVI bVI III I
+ number of chords: 49
+ number of sections: 1
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/we_got_to_have_peace_crd.htm
+ artist: CURTIS MAYFIELD
+ title: WE GOT TO HAVE PEACE
+ sections: 
+ original chords: Gb Gb Fb Cb Gb Gb Fb Cb Gb Ebm Abm Bbm Cb Ebm Cb Gb Fb Cb Gb Gb Fb Cb Gb Ebm Abm Bbm Cb Ebm Cb Gb Ebm7 Ebm Cb Abm Gb Ebm7 Ebm Cb Abm Db Gb Fb Cb Gb Gb Fb Cb Gb Ebm Abm Bbm Cb Ebm Cb Gb Ebm7 Ebm Cb Abm Db Gb Ebm7 Ebm Cb Abm Db Gb Fb Cb Gb Fb Cb Gb Ebm Abm Bbm Cb Ebm Cb Cb Gb Ebm7 Ebm Cb Abm Db Gb Ebm7 Ebm Cb Abm Db Gb Fb Cb Gb Fb Cb Gb
+
+ computed key: B Major
+ computed key certainty: 0.962454
+ computed chords: bbVI bbVI bbV bbII bbVI bbVI bbV bbII bbVI biv bbvii bi bbII biv bbII bbVI bbV bbII bbVI bbVI bbV bbII bbVI biv bbvii bi bbII biv bbII bbVI bivm7 biv bbII bbvii bbVI bivm7 biv bbII bbvii bbIII bbVI bbV bbII bbVI bbVI bbV bbII bbVI biv bbvii bi bbII biv bbII bbVI bivm7 biv bbII bbvii bbIII bbVI bivm7 biv bbII bbvii bbIII bbVI bbV bbII bbVI bbV bbII bbVI biv bbvii bi bbII biv bbII bbII bbVI bivm7 biv bbII bbvii bbIII bbVI bivm7 biv bbII bbvii bbIII bbVI bbV bbII bbVI bbV bbII bbVI
+ number of chords: 99
+ number of sections: 0
+
+========================================
+
+ source: https://tabs.ultimate-guitar.com/c/curtis_mayfield/we_the_people_crd.htm
+ artist: CURTIS MAYFIELD
+ title: WE THE PEOPLE
+ sections: 
+ original chords: C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 F#m7 C#m7 G#m7 F#m7 A C#m7 G#m7 F#m7 C#m7 F#m7 C#m7 F#m7 C#m7 G#m7 F#m7 C#m7 G#m7 F#m7 C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 C#m7 C#m7 G#m7 F#m7 C#m7 C#m7 F#m7 C#m7 G#m7 F#m7 C#m7 G#m7 F#m7 C#m7 F#m7 C#m7 F#m7 C#m7 G#m7 F#m7 A C#m7 G#m7 F#m7 C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 F#m9 C#m7 F#m7 C#m7 F#m9 F#m7
+
+ computed key: C# Minor
+ computed key certainty: 0.85796
+ computed chords: im7 ivm7 im7 ivm9 im7 ivm7 im7 ivm7 im7 vm7 ivm7 bVI im7 vm7 ivm7 im7 ivm7 im7 ivm7 im7 vm7 ivm7 im7 vm7 ivm7 im7 ivm7 im7 ivm9 im7 ivm7 im7 ivm9 im7 ivm7 im7 im7 im7 vm7 ivm7 im7 im7 ivm7 im7 vm7 ivm7 im7 vm7 ivm7 im7 ivm7 im7 ivm7 im7 vm7 ivm7 bVI im7 vm7 ivm7 im7 ivm7 im7 ivm9 im7 ivm7 im7 ivm9 im7 ivm7 im7 ivm9 im7 ivm7 im7 ivm9 ivm7
+ number of chords: 77
+ number of sections: 0
+
+========================================
+
+
+============================================================
+ artist summary: CURTIS MAYFIELD
+============================================================
+ songs encountered: 11
+ total charts encountered: 14
+ songs in major: 6
+ songs in minor: 5
+ chords encountered: 644
+ sections encountered: 21
+
+ most common keys:
+    B Major - seen 2 times
+    F# Major - seen 1 times
+    F# Minor - seen 1 times
+    Ab Major - seen 1 times
+    B Minor - seen 1 times
+ most common chords (specific):
+    Bm - seen 66 times
+    D - seen 64 times
+    G - seen 49 times
+    C - seen 49 times
+    Em7 - seen 44 times
+ most common chords (generic):
+    I - seen 125 times
+    V - seen 79 times
+    ivm7 - seen 59 times
+    v - seen 57 times
+    im7 - seen 52 times
+ most common chord progressions:
+    i v ivm7 iiisus4 - seen 25 times
+    v ivm7 iiisus4 i - seen 25 times
+    ivm7 iiisus4 i v - seen 19 times
+    iiisus4 i v ivm7 - seen 19 times
+    bbVI bbV bbII bbVI - seen 9 times
+ most common song structures:
+
+ avg. chords per song: 58.54545454545455
+ avg. sections per song: 1.9090909090909092
+============================================================
+
