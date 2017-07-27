@@ -112,6 +112,10 @@ class ChartAnalyzer:
 
             return genericChordSymbol.replace("-", "b")
         except:
+            print("### Chord symbol conversion failed!")
+            print('### chordSymbol = ' + chordSymbol)
+            print('### formattedChordSymbol = ' + formattedChordSymbol)
+
             self._log('################################')
             self._log('# Chord symbol conversion failed!')
             self._log('# chordSymbol = ' + chordSymbol)
