@@ -134,7 +134,8 @@ class ChartAnalyzer:
         # TODO - find a better way to avoid these issues!
         formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
         formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
-        formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj")
+        formattedChordSymbol = formattedChordSymbol.replace("maj", "")
+        formattedChordSymbol = formattedChordSymbol.replace("Maj", "")
         formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
         formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
 
