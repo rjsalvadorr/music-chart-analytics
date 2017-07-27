@@ -1,4 +1,6 @@
 import re
+import sys
+import traceback
 
 from music21 import harmony
 from music21 import converter
@@ -95,18 +97,31 @@ class ChartAnalyzer:
         For example: ?????
         """
         formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
-        mChord = harmony.ChordSymbol(formattedChordSymbol)
-        mKey = key.Key(m21Key)
-        mRomanNumeral = roman.romanNumeralFromChord(mChord, mKey)
 
-        regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
-        rootlessChordSymbol = re.sub(regexRoot, '', chordSymbol)
-        if rootlessChordSymbol == 'm':
-            rootlessChordSymbol = ''
+        try:
+            mChord = harmony.ChordSymbol(formattedChordSymbol)
+            mKey = key.Key(m21Key)
+            mRomanNumeral = roman.romanNumeralFromChord(mChord, mKey)
 
-        genericChordSymbol = mRomanNumeral.romanNumeral + rootlessChordSymbol
+            regexRoot = r"[CDEFGAB](#{1,2}|b{1,2})?"
+            rootlessChordSymbol = re.sub(regexRoot, '', chordSymbol)
+            if rootlessChordSymbol == 'm':
+                rootlessChordSymbol = ''
 
-        return genericChordSymbol.replace("-", "b")
+            genericChordSymbol = mRomanNumeral.romanNumeral + rootlessChordSymbol
+
+            return genericChordSymbol.replace("-", "b")
+        except:
+            print("### Chord symbol conversion failed!")
+            print('### chordSymbol = ' + chordSymbol)
+            print('### formattedChordSymbol = ' + formattedChordSymbol)
+
+            self._log('################################')
+            self._log('# Chord symbol conversion failed!')
+            self._log('# chordSymbol = ' + chordSymbol)
+            self._log('# formattedChordSymbol = ' + formattedChordSymbol)
+            self._log('################################\n')
+            raise
 
 
     def _convertChordListToGeneral(self, chordList, keyString):
@@ -134,7 +149,8 @@ class ChartAnalyzer:
         # TODO - find a better way to avoid these issues!
         formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
         formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
-        formattedChordSymbol = formattedChordSymbol.replace("maj", "Maj")
+        formattedChordSymbol = formattedChordSymbol.replace("maj", "")
+        formattedChordSymbol = formattedChordSymbol.replace("Maj", "")
         formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
         formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
 
@@ -322,19 +338,24 @@ class ChartAnalyzer:
             totalMostCommonChordsGen = dict()
 
             for freshChartData in freshCharts:
-                songData = self.dbHandler.getSongById(freshChartData.songId)
-                chartCalcs = self._getBasicChartCalculations(freshChartData)
+                try:
+                    songData = self.dbHandler.getSongById(freshChartData.songId)
+                    chartCalcs = self._getBasicChartCalculations(freshChartData)
 
-                self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
-                self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
+                    self.dbHandler.saveChartCalculationData(freshChartData, chartCalcs)
+                    self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
 
-                mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
-                mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+                    mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
+                    mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
 
-                totalMostCommonChordsSpec = self._mergeCounterDictionary(totalMostCommonChordsSpec, mcChordsSpec)
-                totalMostCommonChordsGen = self._mergeCounterDictionary(totalMostCommonChordsGen, mcChordsGen)
+                    totalMostCommonChordsSpec = self._mergeCounterDictionary(totalMostCommonChordsSpec, mcChordsSpec)
+                    totalMostCommonChordsGen = self._mergeCounterDictionary(totalMostCommonChordsGen, mcChordsGen)
 
-                print("  - Analyzed " + songData.title)
+                    print("  - Analyzed " + songData.title)
+                except:
+                    print("  - Failed to analyze " + songData.title)
+                    print(traceback.format_exc())
+                    print(freshChartData)
 
             finalDictGen = self._trimDictionary(totalMostCommonChordsGen, constants.MOST_COMMON_CHORDS_LIMIT)
             finalDictSpec = self._trimDictionary(totalMostCommonChordsSpec, constants.MOST_COMMON_CHORDS_LIMIT)

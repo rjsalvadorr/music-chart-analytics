@@ -116,8 +116,8 @@ share/**
 pip-selfcheck.json
 
 # log and data output files
-log*.txt
-mChartAnalytics*.yaml
+mchartanalyzer-data/log*.txt
+mchartanalyzer-data/mChartAnalytics*.yaml
 
 # etc
 **/mchartdatabase.db
