@@ -31,3 +31,22 @@ class Utils:
                 primaryDict[dictKey] = secondaryDict[dictKey]
 
         return primaryDict
+
+    def sortAndTrimDict(rawDict, limit):
+        """
+        Given a dictionary and a limit, sorts the dictionary and trims it to the right number of entries.
+        """
+        newDict = dict()
+        sortedDict = sorted(rawDict, key=rawDict.get, reverse=True)
+
+        print(rawDict)
+        print(sortedDict)
+
+        ctr = 0
+        for sortedDictKeys in sortedDict:
+            ctr += 1
+            newDict[sortedDictKeys] = rawDict[sortedDictKeys]
+            if ctr >= limit:
+                break
+
+        return newDict

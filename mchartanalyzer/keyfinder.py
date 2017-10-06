@@ -12,6 +12,8 @@ class KeyFinder:
         self.keyListMajor = ['G-', 'D-', 'A-', 'E-', 'B-', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#']
         self.keyListMinor = ['e-', 'b-', 'f', 'c', 'g', 'd', 'a', 'e', 'b', 'f#', 'c#', 'g#', 'd#']
         self.keyList = self.keyListMajor + self.keyListMinor
+
+        self.keyLimit = 4
         self.lengthChordCursor = 4
 
     def findKeys(self, chordList):
@@ -27,7 +29,7 @@ class KeyFinder:
         totalPossibleKeys = dict()
 
         if len(chordList) <= self.lengthChordCursor:
-            return self._findPossibleKeys(chordList)
+            return Utils.sortAndTrimDict(self._findPossibleKeys(chordList), self.keyLimit)
         else:
             maxIdx = len(chordList) - self.lengthChordCursor
 
@@ -39,7 +41,7 @@ class KeyFinder:
                     cursorPossibleKeys = self._findPossibleKeys(chordListSlice)
                     totalPossibleKeys = Utils.mergeDictionaries(totalPossibleKeys, cursorPossibleKeys)
 
-        return totalPossibleKeys
+        return Utils.sortAndTrimDict(totalPossibleKeys, self.keyLimit)
 
     def _findPossibleKeys(self, chordList):
         """
@@ -67,10 +69,16 @@ class KeyFinder:
                     chordSymbolsInKey += 1
 
             if chordSymbolsInKey > 1:
-                keyName = diatonicKey.tonic.name + ' ' + diatonicKey.mode
-                possibleKeys[keyName] = chordSymbolsInKey
+                possibleKeys[keyRoot] = chordSymbolsInKey
 
         return possibleKeys
+
+    def _detectProgressions(self, chordList, possibleKeys):
+        """
+        Given a chordList and a shortlist of possibleKeys, determine if the chords fit the keys in a better way.
+        This can be through distinguishing chord movements like a ii-V-I
+        """
+        pass
 
     def _isChordInKey(self, chordSymbol, mKey):
         """
