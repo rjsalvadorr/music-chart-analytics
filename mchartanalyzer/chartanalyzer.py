@@ -12,6 +12,7 @@ from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 from . import constants
 from .filewriter import FileWriter
+from .utils import Utils
 
 class ChartAnalyzer:
     """
@@ -96,7 +97,7 @@ class ChartAnalyzer:
         From a given key and chord symbol, return a chord symbol in roman numeral notation.
         For example: ?????
         """
-        formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
+        formattedChordSymbol = Utils.convertToMusic21ChordSymbol(chordSymbol)
 
         try:
             mChord = harmony.ChordSymbol(formattedChordSymbol)
@@ -138,25 +139,6 @@ class ChartAnalyzer:
         return genericChordList
 
 
-    def _convertToMusic21ChordSymbol(self, text):
-        """
-        Converts regular chord symbols into ones that music21 understands.
-        The main difference: the flat accidental is "-" on music21, not "b".
-        For example, this method would convert "Bbm7" to "B-m7"
-        """
-        formattedChordSymbol = text.replace("b", "-")
-        # Specific replacements below were added after certain music21 errors.
-        # TODO - find a better way to avoid these issues!
-        formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
-        formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
-        formattedChordSymbol = formattedChordSymbol.replace("maj", "")
-        formattedChordSymbol = formattedChordSymbol.replace("Maj", "")
-        formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
-        formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
-
-        return formattedChordSymbol
-
-
     def _convertKeyTextToMusic21(self, text):
         """
         Converts a regular key string to a music21 key string.
@@ -192,7 +174,7 @@ class ChartAnalyzer:
         # And assemble those pitches into a large tinynotation string
         tinyNotationString = "tinyNotation: 4/4 "
         for chordSymbol in chordList:
-            formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
+            formattedChordSymbol = Utils.convertToMusic21ChordSymbol(chordSymbol)
             try:
                 h = harmony.ChordSymbol(formattedChordSymbol)
                 for rawPitch in h.pitches:
