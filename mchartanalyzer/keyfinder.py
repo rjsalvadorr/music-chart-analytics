@@ -1,4 +1,5 @@
 from music21 import harmony
+from music21 import key
 
 from utils import Utils
 
@@ -8,7 +9,8 @@ class KeyFinder:
     """
 
     def __init__(self):
-        self.keyList = []
+        self.keyListMajor = ['G-', 'D-', 'A-', 'E-', 'B-', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#']
+        self.keyListMinor = ['e-', 'b-', 'f', 'c', 'g', 'd', 'a', 'e', 'b', 'f#', 'c#', 'g#', 'd#']
 
     def findKeys(self, chordList):
         """
@@ -35,8 +37,21 @@ class KeyFinder:
         Where the numbers represent a score, showing how well those chords fit in each key.
         I suppose we can use certain movements like "ii-V-I" or "IV-V-I" to influence the score.
         """
-        for idx, chordSymbol in enumerate(chordList):
-            pass
+        possibleKeys = dict()
+
+        for majorKeyRoot in self.keyListMajor:
+            majorKey = key.Key(majorKeyRoot)
+            chordSymbolsInKey = 0
+
+            for chordSymbol in chordList:
+                if self._isChordInKey(chordSymbol, majorKey):
+                    chordSymbolsInKey += 1
+
+            if chordSymbolsInKey > 1:
+                keyName = majorKey.tonic.name + ' ' + majorKey.mode
+                possibleKeys[keyName] = chordSymbolsInKey
+
+        return possibleKeys
 
     def _isChordInKey(self, chordSymbol, mKey):
         """
