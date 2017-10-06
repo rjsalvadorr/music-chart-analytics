@@ -19,3 +19,15 @@ class Utils:
         formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
 
         return formattedChordSymbol
+
+    def mergeDictionaries(primaryDict, secondaryDict):
+        """
+        Given two dictionaries, this merges the second into the first and returns the combined dictionary.
+        """
+        for dictKey in secondaryDict:
+            if dictKey in primaryDict:
+                primaryDict[dictKey] = primaryDict[dictKey] + secondaryDict[dictKey]
+            else:
+                primaryDict[dictKey] = secondaryDict[dictKey]
+
+        return primaryDict

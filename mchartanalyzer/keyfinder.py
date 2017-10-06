@@ -12,6 +12,7 @@ class KeyFinder:
         self.keyListMajor = ['G-', 'D-', 'A-', 'E-', 'B-', 'F', 'C', 'G', 'D', 'A', 'E', 'B', 'F#']
         self.keyListMinor = ['e-', 'b-', 'f', 'c', 'g', 'd', 'a', 'e', 'b', 'f#', 'c#', 'g#', 'd#']
         self.keyList = self.keyListMajor + self.keyListMinor
+        self.lengthChordCursor = 4
 
     def findKeys(self, chordList):
         """
@@ -23,8 +24,22 @@ class KeyFinder:
         }
         Where the numbers represent where in the sequence each key starts.
         """
-        for idx, chordSymbol in enumerate(chordList):
-            pass
+        totalPossibleKeys = dict()
+
+        if len(chordList) <= self.lengthChordCursor:
+            return self._findPossibleKeys(chordList)
+        else:
+            maxIdx = len(chordList) - self.lengthChordCursor
+
+            for idx, chordSymbol in enumerate(chordList):
+                if idx <= maxIdx:
+                    cursorEndIdx = idx + 4
+                    chordListSlice = chordList[idx:cursorEndIdx]
+                    print(chordListSlice)
+                    cursorPossibleKeys = self._findPossibleKeys(chordListSlice)
+                    totalPossibleKeys = Utils.mergeDictionaries(totalPossibleKeys, cursorPossibleKeys)
+
+        return totalPossibleKeys
 
     def _findPossibleKeys(self, chordList):
         """

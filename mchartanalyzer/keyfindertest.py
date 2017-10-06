@@ -25,7 +25,24 @@ class KeyFinderTest(unittest.TestCase):
         testChords = ['G', 'Em', 'C', 'D']
         testResult = self.keyFinder._findPossibleKeys(testChords)
 
+        print('findPossibleKeys()')
         print(testResult)
+
+    def test_findKeys(self):
+        testChordsRaw1 = "G Em C D"
+        testChords1 = testChordsRaw1.split(" ")
+        testChordsRaw2 = 'Bb Dm Eb Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Eb Dm Cm Eb Bb Bb Dm Fm Bb Ab Bb Dm Eb Dm Cm F Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Dm D Gm Cm F Bb Bb Bb Dm D Gm Cm F Bb'
+        testChords2 = testChordsRaw2.split(" ")
+
+        print('findKeys()')
+        print(testChords1)
+        print(testChords2)
+
+        testResult1 = self.keyFinder.findKeys(testChords1)
+        testResult2 = self.keyFinder.findKeys(testChords2)
+
+        print(testResult1)
+        print(testResult2)
 
 if __name__ == '__main__':
     unittest.main()
