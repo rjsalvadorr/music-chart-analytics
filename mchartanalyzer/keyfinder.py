@@ -16,6 +16,7 @@ class KeyFinder:
 
         self.keyLimit = 5
         self.lengthChordCursor = 4
+        self.baseChordProgWeight = 0.15
 
         self._chordsPreDom = ['IV', 'iv', 'ii', 'II']
 
@@ -39,7 +40,7 @@ class KeyFinder:
             ['vi', 'II', 'V7'],
         ]
 
-        self.chordsUnorderedMaj = [
+        self.progsUnorderedMaj = [
             ['I', 'IV', 'V']
         ]
 
@@ -65,7 +66,7 @@ class KeyFinder:
             ['bVI', 'II', 'V7'],
         ]
 
-        self.chordsUnorderedMin = [
+        self.progsUnorderedMin = [
             ['i', 'iv', 'v'],
             ['i', 'iv', 'V'],
         ]
@@ -97,6 +98,10 @@ class KeyFinder:
                     cursorEndIdx = idx + 4
                     chordListSlice = chordList[idx:cursorEndIdx]
                     cursorPossibleKeys = self._findPossibleKeys(chordListSlice)
+                    for dKey, value in cursorPossibleKeys.items():
+                        # print('Key = {!s}, Value = {!s}'.format(dKey, value))
+                        mKey = key.Key(dKey)
+                        cursorPossibleKeys[dKey] += self._detectProgressions(chordListSlice, mKey)
                     cursorPossibleKeys = sortAndTrimDict(cursorPossibleKeys, self.keyLimit)
 
                     if(idx == 0):
@@ -160,19 +165,47 @@ class KeyFinder:
         if mKey.mode == 'major':
             return self._detectMajorProgressions(chordListRoman)
         else:
-            return 0
+            return self._detectMinorProgressions(chordListRoman)
 
     def _detectMajorProgressions(self, romanChordList):
         """
         Detects important progressions in a major key.
-        Returns a float, represengint a score to be compared with other results.
+        Returns a float, representing a score to be compared with other results.
         """
         running_score = 0
 
-        for prog in self.chordsUnorderedMaj:
-            # print('Comparing {0!s} and {1!s}'.format(prog, romanChordList))
+        for prog in self.progsUnorderedMaj:
             if self._areChordsInProgression(prog, romanChordList):
-                running_score += 0.01
+                running_score += self.baseChordProgWeight
+
+        for prog in self.progsPreDomMaj:
+            if self._areExactChordsInProgression(prog, romanChordList):
+                running_score += self.baseChordProgWeight * 4
+
+        for prog in self.progsDominantMaj:
+            if self._areExactChordsInProgression(prog, romanChordList):
+                running_score += self.baseChordProgWeight * 2
+
+        return running_score
+
+    def _detectMinorProgressions(self, romanChordList):
+        """
+        Detects important progressions in a minor key.
+        Returns a float, representing a score to be compared with other results.
+        """
+        running_score = 0
+
+        for prog in self.progsUnorderedMin:
+            if self._areChordsInProgression(prog, romanChordList):
+                running_score += self.baseChordProgWeight
+
+        for prog in self.progsPreDomMin:
+            if self._areExactChordsInProgression(prog, romanChordList):
+                running_score += self.baseChordProgWeight * 4
+
+        for prog in self.progsDominantMin:
+            if self._areExactChordsInProgression(prog, romanChordList):
+                running_score += self.baseChordProgWeight * 2
 
         return running_score
 
@@ -188,6 +221,7 @@ class KeyFinder:
 
         for needleChord in searchChordList:
             for haystackChord in chordList:
+                # TODO - need a smart "startsWith()" function that reduces complex chord symbols into simpler diatonic ones!
                 if needleChord == haystackChord:
                     chordsMatching += 1
 

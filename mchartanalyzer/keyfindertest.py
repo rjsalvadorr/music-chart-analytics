@@ -63,13 +63,18 @@ class KeyFinderTest(unittest.TestCase):
 
     def test_detectProgressions(self):
         testResult = self.keyFinder._detectProgressions(self.testChordsMajor1, key.Key('G'))
-        expResult = 0.01
+        expResult = self.keyFinder.baseChordProgWeight
         self.assertEqual(testResult, expResult)
 
     def test_detectMajorProgressions(self):
         testList = ['I', 'iv', 'IV', 'V']
         testResult = self.keyFinder._detectMajorProgressions(testList)
-        expResult = 0.01
+        expResult = self.keyFinder.baseChordProgWeight
+        self.assertEqual(testResult, expResult)
+
+        testList = ['IV', 'vi', 'ii', 'V', 'I']
+        testResult = self.keyFinder._detectMajorProgressions(testList)
+        expResult = self.keyFinder.baseChordProgWeight * 7
         self.assertEqual(testResult, expResult)
 
     def test_areChordsInProgression(self):
