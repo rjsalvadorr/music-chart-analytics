@@ -39,9 +39,6 @@ class Utils:
         newDict = dict()
         sortedDict = sorted(rawDict, key=rawDict.get, reverse=True)
 
-        print(rawDict)
-        print(sortedDict)
-
         ctr = 0
         for sortedDictKeys in sortedDict:
             ctr += 1

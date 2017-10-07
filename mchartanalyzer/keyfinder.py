@@ -1,3 +1,5 @@
+from decimal import *
+
 from music21 import harmony
 from music21 import key
 
@@ -34,10 +36,9 @@ class KeyFinder:
             maxIdx = len(chordList) - self.lengthChordCursor
 
             for idx, chordSymbol in enumerate(chordList):
-                if idx <= maxIdx:
+                if idx < maxIdx:
                     cursorEndIdx = idx + 4
                     chordListSlice = chordList[idx:cursorEndIdx]
-                    print(chordListSlice)
                     cursorPossibleKeys = self._findPossibleKeys(chordListSlice)
                     totalPossibleKeys = Utils.mergeDictionaries(totalPossibleKeys, cursorPossibleKeys)
 
@@ -48,53 +49,49 @@ class KeyFinder:
         Finds the possible keys for a given chord sequence.
         Returns an object like:
         {
-          G major: 20,
-          D major: 12,
-          B minor: 5
+          G major: 0.97562,
+          D major: 0.87234,
+          B minor: 0.75324
         }
         Where the numbers represent a score, showing how well those chords fit in each key.
-
-        Each chord symbol in key gets a + 1.
-        Certain chord progressions will get more bonuses.
-
+        A value of 1.0 means that all the chords fit in that key.
         """
         possibleKeys = dict()
 
         for keyRoot in self.keyList:
             diatonicKey = key.Key(keyRoot)
-            chordSymbolsInKey = 0
+            totalChordFitScore = 0
 
             for chordSymbol in chordList:
-                if self._isChordInKey(chordSymbol, diatonicKey):
-                    chordSymbolsInKey += 1
+                chordFitScore = self._getChordFitScore(chordSymbol, diatonicKey)
+                totalChordFitScore += chordFitScore
 
-            if chordSymbolsInKey > 1:
-                possibleKeys[keyRoot] = chordSymbolsInKey
+            avgChordFitScore = totalChordFitScore / len(chordList)
+            possibleKeys[keyRoot] = avgChordFitScore
 
-        return possibleKeys
+        return Utils.sortAndTrimDict(possibleKeys, self.keyLimit)
 
-    def _detectProgressions(self, chordList, possibleKeys):
+    def _detectProgressions(self, chordList, mKey):
         """
-        Given a chordList and a shortlist of possibleKeys, determine if the chords fit the keys in a better way.
-        This can be through distinguishing chord movements like a ii-V-I
+        Given a chordList and a key, determines if the chords fit the key in a better way.
+        This is done through distinguishing chord movements like a ii-V-I.
+        Returns an integer, representing a score to be compared with other results.
         """
         pass
 
-    def _isChordInKey(self, chordSymbol, mKey):
+    def _getChordFitScore(self, chordSymbol, mKey):
         """
         Determines if the given chord fits in the given key.
+        Returns a floating point number.
         """
         formattedChordSymbol = Utils.convertToMusic21ChordSymbol(chordSymbol)
         chordPitches = harmony.ChordSymbol(formattedChordSymbol).pitches
         keyPitches = mKey.pitches[:-1] # removing last note in scale!
-        chordTonesInKey = 0;
+        chordTonesInKey = 0
 
         for chordPitch in chordPitches:
             for keyPitch in keyPitches:
                 if keyPitch.pitchClass == chordPitch.pitchClass:
                     chordTonesInKey += 1
 
-        if chordTonesInKey == len(chordPitches):
-            return True
-        else:
-            return False
+        return chordTonesInKey / len(chordPitches)
