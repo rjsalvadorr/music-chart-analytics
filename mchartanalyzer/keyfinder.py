@@ -203,7 +203,21 @@ class KeyFinder:
         Looks for the chords exactly the way they're listed.
         Returns a boolean.
         """
-        pass
+        ## idea: slice the chordList into subsets, and see if yours is in there...
+        if len(searchChordList) > len(chordList):
+            return False
+
+        chordsMatching = 0
+
+        for needleChord in searchChordList:
+            for haystackChord in chordList:
+                if needleChord == haystackChord:
+                    chordsMatching += 1
+
+        if chordsMatching == len(searchChordList):
+            return True
+        else:
+            return False
 
     def _getChordFitScore(self, chordSymbol, mKey):
         """
