@@ -51,7 +51,7 @@ class KeyFinderTest(unittest.TestCase):
         testChords4 = 'G Em D F#dim7'.split(' ')
         testResult = self.keyFinder._getRomanProgression(testChords4, key.Key('G'))
         expResult = ['I', 'vi', 'V', 'viio7']
-        self.assertEqual(testResult, expResult)    
+        self.assertEqual(testResult, expResult)
 
         testResult = self.keyFinder._getRomanProgression(testChords2, key.Key('C'))
         expResult = ['V', 'iii', 'I', 'II7']
@@ -89,6 +89,19 @@ class KeyFinderTest(unittest.TestCase):
         testList = ['I', 'iv', 'ii', 'V']
         testResult = self.keyFinder._areChordsInProgression(testSearchList, testList)
         expResult = False
+        self.assertEqual(testResult, expResult)
+
+    def test_areExactChordsInProgression(self):
+        testSearchList = ['V', 'I']
+        testList = ['I', 'iv', 'IV', 'V']
+        testResult = self.keyFinder._areExactChordsInProgression(testSearchList, testList)
+        expResult = False
+        self.assertEqual(testResult, expResult)
+
+        testSearchList = ['V', 'I']
+        testList = ['I', 'IV', 'V', 'I']
+        testResult = self.keyFinder._areExactChordsInProgression(testSearchList, testList)
+        expResult = True
         self.assertEqual(testResult, expResult)
 
     def test_findKeys(self):

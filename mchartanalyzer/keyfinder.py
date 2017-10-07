@@ -160,7 +160,7 @@ class KeyFinder:
         if mKey.mode == 'major':
             return self._detectMajorProgressions(chordListRoman)
         else:
-            return 1
+            return 0
 
     def _detectMajorProgressions(self, romanChordList):
         """
@@ -169,12 +169,11 @@ class KeyFinder:
         """
         running_score = 0
 
-        # if I, IV, and V are all present
         for prog in self.chordsUnorderedMaj:
-            print('Comparing {0!s} and {1!s}'.format(prog, romanChordList))
+            # print('Comparing {0!s} and {1!s}'.format(prog, romanChordList))
             if self._areChordsInProgression(prog, romanChordList):
                 running_score += 0.01
-        
+
         return running_score
 
     def _areChordsInProgression(self, searchChordList, chordList):
@@ -203,21 +202,19 @@ class KeyFinder:
         Looks for the chords exactly the way they're listed.
         Returns a boolean.
         """
-        ## idea: slice the chordList into subsets, and see if yours is in there...
         if len(searchChordList) > len(chordList):
             return False
 
-        chordsMatching = 0
+        searchChordsLength = len(searchChordList)
+        maxIndex = len(chordList) - searchChordsLength
 
-        for needleChord in searchChordList:
-            for haystackChord in chordList:
-                if needleChord == haystackChord:
-                    chordsMatching += 1
+        for idx in range(maxIndex + 1):
+            sliceIdx = idx + searchChordsLength
+            chordListSlice = chordList[idx:sliceIdx]
+            if searchChordList == chordListSlice:
+                return True
 
-        if chordsMatching == len(searchChordList):
-            return True
-        else:
-            return False
+        return False
 
     def _getChordFitScore(self, chordSymbol, mKey):
         """
