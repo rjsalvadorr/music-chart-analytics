@@ -12,7 +12,7 @@ from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 from . import constants
 from .filewriter import FileWriter
-from .utils import Utils
+from .utils import *
 
 class ChartAnalyzer:
     """
@@ -97,7 +97,7 @@ class ChartAnalyzer:
         From a given key and chord symbol, return a chord symbol in roman numeral notation.
         For example: ?????
         """
-        formattedChordSymbol = Utils.convertToMusic21ChordSymbol(chordSymbol)
+        formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
 
         try:
             mChord = harmony.ChordSymbol(formattedChordSymbol)
@@ -174,7 +174,7 @@ class ChartAnalyzer:
         # And assemble those pitches into a large tinynotation string
         tinyNotationString = "tinyNotation: 4/4 "
         for chordSymbol in chordList:
-            formattedChordSymbol = Utils.convertToMusic21ChordSymbol(chordSymbol)
+            formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
             try:
                 h = harmony.ChordSymbol(formattedChordSymbol)
                 for rawPitch in h.pitches:

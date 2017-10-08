@@ -4,7 +4,7 @@ import unittest
 from music21 import harmony
 from music21 import key
 
-from keyfinder import KeyFinder
+from mchartanalyzer.keyfinder import KeyFinder
 
 class KeyFinderTest(unittest.TestCase):
 
@@ -59,6 +59,11 @@ class KeyFinderTest(unittest.TestCase):
 
         testResult = self.keyFinder._getRomanProgression(self.testChordsMinor1, key.Key('d'))
         expResult = ['i', 'V', 'i', 'bVII', 'III', 'bVII', 'i', 'V7']
+        self.assertEqual(testResult, expResult)
+
+        testChords5 = 'Gmaj7 Em7 D F#dim'.split(' ')
+        testResult = self.keyFinder._getRomanProgression(testChords5, key.Key('G'))
+        expResult = ['I', 'vi', 'V', 'viio']
         self.assertEqual(testResult, expResult)
 
     def test_detectProgressions(self):

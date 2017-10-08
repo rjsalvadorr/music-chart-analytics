@@ -1,4 +1,5 @@
 import collections
+import re
 
 def convertToMusic21ChordSymbol(text):
     """
@@ -13,7 +14,10 @@ def convertToMusic21ChordSymbol(text):
     formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
     formattedChordSymbol = formattedChordSymbol.replace("maj", "")
     formattedChordSymbol = formattedChordSymbol.replace("Maj", "")
+    formattedChordSymbol = formattedChordSymbol.replace("maj7", "M7")
     formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
+    formattedChordSymbol = formattedChordSymbol.replace("maj9", "M9")
+    formattedChordSymbol = formattedChordSymbol.replace("Maj9", "M9")
     formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
 
     return formattedChordSymbol
@@ -52,5 +56,13 @@ def substituteRomanChords(inChord):
     """
     outChord = inChord.replace('75#3', '7')
     outChord = outChord.replace('ob753', 'o7')
-
     return outChord
+
+def convertRomanScaleDegree(inText):
+    """
+    Converts scale degree text like '-VII' to 'bVII'.
+    Also changes chords like 'vi7' to 'vi'
+    """
+    outText = inText.replace('-', 'b')
+
+    return outText

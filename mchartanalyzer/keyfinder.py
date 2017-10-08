@@ -1,8 +1,9 @@
-from decimal import *
+import decimal
+import re
 
 from music21 import harmony, key, chord, roman
 
-from utils import *
+from .utils import *
 
 class KeyFinder:
     """
@@ -150,7 +151,19 @@ class KeyFinder:
             formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
             mChord = harmony.ChordSymbol(formattedChordSymbol)
             romanObj = roman.romanNumeralFromChord(mChord, mKey)
-            chordListRoman.append(substituteRomanChords(romanObj.figure))
+
+            returnSymbol = substituteRomanChords(romanObj.figure)
+            rgxFilterWhitelist = re.compile(r'[b#]?[IV]*[iv]*o?7?')
+            rgxFilterBlacklist = re.compile(r'[-#]?[iv]+7')
+
+            filterMatchWhitelist = rgxFilterWhitelist.fullmatch(returnSymbol)
+            filterMatchBlacklist = rgxFilterBlacklist.fullmatch(returnSymbol)
+            # print('figure= {}\tfSymbol = {}\tnumeral = {}\tmatch = {!s}'.format(romanObj.figure, returnSymbol, convertRomanScaleDegree(romanObj.romanNumeral), filterMatchWhitelist))
+
+            if filterMatchWhitelist == None or filterMatchBlacklist:
+                returnSymbol = convertRomanScaleDegree(romanObj.romanNumeral)
+
+            chordListRoman.append(returnSymbol)
 
         return chordListRoman
 
