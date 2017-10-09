@@ -1,5 +1,7 @@
+import collections
 import decimal
 import re
+import copy
 
 from music21 import harmony, key, chord, roman
 
@@ -15,11 +17,14 @@ class KeyFinder:
         self.keyListMinor = ['e-', 'b-', 'f', 'c', 'g', 'd', 'a', 'e', 'b', 'f#', 'c#', 'g#', 'd#']
         self.keyList = self.keyListMajor + self.keyListMinor
 
-        self.keyLimit = 5
+        self.keyLimit = 4
         self.lengthChordCursor = 4
         self.baseChordProgWeight = 0.15
+        self.functionalityScoreAdjust = 150
+        self.smallKeyLimit = 4
 
-        self._chordsPreDom = ['IV', 'iv', 'ii', 'II']
+        self._chordsPreDomMaj = ['IV', 'ii', 'II']
+        self._chordsPreDomMin = ['iv', 'iio', 'II', 'ii']
 
         ##### Chord progressions (Major)
         self.progsDominantMaj = [
@@ -30,9 +35,10 @@ class KeyFinder:
 
         self.progsPreDomMaj = []
         for prog in self.progsDominantMaj:
-            for chord in self._chordsPreDom:
+            for chord in self._chordsPreDomMaj:
                 newProg = [chord] + prog
                 self.progsPreDomMaj.append(newProg)
+        # print(self.progsPreDomMaj)
 
         self.progsSpecificMaj = [
             ['vi', 'ii', 'V'],
@@ -54,9 +60,10 @@ class KeyFinder:
 
         self.progsPreDomMin = []
         for prog in self.progsDominantMin:
-            for chord in self._chordsPreDom:
+            for chord in self._chordsPreDomMin:
                 newProg = [chord] + prog
                 self.progsPreDomMin.append(newProg)
+        # print(self.progsPreDomMin)
 
         self.progsSpecificMin = [
             ['bVI', 'iio', 'V'],
@@ -72,7 +79,7 @@ class KeyFinder:
             ['i', 'iv', 'V'],
         ]
 
-    def findKeys(self, chordList):
+    def findKeys(self, chordList, strict=False):
         """
         Find the key(s) for the given chord sequence.
         Returns an object like:
@@ -83,14 +90,18 @@ class KeyFinder:
         Where the numbers represent where in the sequence each key starts.
         """
         listPossibleKeys = []
+        keysInPiece = []
 
         if len(chordList) <= self.lengthChordCursor:
-            possibleKeys = sortAndTrimDict(self._findPossibleKeys(chordList), self.keyLimit)
+            possibleKeys = self._findPossibleKeys(chordList)
+            for dKey, value in possibleKeys.items():
+                # print('Key = {!s}, Value = {!s}'.format(dKey, value))
+                mKey = key.Key(dKey)
+                possibleKeys[dKey] += self._detectProgressions(chordList, mKey)
+            possibleKeys = sortAndTrimDict(possibleKeys, self.keyLimit)
 
             for idx in range(len(chordList)):
-                listPossibleKeys.append(possibleKeys)
-
-            return listPossibleKeys
+                listPossibleKeys.append(copy.deepcopy(possibleKeys))
         else:
             maxIdx = len(chordList) - self.lengthChordCursor
 
@@ -107,11 +118,41 @@ class KeyFinder:
 
                     if(idx == 0):
                         for startIndex in range(self.keyLimit):
-                            listPossibleKeys.append(cursorPossibleKeys)
+                            listPossibleKeys.append(copy.deepcopy(cursorPossibleKeys))
                     else:
                         listPossibleKeys.append(cursorPossibleKeys)
 
-            return listPossibleKeys
+        currentKey = ''
+        for idx, possibleKey in enumerate(listPossibleKeys):
+            indexKey, indexKeyLikelihood = possibleKey.popitem(False)
+            if indexKey != currentKey:
+                keyTuple = (indexKey, indexKeyLikelihood, idx + 1)
+                keysInPiece.append(keyTuple)
+            currentKey = indexKey
+        # print('chordList length = {}\tlistPossibleKeys length = {}'.format(len(chordList), len(listPossibleKeys)))
+
+        if strict == False:
+            # Remove key sections that are smaller than 4 measures
+            oldList = keysInPiece
+            keysInPiece = []
+            print('chordList length = {}'.format(len(chordList)))
+            for idx, keyInPiece in enumerate(oldList):
+                if idx == len(oldList) - 1:
+                    duration = len(chordList) - (keyInPiece[2] - 1)
+                else:
+                    duration = oldList[idx + 1][2] - keyInPiece[2]
+
+                print('currentKey = {}, keyInPiece = {!s}, duration = {}'.format(currentKey, keyInPiece, duration))
+
+                if len(keysInPiece) > 0:
+                    previousKey = keysInPiece[-1][0]
+                else:
+                    previousKey = ''
+
+                if (duration == len(chordList) or duration > self.smallKeyLimit) and previousKey != keyInPiece[0]:
+                    keysInPiece.append(keyInPiece)
+                    
+        return keysInPiece
 
     def _findPossibleKeys(self, chordList):
         """
@@ -139,7 +180,6 @@ class KeyFinder:
             possibleKeys[keyRoot] = avgChordFitScore
 
         return sortAndTrimDict(possibleKeys, self.keyLimit)
-
 
     def _getRomanProgression(self, chordList, mKey):
         """
@@ -173,52 +213,35 @@ class KeyFinder:
         This is done through distinguishing chord movements like a ii-V-I.
         Returns a float, representing a score to be compared with other results.
         """
-        chordListRoman = self._getRomanProgression(chordList, mKey)
+        romanChordList = self._getRomanProgression(chordList, mKey)
 
-        if mKey.mode == 'major':
-            return self._detectMajorProgressions(chordListRoman)
-        else:
-            return self._detectMinorProgressions(chordListRoman)
+        isMajor =  mKey.mode == 'major'
+        unorderedProg = self.progsUnorderedMaj if isMajor else self.progsUnorderedMin
+        preDominantProg = self.progsPreDomMaj if isMajor else self.progsPreDomMin
+        dominantProg = self.progsDominantMaj if isMajor else self.progsDominantMin
 
-    def _detectMajorProgressions(self, romanChordList):
-        """
-        Detects important progressions in a major key.
-        Returns a float, representing a score to be compared with other results.
-        """
         running_score = 0
+        for romanChord in romanChordList:
+            rn = roman.RomanNumeral(romanChord)
+            running_score += (rn.functionalityScore / 100) ** 3 * self.baseChordProgWeight
+        running_score = running_score / len(romanChordList)
 
-        for prog in self.progsUnorderedMaj:
+        # print('{!s} in {!s} = {!s}'.format(chordList, mKey, romanChordList))
+        # print('progression score after rn.functionalityScore = {}'.format(running_score))
+
+        for prog in unorderedProg:
             if self._areChordsInProgression(prog, romanChordList):
                 running_score += self.baseChordProgWeight
 
-        for prog in self.progsPreDomMaj:
+        for prog in preDominantProg:
             if self._areExactChordsInProgression(prog, romanChordList):
-                running_score += self.baseChordProgWeight * 4
+                running_score += self.baseChordProgWeight * 3
 
-        for prog in self.progsDominantMaj:
-            if self._areExactChordsInProgression(prog, romanChordList):
-                running_score += self.baseChordProgWeight * 2
-
-        return running_score
-
-    def _detectMinorProgressions(self, romanChordList):
-        """
-        Detects important progressions in a minor key.
-        Returns a float, representing a score to be compared with other results.
-        """
-        running_score = 0
-
-        for prog in self.progsUnorderedMin:
-            if self._areChordsInProgression(prog, romanChordList):
-                running_score += self.baseChordProgWeight
-
-        for prog in self.progsPreDomMin:
-            if self._areExactChordsInProgression(prog, romanChordList):
-                running_score += self.baseChordProgWeight * 4
-
-        for prog in self.progsDominantMin:
+        for prog in dominantProg:
             if self._areExactChordsInProgression(prog, romanChordList):
                 running_score += self.baseChordProgWeight * 2
+
+        # print('progression score after everything else = {}\n'.format(running_score))
 
         return running_score
 
@@ -234,7 +257,6 @@ class KeyFinder:
 
         for needleChord in searchChordList:
             for haystackChord in chordList:
-                # TODO - need a smart "startsWith()" function that reduces complex chord symbols into simpler diatonic ones!
                 if needleChord == haystackChord:
                     chordsMatching += 1
 
@@ -266,7 +288,8 @@ class KeyFinder:
     def _getChordFitScore(self, chordSymbol, mKey):
         """
         Determines if the given chord fits in the given key.
-        Returns a floating point number.
+        Returns a floating point number between 0 and 1.
+        1.0 means that all the chord tones fit in the key.
         """
         formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
         chordPitches = harmony.ChordSymbol(formattedChordSymbol).pitches

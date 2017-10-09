@@ -71,17 +71,6 @@ class KeyFinderTest(unittest.TestCase):
         expResult = self.keyFinder.baseChordProgWeight
         self.assertEqual(testResult, expResult)
 
-    def test_detectMajorProgressions(self):
-        testList = ['I', 'iv', 'IV', 'V']
-        testResult = self.keyFinder._detectMajorProgressions(testList)
-        expResult = self.keyFinder.baseChordProgWeight
-        self.assertEqual(testResult, expResult)
-
-        testList = ['IV', 'vi', 'ii', 'V', 'I']
-        testResult = self.keyFinder._detectMajorProgressions(testList)
-        expResult = self.keyFinder.baseChordProgWeight * 7
-        self.assertEqual(testResult, expResult)
-
     def test_areChordsInProgression(self):
         testSearchList = ['I', 'IV', 'V']
         testList = ['I', 'iv', 'IV', 'V']
@@ -115,7 +104,7 @@ class KeyFinderTest(unittest.TestCase):
         self.assertEqual(testResult, expResult)
 
     def test_findKeys(self):
-        testChordsRaw2 = 'Bb Dm Eb Bb Bb Dm Eb Bb Bb Cm F Gm Dm Eb Bb Cm F Bb Bb Dm Eb Bb Bb Cm F Bb'
+        testChordsRaw2 = 'Bb Dm Eb Bb Dm Eb Bb Cm F Gm Dm Eb Bb Cm F Bb Dm Eb Bb Cm F Bb'
         testChords2 = testChordsRaw2.split(' ')
 
         self.pPrinter.pprint('findKeys()')
