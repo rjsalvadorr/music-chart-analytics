@@ -131,6 +131,15 @@ class KeyFinder:
             currentKey = indexKey
         # print('chordList length = {}\tlistPossibleKeys length = {}'.format(len(chordList), len(listPossibleKeys)))
 
+        numKeys = len(keysInPiece)
+        for idx, keyInPiece in enumerate(keysInPiece):
+            if idx > 0:
+                prevIdx = idx - 1
+                endDuration = keyInPiece[2] - 1
+                keysInPiece[prevIdx] = keysInPiece[prevIdx] + (endDuration,)
+            if idx == numKeys - 1:
+                keysInPiece[idx] = keysInPiece[idx] + (len(chordList),)
+
         if strict == False:
             # Remove key sections that are smaller than 4 measures
             oldList = keysInPiece
@@ -151,7 +160,7 @@ class KeyFinder:
 
                 if (duration == len(chordList) or duration > self.smallKeyLimit) and previousKey != keyInPiece[0]:
                     keysInPiece.append(keyInPiece)
-                    
+
         return keysInPiece
 
     def _findPossibleKeys(self, chordList):
