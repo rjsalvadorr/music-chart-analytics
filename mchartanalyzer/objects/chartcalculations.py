@@ -9,11 +9,14 @@ class ChartCalculations(BaseDataObject):
         BaseDataObject.__init__(self)
 
         self.chartId= 0
-        self.key = ""
-        self.keyAnalysisCertainty = ""
-        self.chordsGeneral = []
-        self.numChords = 0 # TODO - remove?
-        self.numSections = 0 # TODO - remove?
+        self.keys = []
+        """ Keys in the piece (list of strings) """
+        self.keyChords = []
+        """
+        Generic chords in the piece.
+        Rep'd as a list of strings, with each string showing chords in each key.
+        This list is parallel to the `keys` list above.
+        """
 
         # When returning a ChartCalculations object from the database, this can be initialized.
         self.chartData = None
@@ -24,19 +27,14 @@ class ChartCalculations(BaseDataObject):
             self.key = databaseRow[2]
             self.keyAnalysisCertainty = databaseRow[3]
             self.chordsGeneral = self._convertStringToList(databaseRow[4])
-            self.numChords = databaseRow[5]
-            self.numSections = databaseRow[6]
             self.updateTime = databaseRow[7]
-
 
     def setChordListFromString(self, chordListStr):
         convertedList = self._convertStringToList(chordListStr)
         self.chordsGeneral = convertedList
 
-
     def getChordListString(self):
         return self._convertListToString(self.chordsGeneral)
-
 
     def __str__(self):
         stringRep = "ChartCalculations { id=" + str(self.id) + ", "
@@ -45,7 +43,6 @@ class ChartCalculations(BaseDataObject):
         stringRep += "key=" + self.key + ", "
         stringRep += "keyAnalysisCertainty=" + self.keyAnalysisCertainty + ", "
         stringRep += "chordsGeneral=[" + self.getChordListString() + "], "
-        stringRep += "numChords=" + str(self.numChords) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 
