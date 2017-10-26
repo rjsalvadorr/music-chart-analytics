@@ -12,13 +12,14 @@ from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 from . import constants
 from .filewriter import FileWriter
+from .keyfinder import KeyFinder
 from .utils import *
 
 class ChartAnalyzer:
     """
     Analyzes the charts, and calculates the desired data for display.
     """
-
+    keyfinder = KeyFinder()
     filewriter = FileWriter()
 
     def __init__(self):
@@ -197,14 +198,22 @@ class ChartAnalyzer:
         """
         Analyzes a chart. Returns an ChartCalculations object.
         """
+
         chartCalcs = ChartCalculations()
 
-        analyzedKey, analyzedKeyCertainty = self._analyzeKey(chartData.chordsSpecific)
-        chartCalcs.key = analyzedKey
-        chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
-        chartCalcs.chordsGeneral = self._convertChordListToGeneral(chartData.chordsSpecific, analyzedKey)
-        chartCalcs.numChords = len(chartData.chordsSpecific)
-        chartCalcs.numSections = len(chartData.sections)
+        keyInfo = ChartAnalyzer.keyfinder.findKeys(chartData.chordsSpecific)
+
+        for keyEntry in keyInfo:
+            currentKey = keyEntry[0]
+            currentKeyCertainty = keyEntry[1]
+            currentKeyStart = keyEntry[2] - 1
+            currentKeyEnd = keyEntry[3]
+
+            currentKeyChords = chartData.chordsSpecific[currentKeyStart:currentKeyEnd]
+            currentChordsGen = self._convertChordListToGeneral(chartData.chordsSpecific, currentKey)
+
+            chartCalcs.keys.append(currentKeyChords)
+            chartCalcs.keyChords.append(currentChordsGen)
 
         return chartCalcs
 
@@ -260,11 +269,10 @@ class ChartAnalyzer:
         logString += " sections: " + chartData.getSectionListString().replace(",", " ") + "\n"
         logString += " original chords: " + chartData.getChordListString().replace(",", " ") + "\n"
         logString += "\n"
-        logString += " computed key: " + chartCalcs.key + "\n"
-        logString += " computed key certainty: " + chartCalcs.keyAnalysisCertainty + "\n"
-        logString += " computed chords: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
-        logString += " number of chords: " + str(chartCalcs.numChords) + "\n"
-        logString += " number of sections: " + str(chartCalcs.numSections) + "\n"
+        logString += " computed keys: " + chartCalcs.getKeysString() + "\n"
+        logString += " computed chords: " + chartCalcs.getKeyChordsString().replace(",", " ") + "\n"
+        logString += " number of chords: " + str(len(chartData.chordsSpecific)) + "\n"
+        logString += " number of sections: " + str(len(chartData.sections)) + "\n"
         logString += "\n========================================\n"
 
         self._log(logString)
