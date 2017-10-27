@@ -211,11 +211,7 @@ class ChartAnalyzer:
         """
 
         chartCalcs = ChartCalculations()
-
         keyInfo = ChartAnalyzer.keyfinder.findKeys(chartData.chordsSpecific)
-
-        print('Key information:')
-        print(keyInfo)
 
         for keyEntry in keyInfo:
             currentKey = keyEntry[0]
@@ -253,9 +249,6 @@ class ChartAnalyzer:
             artistCalcs.numSongs += 1
             artistCalcs.numChords += len(chartCalc.chartData.chordsSpecific)
             artistCalcs.numSections += len(chartCalc.chartData.sections)
-
-            print('--- printing chartCalc, boss')
-            print(chartCalc)
 
             for currentKey in chartCalc.keys:
                 if currentKey.lower().find("major") >= 0:

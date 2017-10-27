@@ -39,17 +39,13 @@ class ChartCalculations(BaseDataObject):
                 keyList.append(keyStr)
                 self.keys = keyList
 
-        print('keyStr = {!s}, resulting keys = {!s}'.format(keyStr, self.keys))
-
     def getKeysString(self):
-        print('getting keys string = {!s}'.format(self.keys))
         if not self.keys:
             return ''
         else:
             return self._convertListToString(self.keys)
 
     def setKeyChordsFromString(self, keyChordsStr):
-        print('keyChordsStr = {!s}'.format(keyChordsStr))
         convertedList = self._convertStringToTwoDimensionList(keyChordsStr)
         self.keyChords = convertedList
 

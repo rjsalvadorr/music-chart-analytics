@@ -144,15 +144,12 @@ class KeyFinder:
             # Remove key sections that are smaller than 4 measures
             oldList = keysInPiece
             keysInPiece = []
-            print('chordList length = {}'.format(len(chordList)))
             for idx, keyInPiece in enumerate(oldList):
                 if idx == len(oldList) - 1:
                     duration = len(chordList) - (keyInPiece[2] - 1)
                 else:
                     duration = oldList[idx + 1][2] - keyInPiece[2]
-
-                print('currentKey = {}, keyInPiece = {!s}, duration = {}'.format(currentKey, keyInPiece, duration))
-
+                # print('currentKey = {}, keyInPiece = {!s}, duration = {}'.format(currentKey, keyInPiece, duration))
                 if len(keysInPiece) > 0:
                     previousKey = keysInPiece[-1][0]
                 else:
