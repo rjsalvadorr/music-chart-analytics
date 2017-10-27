@@ -12,7 +12,7 @@ CREATE TABLE "CHARTS" (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`)
 );
 CREATE TABLE "CHART_CALCS" (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`)
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `keys` TEXT, `keys_certainty` TEXT, `key_chords` TEXT, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`)
 );
 CREATE TABLE `SONGS` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER, `title` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES ARTISTS(id)

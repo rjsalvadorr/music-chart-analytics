@@ -12,12 +12,14 @@ from .objects.chartcalculations import ChartCalculations
 from .databasehandler import DatabaseHandler
 from . import constants
 from .filewriter import FileWriter
+from .keyfinder import KeyFinder
+from .utils import *
 
 class ChartAnalyzer:
     """
     Analyzes the charts, and calculates the desired data for display.
     """
-
+    keyfinder = KeyFinder()
     filewriter = FileWriter()
 
     def __init__(self):
@@ -40,6 +42,17 @@ class ChartAnalyzer:
                     rawDict[prog] = 1
 
         return rawDict
+
+    def _getMostCommonChordsTwoDim(self, chordList):
+        """
+        Gets the most common chord symbols in the given two-dimensional chord list.
+        Returns a dictionary with chord symbols as keys, and counts as values.
+        """
+        masterList = []
+        for innerList in chordList:
+            masterList = masterList + innerList
+
+        return self._getMostCommonChords(masterList)
 
     def _getMostCommonChords(self, chordList):
         """
@@ -96,7 +109,7 @@ class ChartAnalyzer:
         From a given key and chord symbol, return a chord symbol in roman numeral notation.
         For example: ?????
         """
-        formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
+        formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
 
         try:
             mChord = harmony.ChordSymbol(formattedChordSymbol)
@@ -132,29 +145,10 @@ class ChartAnalyzer:
         genericChordList = []
 
         for chordSym in chordList:
-            formattedKeyString = self._convertKeyTextToMusic21(keyString)
-            genericChordList.append(self._convertChordSymbolToGeneral(chordSym, formattedKeyString))
+            # formattedKeyString = self._convertKeyTextToMusic21(keyString)
+            genericChordList.append(self._convertChordSymbolToGeneral(chordSym, keyString))
 
         return genericChordList
-
-
-    def _convertToMusic21ChordSymbol(self, text):
-        """
-        Converts regular chord symbols into ones that music21 understands.
-        The main difference: the flat accidental is "-" on music21, not "b".
-        For example, this method would convert "Bbm7" to "B-m7"
-        """
-        formattedChordSymbol = text.replace("b", "-")
-        # Specific replacements below were added after certain music21 errors.
-        # TODO - find a better way to avoid these issues!
-        formattedChordSymbol = formattedChordSymbol.replace("-5", "b5")
-        formattedChordSymbol = formattedChordSymbol.replace("-9", "b9")
-        formattedChordSymbol = formattedChordSymbol.replace("maj", "")
-        formattedChordSymbol = formattedChordSymbol.replace("Maj", "")
-        formattedChordSymbol = formattedChordSymbol.replace("Maj7", "M7")
-        formattedChordSymbol = formattedChordSymbol.replace("7sus4", "sus4")
-
-        return formattedChordSymbol
 
 
     def _convertKeyTextToMusic21(self, text):
@@ -192,7 +186,7 @@ class ChartAnalyzer:
         # And assemble those pitches into a large tinynotation string
         tinyNotationString = "tinyNotation: 4/4 "
         for chordSymbol in chordList:
-            formattedChordSymbol = self._convertToMusic21ChordSymbol(chordSymbol)
+            formattedChordSymbol = convertToMusic21ChordSymbol(chordSymbol)
             try:
                 h = harmony.ChordSymbol(formattedChordSymbol)
                 for rawPitch in h.pitches:
@@ -215,14 +209,23 @@ class ChartAnalyzer:
         """
         Analyzes a chart. Returns an ChartCalculations object.
         """
-        chartCalcs = ChartCalculations()
 
-        analyzedKey, analyzedKeyCertainty = self._analyzeKey(chartData.chordsSpecific)
-        chartCalcs.key = analyzedKey
-        chartCalcs.keyAnalysisCertainty = str(analyzedKeyCertainty)
-        chartCalcs.chordsGeneral = self._convertChordListToGeneral(chartData.chordsSpecific, analyzedKey)
-        chartCalcs.numChords = len(chartData.chordsSpecific)
-        chartCalcs.numSections = len(chartData.sections)
+        chartCalcs = ChartCalculations()
+        keyInfo = ChartAnalyzer.keyfinder.findKeys(chartData.chordsSpecific)
+
+        for keyEntry in keyInfo:
+            currentKey = keyEntry[0]
+            currentKeyCertainty = keyEntry[1]
+            currentKeyStart = keyEntry[2] - 1
+            currentKeyEnd = keyEntry[3]
+
+            currentKeyChords = chartData.chordsSpecific[currentKeyStart:currentKeyEnd]
+            currentChordsGen = self._convertChordListToGeneral(chartData.chordsSpecific, currentKey)
+
+            formatKeyStep = '{} {}'.format(currentKey, key.Key(currentKey).mode)
+            formattedKey = self._convertMusic21KeyToText(formatKeyStep)
+            chartCalcs.keys.append(formattedKey)
+            chartCalcs.keyChords.append(currentChordsGen)
 
         return chartCalcs
 
@@ -244,24 +247,26 @@ class ChartAnalyzer:
 
         for chartCalc in artistDefinitiveChartCalcs:
             artistCalcs.numSongs += 1
-            if chartCalc.key.lower().find("major") >= 0:
-                artistCalcs.numMajorKeys += 1
-            artistCalcs.numChords += chartCalc.numChords
-            artistCalcs.numSections += chartCalc.numSections
+            artistCalcs.numChords += len(chartCalc.chartData.chordsSpecific)
+            artistCalcs.numSections += len(chartCalc.chartData.sections)
 
-            if chartCalc.key in mostCommonKeys:
-                mostCommonKeys[chartCalc.key] = mostCommonKeys[chartCalc.key] + 1
-            else:
-                mostCommonKeys[chartCalc.key] = 1
+            for currentKey in chartCalc.keys:
+                if currentKey.lower().find("major") >= 0:
+                    artistCalcs.numMajorKeys += 1
+                if currentKey in mostCommonKeys:
+                    mostCommonKeys[currentKey] = mostCommonKeys[currentKey] + 1
+                else:
+                    mostCommonKeys[currentKey] = 1
 
-            if chartCalc.chartData:
+            if chartCalc.chartData and chartCalc.chartData.sections:
                 songStruct = ' '.join(chartCalc.chartData.sections)
                 if songStruct in allProgs:
                     allSections[songStruct] = allSections[songStruct] + 1
                 else:
                     allSections[songStruct] = 1
 
-            allProgs = self._mergeCounterDictionary(allProgs, self._getChordProgressions(chartCalc.chordsGeneral))
+            for chordList in chartCalc.keyChords:
+                allProgs = self._mergeCounterDictionary(allProgs, self._getChordProgressions(chordList))
 
         artistCalcs.mostCommonKeys = self._trimDictionary(mostCommonKeys, constants.MOST_COMMON_CHORDS_LIMIT)
         artistCalcs.mostCommonChordProgressions = self._trimDictionary(allProgs, constants.MOST_COMMON_CHORDS_LIMIT)
@@ -278,11 +283,10 @@ class ChartAnalyzer:
         logString += " sections: " + chartData.getSectionListString().replace(",", " ") + "\n"
         logString += " original chords: " + chartData.getChordListString().replace(",", " ") + "\n"
         logString += "\n"
-        logString += " computed key: " + chartCalcs.key + "\n"
-        logString += " computed key certainty: " + chartCalcs.keyAnalysisCertainty + "\n"
-        logString += " computed chords: " + chartCalcs.getChordListString().replace(",", " ") + "\n"
-        logString += " number of chords: " + str(chartCalcs.numChords) + "\n"
-        logString += " number of sections: " + str(chartCalcs.numSections) + "\n"
+        logString += " computed keys: " + chartCalcs.getKeysString() + "\n"
+        logString += " computed chords: " + chartCalcs.getKeyChordsString().replace(",", " ") + "\n"
+        logString += " number of chords: " + str(len(chartData.chordsSpecific)) + "\n"
+        logString += " number of sections: " + str(len(chartData.sections)) + "\n"
         logString += "\n========================================\n"
 
         self._log(logString)
@@ -346,7 +350,7 @@ class ChartAnalyzer:
                     self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
 
                     mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
-                    mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+                    mcChordsGen = self._getMostCommonChordsTwoDim(chartCalcs.keyChords)
 
                     totalMostCommonChordsSpec = self._mergeCounterDictionary(totalMostCommonChordsSpec, mcChordsSpec)
                     totalMostCommonChordsGen = self._mergeCounterDictionary(totalMostCommonChordsGen, mcChordsGen)

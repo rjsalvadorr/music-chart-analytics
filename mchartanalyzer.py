@@ -38,7 +38,7 @@ if len(sys.argv) > 0:
         if(arg.lower() == "--help" or arg.lower() == "-?" or arg.lower() == "?"):
             print("AVAILABLE FLAGS:\n")
             print("--initialize-database")
-            print("    For local database use. Initializes the database by setting up the table structure.\n")
+            print("    For local database use. Initializes the database by setting up the table structure.\n    If the database already exists, it destroys that first.\n")
             print("--purge-database")
             print("    For local database use. Removes all the data stored in the database.\n")
             print("--force-analysis")

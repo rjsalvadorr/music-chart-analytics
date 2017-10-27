@@ -9,11 +9,14 @@ class ChartCalculations(BaseDataObject):
         BaseDataObject.__init__(self)
 
         self.chartId= 0
-        self.key = ""
-        self.keyAnalysisCertainty = ""
-        self.chordsGeneral = []
-        self.numChords = 0 # TODO - remove?
-        self.numSections = 0 # TODO - remove?
+        self.keys = []
+        """ Keys in the piece (list of strings) """
+        self.keyChords = []
+        """
+        Generic chords in the piece.
+        Rep'd as a list of strings, with each string showing chords in each key.
+        This list is parallel to the `keys` list above.
+        """
 
         # When returning a ChartCalculations object from the database, this can be initialized.
         self.chartData = None
@@ -21,31 +24,46 @@ class ChartCalculations(BaseDataObject):
         if databaseRow:
             self.id = databaseRow[0]
             self.chartId = databaseRow[1]
-            self.key = databaseRow[2]
-            self.keyAnalysisCertainty = databaseRow[3]
-            self.chordsGeneral = self._convertStringToList(databaseRow[4])
-            self.numChords = databaseRow[5]
-            self.numSections = databaseRow[6]
-            self.updateTime = databaseRow[7]
+            self.setKeysFromString(databaseRow[2])
+            self.setKeyChordsFromString(databaseRow[4])
+            self.updateTime = databaseRow[5]
 
+    def setKeysFromString(self, keyStr):
+        blacklistValues = ['[]', 'None']
+        if keyStr and keyStr not in blacklistValues and keyStr is not None:
+            if self.delim2 in keyStr:
+                convertedList = self._convertStringToList(keyStr)
+                self.keys = convertedList
+            else:
+                keyList = []
+                keyList.append(keyStr)
+                self.keys = keyList
 
-    def setChordListFromString(self, chordListStr):
-        convertedList = self._convertStringToList(chordListStr)
-        self.chordsGeneral = convertedList
+    def getKeysString(self):
+        if not self.keys:
+            return ''
+        else:
+            return self._convertListToString(self.keys)
 
+    def setKeyChordsFromString(self, keyChordsStr):
+        convertedList = self._convertStringToTwoDimensionList(keyChordsStr)
+        self.keyChords = convertedList
 
-    def getChordListString(self):
-        return self._convertListToString(self.chordsGeneral)
+        if not self.keyChords:
+            self.keyChords = []
 
+    def getKeyChordsString(self):
+        if not self.keyChords:
+            return ''
+        else:
+            return self._convertTwoDimensionListToString(self.keyChords)
 
     def __str__(self):
         stringRep = "ChartCalculations { id=" + str(self.id) + ", "
 
         stringRep += "chartId=" + str(self.chartId) + ", "
-        stringRep += "key=" + self.key + ", "
-        stringRep += "keyAnalysisCertainty=" + self.keyAnalysisCertainty + ", "
-        stringRep += "chordsGeneral=[" + self.getChordListString() + "], "
-        stringRep += "numChords=" + str(self.numChords) + ", "
+        stringRep += "keys=" + str(self.keys) + ", "
+        stringRep += "keyChords=" + str(self.keyChords) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 

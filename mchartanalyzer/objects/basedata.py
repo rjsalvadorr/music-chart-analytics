@@ -11,13 +11,11 @@ class BaseDataObject:
         self.delim1 = ";"
         self.delim2 = ","
 
-
     def _convertListToString(self, myList):
         """
         Returns a string representation of a list
         """
         return self.delim2.join(myList)
-
 
     def _convertStringToList(self, listString):
         """
@@ -25,6 +23,30 @@ class BaseDataObject:
         """
         if listString:
             return listString.split(self.delim2)
+        else:
+            return []
+
+    def _convertTwoDimensionListToString(self, myList):
+        """
+        Returns a string representation of a two-dimensional list
+        """
+        flatList = []
+        for innerList in myList:
+            listStr = self.delim2.join(innerList)
+            flatList.append(listStr)
+        return self.delim1.join(flatList)
+
+    def _convertStringToTwoDimensionList(self, listString):
+        """
+        Returns a list from its string representation
+        """
+        if listString:
+            newList = []
+            stageList = listString.split(self.delim1)
+            for innerListString in stageList:
+                newList.append(innerListString.split(self.delim2))
+
+            return newList
         else:
             return []
 
