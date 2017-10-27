@@ -226,7 +226,9 @@ class ChartAnalyzer:
             currentKeyChords = chartData.chordsSpecific[currentKeyStart:currentKeyEnd]
             currentChordsGen = self._convertChordListToGeneral(chartData.chordsSpecific, currentKey)
 
-            chartCalcs.keys.append(currentKey)
+            formatKeyStep = '{} {}'.format(currentKey, key.Key(currentKey).mode)
+            formattedKey = self._convertMusic21KeyToText(formatKeyStep)
+            chartCalcs.keys.append(formattedKey)
             chartCalcs.keyChords.append(currentChordsGen)
 
         return chartCalcs
@@ -249,24 +251,29 @@ class ChartAnalyzer:
 
         for chartCalc in artistDefinitiveChartCalcs:
             artistCalcs.numSongs += 1
-            if chartCalc.key.lower().find("major") >= 0:
-                artistCalcs.numMajorKeys += 1
-            artistCalcs.numChords += chartCalc.numChords
-            artistCalcs.numSections += chartCalc.numSections
+            artistCalcs.numChords += len(chartCalc.chartData.chordsSpecific)
+            artistCalcs.numSections += len(chartCalc.chartData.sections)
 
-            if chartCalc.key in mostCommonKeys:
-                mostCommonKeys[chartCalc.key] = mostCommonKeys[chartCalc.key] + 1
-            else:
-                mostCommonKeys[chartCalc.key] = 1
+            print('--- printing chartCalc, boss')
+            print(chartCalc)
 
-            if chartCalc.chartData:
+            for currentKey in chartCalc.keys:
+                if currentKey.lower().find("major") >= 0:
+                    artistCalcs.numMajorKeys += 1
+                if currentKey in mostCommonKeys:
+                    mostCommonKeys[currentKey] = mostCommonKeys[currentKey] + 1
+                else:
+                    mostCommonKeys[currentKey] = 1
+
+            if chartCalc.chartData and chartCalc.chartData.sections:
                 songStruct = ' '.join(chartCalc.chartData.sections)
                 if songStruct in allProgs:
                     allSections[songStruct] = allSections[songStruct] + 1
                 else:
                     allSections[songStruct] = 1
 
-            allProgs = self._mergeCounterDictionary(allProgs, self._getChordProgressions(chartCalc.chordsGeneral))
+            for chordList in chartCalc.keyChords:
+                allProgs = self._mergeCounterDictionary(allProgs, self._getChordProgressions(chordList))
 
         artistCalcs.mostCommonKeys = self._trimDictionary(mostCommonKeys, constants.MOST_COMMON_CHORDS_LIMIT)
         artistCalcs.mostCommonChordProgressions = self._trimDictionary(allProgs, constants.MOST_COMMON_CHORDS_LIMIT)

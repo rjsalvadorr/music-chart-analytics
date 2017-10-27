@@ -30,9 +30,6 @@ class BaseDataObject:
         """
         Returns a string representation of a two-dimensional list
         """
-        print('\nlist to convert:')
-        print(myList)
-        
         flatList = []
         for innerList in myList:
             listStr = self.delim2.join(innerList)
@@ -43,7 +40,6 @@ class BaseDataObject:
         """
         Returns a list from its string representation
         """
-        print('\nstring to convert: ' + listString)
         if listString:
             newList = []
             stageList = listString.split(self.delim1)

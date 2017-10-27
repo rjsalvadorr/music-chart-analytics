@@ -24,32 +24,50 @@ class ChartCalculations(BaseDataObject):
         if databaseRow:
             self.id = databaseRow[0]
             self.chartId = databaseRow[1]
-            self.keys = databaseRow[2]
-            self.keyChords = self._convertStringToList(databaseRow[3])
-            self.updateTime = databaseRow[4]
+            self.setKeysFromString(databaseRow[2])
+            self.setKeyChordsFromString(databaseRow[4])
+            self.updateTime = databaseRow[5]
 
     def setKeysFromString(self, keyStr):
-        convertedList = self._convertStringToList(keyStr)
-        self.keys = convertedList
+        blacklistValues = ['[]', 'None']
+        if keyStr and keyStr not in blacklistValues and keyStr is not None:
+            if self.delim2 in keyStr:
+                convertedList = self._convertStringToList(keyStr)
+                self.keys = convertedList
+            else:
+                keyList = []
+                keyList.append(keyStr)
+                self.keys = keyList
+
+        print('keyStr = {!s}, resulting keys = {!s}'.format(keyStr, self.keys))
 
     def getKeysString(self):
-        print('--- getting keys, boss')
-        print(self.keys)
-        return self._convertListToString(self.keys)
+        print('getting keys string = {!s}'.format(self.keys))
+        if not self.keys:
+            return ''
+        else:
+            return self._convertListToString(self.keys)
 
     def setKeyChordsFromString(self, keyChordsStr):
+        print('keyChordsStr = {!s}'.format(keyChordsStr))
         convertedList = self._convertStringToTwoDimensionList(keyChordsStr)
         self.keyChords = convertedList
 
+        if not self.keyChords:
+            self.keyChords = []
+
     def getKeyChordsString(self):
-        return self._convertTwoDimensionListToString(self.keyChords)
+        if not self.keyChords:
+            return ''
+        else:
+            return self._convertTwoDimensionListToString(self.keyChords)
 
     def __str__(self):
         stringRep = "ChartCalculations { id=" + str(self.id) + ", "
 
         stringRep += "chartId=" + str(self.chartId) + ", "
-        stringRep += "keys=" + self.getKeysString() + ", "
-        stringRep += "keyChords=" + self.getKeyChordsString() + ", "
+        stringRep += "keys=" + str(self.keys) + ", "
+        stringRep += "keyChords=" + str(self.keyChords) + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 

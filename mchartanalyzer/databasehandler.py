@@ -431,7 +431,8 @@ class DatabaseHandler:
 
         for row in rows:
             newChartCalc = ChartCalculations(databaseRow=row)
-            self.getChartById(newChartCalc.chartId)
+            print('fresh chart calcs = {!s}'.format(newChartCalc))
+            newChartCalc.chartData = self.getChartById(newChartCalc.chartId)
             chartCalcs.append(newChartCalc)
 
         return chartCalcs
