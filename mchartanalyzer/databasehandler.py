@@ -202,9 +202,8 @@ class DatabaseHandler:
         """
         Saves chart calculations to the database.
         """
-        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'key', 'key_certainty', 'chords_general', 'num_chords', 'num_sections', 'update_time') VALUES ({chartId}, \'{key}\', \'{keyCertainty}\', \'{chordsGeneral}\', {numChords}, {numSections}, \'{updateTime}\')"
-
-        updateCalcsStmt = "UPDATE CHART_CALCS SET 'key' = \'{key}\', 'key_certainty' = \'{keyCertainty}\', 'chords_general' = \'{chordsGeneral}\', 'num_chords' = {numChords}, 'num_sections' = {numSections}, 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
+        insertCalcsStmt = "INSERT INTO CHART_CALCS('chart_id', 'keys', 'keys_certainty', 'key_chords', 'update_time') VALUES ({chartId}, \'{keys}\', \'{keysCertainty}\', \'{keyChords}\', \'{updateTime}\')"
+        updateCalcsStmt = "UPDATE CHART_CALCS SET 'keys' = \'{keys}\', 'keys_certainty' = \'{keysCertainty}\', 'key_chords' = \'{keyChords}\', 'update_time' = \'{updateTime}\' WHERE chart_id={chartId}"
 
         updateChartStmt = "UPDATE CHARTS SET is_new = 0, update_time = \'{updateTime}\' WHERE id={chartId}"
 
@@ -218,10 +217,10 @@ class DatabaseHandler:
 
             if existingChartCalc:
                 # Chart from this source already exists. Update it.
-                c.execute(updateCalcsStmt.format(chartId=chartData.id, key=chartCalcs.key, keyCertainty=chartCalcs.keyAnalysisCertainty, chordsGeneral=chartCalcs.getChordListString(), numChords=chartCalcs.numChords, numSections=chartCalcs.numSections, updateTime=timestampStr))
+                c.execute(updateCalcsStmt.format(chartId=chartData.id, keys=chartCalcs.getKeysString(), keysCertainty=0, keyChords=chartCalcs.getKeyChordsString(), updateTime=timestampStr))
             else:
                 # Chart does not exist yet. Insert new record.
-                c.execute(insertCalcsStmt.format(chartId=chartData.id, key=chartCalcs.key, keyCertainty=chartCalcs.keyAnalysisCertainty, chordsGeneral=chartCalcs.getChordListString(), numChords=chartCalcs.numChords, numSections=chartCalcs.numSections, updateTime=timestampStr))
+                c.execute(insertCalcsStmt.format(chartId=chartData.id, keys=chartCalcs.getKeysString(), keysCertainty=0, keyChords=chartCalcs.getKeyChordsString(), updateTime=timestampStr))
 
             # Update the chart, toggle "is_new" to 0
             c.execute(updateChartStmt.format(chartId=chartData.id,  updateTime=timestampStr))
@@ -299,7 +298,7 @@ class DatabaseHandler:
         Returns an empty list if a record isn't found.
         """
         songRecords = []
-        query = ("SELECT SONGS.*, CHART_CALCS.key FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id INNER JOIN CHART_CALCS ON CHARTS.id = CHART_CALCS.chart_id WHERE artist_id = ? GROUP BY SONGS.id", (artistData.id,))
+        query = ("SELECT SONGS.* FROM SONGS INNER JOIN CHARTS ON SONGS.id = CHARTS.song_id WHERE artist_id = ? GROUP BY SONGS.id", (artistData.id,))
         songRows = self._executeQuery(query)
 
         for row in songRows:
@@ -478,7 +477,7 @@ class DatabaseHandler:
             c.execute("CREATE TABLE CHARTS ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `song_id` INTEGER, `source_url` TEXT UNIQUE, `chords_specific` TEXT, `sections` TEXT, `is_new` INTEGER, `update_time` TEXT, FOREIGN KEY(`song_id`) REFERENCES `SONGS`(`id`) )")
 
             c.execute("CREATE TABLE \"ARTIST_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `artist_id` INTEGER UNIQUE, `num_chords` INTEGER, `num_sections` INTEGER, `num_songs` INTEGER, `num_charts` INTEGER, `num_major` INTEGER, `num_minor` INTEGER, `common_keys` TEXT, `common_chords_spec` TEXT, `common_chords_gen` TEXT, `common_progs` TEXT, `common_structs` TEXT, `update_time` TEXT, FOREIGN KEY(`artist_id`) REFERENCES `ARTISTS`(`id`) )")
-            c.execute("CREATE TABLE \"CHART_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `key` TEXT, `key_certainty` TEXT, `chords_general` TEXT, `num_chords` INTEGER, `num_sections` INTEGER, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )")
+            c.execute("CREATE TABLE \"CHART_CALCS\" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `chart_id` INTEGER UNIQUE, `keys` TEXT, `keys_certainty` TEXT, `key_chords` TEXT, `update_time` TEXT, FOREIGN KEY(`chart_id`) REFERENCES `CHARTS`(`id`) )")
 
             c.execute("CREATE TABLE `ARTISTS_DUPL_ASC` ( `id` INTEGER, `primary_artist_id` INTEGER, `duplicate_artist_id` INTEGER, PRIMARY KEY(`id`) )")
             c.execute("CREATE TABLE `SONGS_DUPL_ASC` ( `id` INTEGER, `primary_song_id` INTEGER, `duplicate_song_id` INTEGER, PRIMARY KEY(`id`) )")

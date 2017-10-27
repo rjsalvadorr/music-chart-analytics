@@ -43,6 +43,17 @@ class ChartAnalyzer:
 
         return rawDict
 
+    def _getMostCommonChordsTwoDim(self, chordList):
+        """
+        Gets the most common chord symbols in the given two-dimensional chord list.
+        Returns a dictionary with chord symbols as keys, and counts as values.
+        """
+        masterList = []
+        for innerList in chordList:
+            masterList = masterList + innerList
+
+        return self._getMostCommonChords(masterList)
+
     def _getMostCommonChords(self, chordList):
         """
         Gets the most common chord symbols in the given chord list.
@@ -134,8 +145,8 @@ class ChartAnalyzer:
         genericChordList = []
 
         for chordSym in chordList:
-            formattedKeyString = self._convertKeyTextToMusic21(keyString)
-            genericChordList.append(self._convertChordSymbolToGeneral(chordSym, formattedKeyString))
+            # formattedKeyString = self._convertKeyTextToMusic21(keyString)
+            genericChordList.append(self._convertChordSymbolToGeneral(chordSym, keyString))
 
         return genericChordList
 
@@ -203,6 +214,9 @@ class ChartAnalyzer:
 
         keyInfo = ChartAnalyzer.keyfinder.findKeys(chartData.chordsSpecific)
 
+        print('Key information:')
+        print(keyInfo)
+
         for keyEntry in keyInfo:
             currentKey = keyEntry[0]
             currentKeyCertainty = keyEntry[1]
@@ -212,7 +226,7 @@ class ChartAnalyzer:
             currentKeyChords = chartData.chordsSpecific[currentKeyStart:currentKeyEnd]
             currentChordsGen = self._convertChordListToGeneral(chartData.chordsSpecific, currentKey)
 
-            chartCalcs.keys.append(currentKeyChords)
+            chartCalcs.keys.append(currentKey)
             chartCalcs.keyChords.append(currentChordsGen)
 
         return chartCalcs
@@ -336,7 +350,7 @@ class ChartAnalyzer:
                     self._dumpChartCalculationsToLog(artistData, songData, freshChartData, chartCalcs)
 
                     mcChordsSpec = self._getMostCommonChords(freshChartData.chordsSpecific)
-                    mcChordsGen = self._getMostCommonChords(chartCalcs.chordsGeneral)
+                    mcChordsGen = self._getMostCommonChordsTwoDim(chartCalcs.keyChords)
 
                     totalMostCommonChordsSpec = self._mergeCounterDictionary(totalMostCommonChordsSpec, mcChordsSpec)
                     totalMostCommonChordsGen = self._mergeCounterDictionary(totalMostCommonChordsGen, mcChordsGen)

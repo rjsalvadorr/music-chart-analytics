@@ -33,21 +33,23 @@ class ChartCalculations(BaseDataObject):
         self.keys = convertedList
 
     def getKeysString(self):
+        print('--- getting keys, boss')
+        print(self.keys)
         return self._convertListToString(self.keys)
 
     def setKeyChordsFromString(self, keyChordsStr):
-        convertedList = self._convertStringToList(keyChordsStr)
+        convertedList = self._convertStringToTwoDimensionList(keyChordsStr)
         self.keyChords = convertedList
 
     def getKeyChordsString(self):
-        return self._convertListToString(self.keyChords)
+        return self._convertTwoDimensionListToString(self.keyChords)
 
     def __str__(self):
         stringRep = "ChartCalculations { id=" + str(self.id) + ", "
 
         stringRep += "chartId=" + str(self.chartId) + ", "
-        stringRep += "keys=" + self.keys + ", "
-        stringRep += "keyChords=" + self.keyChords + ", "
+        stringRep += "keys=" + self.getKeysString() + ", "
+        stringRep += "keyChords=" + self.getKeyChordsString() + ", "
 
         stringRep += "updateTime=" + self.updateTime + " }"
 
