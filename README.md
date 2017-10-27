@@ -25,6 +25,10 @@ The parser will read through all those charts and identify key features of the s
 
 ...
 
+### Key Finder
+
+...
+
 ## Usage
 
 ...
